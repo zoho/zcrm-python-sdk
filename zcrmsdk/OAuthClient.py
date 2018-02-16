@@ -39,7 +39,7 @@ class ZohoOAuth(object):
             line=line.rstrip()
             keyValue=line.split("=")
             if(not keyValue[0].startswith('#')):
-                dictionary[keyValue[0]]=keyValue[1].strip()
+                dictionary[keyValue[0].strip()]=keyValue[1].strip()
         filePointer.close()
         return dictionary
     @staticmethod

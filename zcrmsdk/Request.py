@@ -26,7 +26,9 @@ class APIRequest(object):
         self.request_api_key=api_handler_ins.request_api_key
     
     def construct_api_url(self):
-        self.url=ZCRMConfigUtil.get_api_base_url()+"/crm/"+ZCRMConfigUtil.get_api_version()+"/"
+        hit_sand_box=ZCRMConfigUtil.config_prop_dict['sandbox']
+        base_url=ZCRMConfigUtil.get_api_base_url().replace('www','sandbox') if hit_sand_box.lower()=='true' else ZCRMConfigUtil.get_api_base_url()
+        self.url=base_url+"/crm/"+ZCRMConfigUtil.get_api_version()+"/"
     
     def authenticate_request(self):
         accessToken=ZCRMConfigUtil.get_instance().get_access_token()
