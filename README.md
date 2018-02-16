@@ -89,6 +89,11 @@ If your application needs only single user authentication then you have to set t
 
 >currentUserEmail=user@email.com
 
+To make API calls to `sandbox account`, please change the value of following key to `true`. By default the value is `false`  
+
+>sandbox=true
+
+
 In order to work with multi user authentication, you need to set the user EmailId in current thread as an attribute.
 
 >threading.current_thread().__setattr__('current_user_email','user@email.com')
