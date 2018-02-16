@@ -85,13 +85,14 @@ Please fill the value for the following key alone. If log path is not provided t
 
 >applicationLogFilePath=
 
-If your application needs only single user authentication then you have to set the user Email Id in configurations.properties file like below.
-
->currentUserEmail=user@email.com
-
 To make API calls to `sandbox account`, please change the value of following key to `true`. By default the value is `false`  
 
 >sandbox=true
+
+
+If your application needs only single user authentication then you have to set the user Email Id in configurations.properties file like below.
+
+>currentUserEmail=user@email.com
 
 
 In order to work with multi user authentication, you need to set the user EmailId in current thread as an attribute.
