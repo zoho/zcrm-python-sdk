@@ -8,7 +8,7 @@ class ZohoOAuthConstants(object):
     '''
     OAuth constants
     '''
-    IAM_URL="iamURL";
+    IAM_URL="accounts_url";
     SCOPES="scope";
     STATE="state";
     STATE_OBTAINING_GRANT_TOKEN="OBTAIN_GRANT_TOKEN";

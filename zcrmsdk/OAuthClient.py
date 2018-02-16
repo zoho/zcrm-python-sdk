@@ -11,7 +11,7 @@ class ZohoOAuth(object):
     This class is to load oauth configurations and provide OAuth request URIs
     '''
     configProperties={}
-    iamURL='https://accounts.zoho.com'
+    #iamURL='https://accounts.zoho.com'
     
     def __init__(self):
         '''
@@ -44,19 +44,19 @@ class ZohoOAuth(object):
         return dictionary
     @staticmethod
     def get_grant_url():
-        return (ZohoOAuth.iamURL+"/oauth/v2/auth")
+        return (ZohoOAuth.configProperties[ZohoOAuthConstants.IAM_URL]+"/oauth/v2/auth")
     @staticmethod
     def get_token_url():
-        return (ZohoOAuth.iamURL+"/oauth/v2/token")
+        return (ZohoOAuth.configProperties[ZohoOAuthConstants.IAM_URL]+"/oauth/v2/token")
     @staticmethod
     def get_refresh_token_url():
-        return (ZohoOAuth.iamURL+"/oauth/v2/token")
+        return (ZohoOAuth.configProperties[ZohoOAuthConstants.IAM_URL]+"/oauth/v2/token")
     @staticmethod
     def get_revoke_token_url():
-        return (ZohoOAuth.iamURL+"/oauth/v2/token/revoke")
+        return (ZohoOAuth.configProperties[ZohoOAuthConstants.IAM_URL]+"/oauth/v2/token/revoke")
     @staticmethod
     def get_user_info_url():
-        return (ZohoOAuth.iamURL+"/oauth/user/info")
+        return (ZohoOAuth.configProperties[ZohoOAuthConstants.IAM_URL]+"/oauth/user/info")
     @staticmethod
     def get_client_instance():
         oauth_client_ins=ZohoOAuthClient.get_instance()
