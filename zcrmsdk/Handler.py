@@ -813,7 +813,46 @@ class MassEntityAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+    
+    def update_records(self,record_ins_list):
+        try:
+            from Utility import CommonUtil
+            if len(record_ins_list)>100:
+                CommonUtil.raise_exception('Records_Update',"records count must be less than or equals to 100",'MORE RECORDS PROVIDED',"MORE RECORDS")
+            handler_ins=APIHandler()
+            handler_ins.request_url_path=self.module_instance.api_name
+            handler_ins.request_method=APIConstants.REQUEST_METHOD_PUT
+            handler_ins.request_api_key=APIConstants.DATA
+            data_array=list()
+            for record_ins in record_ins_list:
+                record_json=EntityAPIHandler.get_instance(record_ins).get_zcrmrecord_as_json()
+                if record_ins.entity_id is not None:
+                    record_json['id']=str(record_ins.entity_id)
+                data_array.append(record_json)
+            request_json=dict()
+            request_json[APIConstants.DATA]=data_array
+            handler_ins.request_body=request_json
+            
+            bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
+            
+            created_records=list()
+            entity_responses=bulk_api_response.bulk_entity_response
+            length=len(entity_responses)
+            for i in range(0,length):
+                entity_response_ins=entity_responses[i]
+                if entity_response_ins.status==APIConstants.STATUS_SUCCESS:
+                    record_create_details=entity_response_ins.details
+                    new_record=record_ins_list[i]
+                    EntityAPIHandler.get_instance(new_record).set_record_properties(record_create_details)
+                    created_records.append(new_record)
+                    entity_response_ins.data=new_record
+            bulk_api_response.data=created_records
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+
     def update_mass_records(self,entityid_list,field_api_name,value):
         try:
             from Utility import CommonUtil
@@ -1923,3 +1962,107 @@ class OrganizationAPIHandler(APIHandler):
         user_theme_instance.selected_tab_font_color=user_theme_info['selected_tab']['font_color']
         user_theme_instance.selected_tab_background=user_theme_info['selected_tab']['background']
         return user_theme_instance
+    
+class AutomationAPIHandler(APIHandler):
+    @staticmethod
+    def get_instance():
+        return AutomationAPIHandler()
+    
+    def set_nominal_custom_function_properties(self,custom_function_details,cf_instance):
+        cf_instance.associated_places=custom_function_details['associated_place']
+        cf_instance.api_name=custom_function_details['api_name']
+        if 'rest_api' in custom_function_details:
+            restAPIDetails=custom_function_details['rest_api']
+            for restAPI in restAPIDetails:
+                if restAPI['type']=='oauth':
+                    cf_instance.restapi_details_for_oauth=restAPI
+                else:
+                    cf_instance.restapi_details_for_zapikey=restAPI
+        cf_instance.description=custom_function_details['description']
+        cf_instance.source=custom_function_details['source']
+        cf_instance.category=custom_function_details['category']
+        cf_instance.config=bool(custom_function_details['config'])
+        if 'name' in custom_function_details:
+            cf_instance.name=custom_function_details['name']
+        if 'params' in custom_function_details:
+            cf_instance.parameters=custom_function_details['params']
+        
+    def set_custom_function_properties(self,custom_function_details,cf_instance):
+        self.set_nominal_custom_function_properties(custom_function_details, cf_instance)
+        cf_instance.modified_time=custom_function_details['modified_on']
+        cf_instance.return_type=custom_function_details['return_type']
+        cf_instance.work_flow=custom_function_details['workflow']
+        cf_instance.script=custom_function_details['script']
+        cf_instance.modified_by=custom_function_details['modified_by']
+        
+    def get_all_customfunctions(self,type,start,limit,category):
+        try:
+            handler_ins=APIHandler()
+            handler_ins.request_url_path="settings/custom_functions"
+            handler_ins.request_method=APIConstants.REQUEST_METHOD_GET
+            handler_ins.request_api_key=APIConstants.CUSTOM_FUNCTIONS
+            handler_ins.add_param('type', type)
+            if start is not None:
+                handler_ins.add_param('start', start)
+            if limit is not None:
+                handler_ins.add_param('limit', limit)
+            if category is not None:
+                handler_ins.add_param('category', category)
+            bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
+            custom_functions_json=bulk_api_response.response_json[APIConstants.CUSTOM_FUNCTIONS]
+            cf_ins_list=list()
+            from Operations import ZCRMCustomFunction
+            for custom_function in custom_functions_json:
+                cf_ins=ZCRMCustomFunction.get_instance(custom_function['id'],custom_function['display_name'])
+                self.set_nominal_custom_function_properties(custom_function, cf_ins)
+                cf_ins_list.append(cf_ins)
+            bulk_api_response.data=cf_ins_list
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            from Utility import CommonUtil
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+    
+    def get_customfunction(self,custom_function_id,source):
+        try:
+            handler_ins=APIHandler()
+            handler_ins.request_url_path="settings/custom_functions/"+str(custom_function_id)
+            handler_ins.request_method=APIConstants.REQUEST_METHOD_GET
+            handler_ins.request_api_key=APIConstants.CUSTOM_FUNCTIONS
+            handler_ins.add_param('type', type)
+            if source is not None:
+                handler_ins.add_param('source', source)
+            api_response=APIRequest(handler_ins).get_api_response()
+            custom_function_json=api_response.response_json[APIConstants.CUSTOM_FUNCTIONS][0]
+            from Operations import ZCRMCustomFunction
+            cf_ins=ZCRMCustomFunction.get_instance(custom_function['id'],custom_function['display_name'] if 'display_name' in custom_function else None)
+            self.set_custom_function_properties(custom_function_json, cf_ins)
+            api_response.data=cf_ins
+            return api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            from Utility import CommonUtil
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            
+    def execute_customfunction(self,cf_api_name,method_type,auth_type,input):
+        try:
+            handler_ins=APIHandler()
+            handler_ins.request_url_path="settings/custom_functions/"+str(cf_api_name)+"/actions/exceute"
+            if method_type.upper()==APIConstants.REQUEST_METHOD_POST:
+                handler_ins.request_method=APIConstants.REQUEST_METHOD_POST
+            else:
+                handler_ins.request_method=APIConstants.REQUEST_METHOD_GET
+            handler_ins.request_api_key=APIConstants.CUSTOM_FUNCTIONS
+            if auth_type is not None:
+                handler_ins.add_param('auth_type', auth_type)
+            handler_ins.add_param('arguments', input if input is not None else dict())
+            api_response=APIRequest(handler_ins).get_api_response()
+            return api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            from Utility import CommonUtil
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+    

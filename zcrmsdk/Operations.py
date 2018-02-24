@@ -62,7 +62,10 @@ class ZCRMModule(object):
     def upsert_records(self,record_ins_list):
         from Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).upsert_records(record_ins_list)
-    def update_records(self,entityid_list,field_api_name,value):
+    def update_records(self,record_ins_list):
+        from Handler import MassEntityAPIHandler
+        return MassEntityAPIHandler.get_instance(self).update_records(record_ins_list)
+    def mass_update_records(self,entityid_list,field_api_name,value):
         from Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).update_mass_records(entityid_list,field_api_name,value)
     def delete_records(self,entityid_list):
@@ -792,4 +795,51 @@ class ZCRMTrashRecord(object):
     @staticmethod
     def get_instance(entity_type,entity_id=None):
         return ZCRMTrashRecord(entity_type,entity_id)
-        
+    
+class ZCRMCustomFunction(object):
+    
+    def __init__(self,function_id,display_name):
+        self.associated_places=None
+        self.api_name=None
+        self.description=None
+        self.id=function_id
+        self.name=None
+        self.source=None
+        self.category=None
+        self.display_name=display_name
+        self.config=None
+        self.restapi_details_for_oauth=None
+        self.restapi_details_for_zapikey=None
+        self.return_type=None
+        self.work_flow=None
+        self.parameters=None
+        self.script=None
+        self.modified_time=None
+        self.modified_by=None
+    @staticmethod
+    def get_instance(function_id=None,display_name=None):
+        return ZCRMCustomFunction(function_id,display_name)
+    
+    def get_all_custom_functions(self,type,category=None,start=None,limit=None):
+        if type is None:
+            from Utility import CommonUtil
+            CommonUtil.raise_exception('get_all_custom_functions',"type parameter must be given",'type PARAMETER NOT PROVIDED',"REQUIRED PARAMETER IS MISSING")
+        from Handler import AutomationAPIHandler
+        return AutomationAPIHandler.get_instance().get_all_customfunctions(type,category,start,limit)
+    
+    def get_custom_function_details(self,custom_function_id,source=None):
+        if custom_function_id is None:
+            from Utility import CommonUtil
+            CommonUtil.raise_exception('get_custom_function_details',"custom function id must be given",'CUSTOM FUNCTION ID NOT PROVIDED',"ID IS MISSING")
+        from Handler import AutomationAPIHandler
+        return AutomationAPIHandler.get_instance().get_customfunction(custom_function_id,source)
+    
+    def execute(self,api_name,method_type,auth_type,input):
+        if api_name is None:
+            from Utility import CommonUtil
+            CommonUtil.raise_exception('execute',"custom function APINAME must be given",'CUSTOM FUNCTION APINAME NOT PROVIDED',"APINAME IS MISSING")
+        if auth_type is None:
+            from Utility import CommonUtil
+            CommonUtil.raise_exception('execute',"custom function auth_type parameter must be given",'auth_type PARAMETER NOT PROVIDED',"REQUIRED PARAMETER IS MISSING")
+        from Handler import AutomationAPIHandler
+        return AutomationAPIHandler.get_instance().execute_customfunction(api_name,method_type,auth_type,input)
