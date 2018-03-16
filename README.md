@@ -20,7 +20,7 @@ Setting Up
 ----------
 Python SDK is installable through **pip**. Pip is a tool for dependency management in Python. The SDK expects following things from the client app
 
-Client app must have Python 2.7.
+Client app must have Python 2.7 and above.
 >https://www.python.org/downloads/
 
 Client app must have python requests being installed
