@@ -4,12 +4,13 @@ Created on Aug 16, 2017
 @author: sumanth-3058
 '''
 
-from CLException import ZCRMException
-from Utility import APIConstants
-from Request import APIRequest
+from .CLException import ZCRMException
+from .Utility import APIConstants
+from .Request import APIRequest
 from array import array
 import traceback
 from decimal import Decimal
+
 
 class APIHandler(object):
     '''
@@ -59,7 +60,7 @@ class EntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     def create_record(self):
         try:
@@ -68,14 +69,14 @@ class EntityAPIHandler(APIHandler):
             handler_ins.request_method=APIConstants.REQUEST_METHOD_POST
             handler_ins.request_api_key=APIConstants.DATA
             input_json=self.get_zcrmrecord_as_json()
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             handler_ins.request_body=CommonUtil.create_api_supported_input_json(input_json, APIConstants.DATA)
             apiResponse=APIRequest(handler_ins).get_api_response()
             reponseDetails=apiResponse.response_json[APIConstants.DATA][0]['details']
             self.zcrmrecord.entity_id=reponseDetails['id']
             self.zcrmrecord.created_time=reponseDetails['Created_Time']
             createdBy=reponseDetails['Created_By']
-            from Operations import ZCRMUser
+            from .Operations import ZCRMUser
             self.zcrmrecord.created_by=ZCRMUser.get_instance(long(createdBy['id']),createdBy['name'])
             apiResponse.data=self.zcrmrecord
             return apiResponse
@@ -91,7 +92,7 @@ class EntityAPIHandler(APIHandler):
             handler_ins.request_method=APIConstants.REQUEST_METHOD_PUT
             handler_ins.request_api_key=APIConstants.DATA
             input_json=self.get_zcrmrecord_as_json()
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             handler_ins.request_body=CommonUtil.create_api_supported_input_json(input_json, APIConstants.DATA)
             api_response=APIRequest(handler_ins).get_api_response()
             reponseDetails=api_response.response_json[APIConstants.DATA][0]['details']
@@ -99,7 +100,7 @@ class EntityAPIHandler(APIHandler):
             self.zcrmrecord.created_time=reponseDetails['Created_Time']
             self.zcrmrecord.modified_time=reponseDetails['Modified_Time']
             createdBy=reponseDetails['Created_By']
-            from Operations import ZCRMUser
+            from .Operations import ZCRMUser
             self.zcrmrecord.created_by=ZCRMUser.get_instance(long(createdBy['id']),createdBy['name'])
             modifiedBy=reponseDetails['Modified_By']
             self.zcrmrecord.modified_by=ZCRMUser.get_instance(long(modifiedBy['id']),modifiedBy['name'])
@@ -121,7 +122,7 @@ class EntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     
     def convert_record(self,potential_record,assign_to_user):
@@ -155,7 +156,7 @@ class EntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def upload_photo(self,file_path):
@@ -168,7 +169,7 @@ class EntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
             
     def download_photo(self):
@@ -181,7 +182,7 @@ class EntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     
     def delete_photo(self):
@@ -194,12 +195,12 @@ class EntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
             
     def get_zcrmrecord_as_json(self):
-        from Operations import ZCRMRecord
-        from Operations import ZCRMUser
+        from .Operations import ZCRMRecord
+        from .Operations import ZCRMUser
         record_json=dict()
         apiNameVsValues=self.zcrmrecord.field_data
         if self.zcrmrecord.owner is not None :
@@ -296,10 +297,10 @@ class EntityAPIHandler(APIHandler):
         return lineItemsAsJSONArray
     
     def set_record_properties(self,responseDict):
-        from Operations import ZCRMUser
-        from Operations import ZCRMLayout
-        from Operations import ZCRMRecord
-        from Operations import ZCRMTax
+        from .Operations import ZCRMUser
+        from .Operations import ZCRMLayout
+        from .Operations import ZCRMRecord
+        from .Operations import ZCRMTax
         for key in responseDict:
             value=responseDict[key]
             if(value is None):
@@ -356,7 +357,7 @@ class EntityAPIHandler(APIHandler):
         for priceDetail in priceDetails:
             self.zcrmrecord.price_details.append(self.get_zcrm_pricebook_pricing(priceDetail))
     def get_zcrm_pricebook_pricing(self,priceDetails):
-        from Operations import ZCRMPriceBookPricing
+        from .Operations import ZCRMPriceBookPricing
         priceDetailIns = ZCRMPriceBookPricing.get_instance(long(priceDetails["id"]))
         priceDetailIns.discount=Decimal(priceDetails["discount"])
         priceDetailIns.to_range=Decimal(priceDetails["to_range"])
@@ -366,7 +367,7 @@ class EntityAPIHandler(APIHandler):
         for participant in participants:
             self.zcrmrecord.participants.append(self.get_zcrmparticipant(participant))
     def get_zcrmparticipant(self,participantDetails):
-        from Operations import ZCRMEventParticipant
+        from .Operations import ZCRMEventParticipant
         participant = ZCRMEventParticipant.get_instance(participantDetails['type'],long(participantDetails['participant']))
         participant.name=participantDetails["name"]
         participant.email=participantDetails["Email"]
@@ -380,9 +381,9 @@ class EntityAPIHandler(APIHandler):
             self.zcrmrecord.line_items.append(self.get_zcrminventory_line_item(lineItem))
     
     def get_zcrminventory_line_item(self,lineItemDetails):
-        from Operations import ZCRMInventoryLineItem
-        from Operations import ZCRMRecord
-        from Operations import ZCRMTax
+        from .Operations import ZCRMInventoryLineItem
+        from .Operations import ZCRMRecord
+        from .Operations import ZCRMTax
         productDetails = lineItemDetails["product"]
         lineItemInstance = ZCRMInventoryLineItem.get_instance(long(lineItemDetails["id"]))
         product = ZCRMRecord.get_instance("Products", long(productDetails["id"]))
@@ -411,7 +412,7 @@ class RelatedListAPIHandler(APIHandler):
     
     def __init__(self,parent_record,related_list_or_junction_record):
         self.parent_record=parent_record
-        from Operations import ZCRMModuleRelation
+        from .Operations import ZCRMModuleRelation
         if isinstance(related_list_or_junction_record, ZCRMModuleRelation):
             self.related_lists=related_list_or_junction_record
             self.junction_record=None
@@ -438,7 +439,7 @@ class RelatedListAPIHandler(APIHandler):
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
             records_json=bulk_api_response.response_json[APIConstants.DATA]
             records_ins_list=list()
-            from Operations import ZCRMRecord
+            from .Operations import ZCRMRecord
             for record_json in records_json:
                 record_ins=ZCRMRecord.get_instance(self.related_lists.api_name, long(record_json['id']))
                 EntityAPIHandler.get_instance(record_ins).set_record_properties(record_json)
@@ -448,7 +449,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def add_relation(self):
@@ -458,7 +459,7 @@ class RelatedListAPIHandler(APIHandler):
             handler_ins.request_method=APIConstants.REQUEST_METHOD_PUT
             handler_ins.request_api_key=APIConstants.DATA
             junction_record_data=self.junction_record.get_related_data()
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             handler_ins.request_body=CommonUtil.create_api_supported_input_json(junction_record_data, APIConstants.DATA)
             return APIRequest(handler_ins).get_api_response()
         except ZCRMException as ex:
@@ -476,7 +477,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def add_note(self,zcrm_note_ins):
@@ -485,7 +486,7 @@ class RelatedListAPIHandler(APIHandler):
             handler_ins.request_url_path=self.parent_record.module_api_name+"/"+str(self.parent_record.entity_id)+"/"+self.related_lists.api_name
             handler_ins.request_method=APIConstants.REQUEST_METHOD_POST
             handler_ins.request_api_key=APIConstants.DATA
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             handler_ins.request_body=CommonUtil.create_api_supported_input_json(self.get_zcrmnote_as_json(zcrm_note_ins), APIConstants.DATA)
             api_response= APIRequest(handler_ins).get_api_response()
             details=api_response.response_json[APIConstants.DATA][0][APIConstants.DETAILS]
@@ -503,7 +504,7 @@ class RelatedListAPIHandler(APIHandler):
             handler_ins.request_url_path=self.parent_record.module_api_name+"/"+str(self.parent_record.entity_id)+"/"+self.related_lists.api_name+"/"+str(zcrm_note_ins.id)
             handler_ins.request_method=APIConstants.REQUEST_METHOD_PUT
             handler_ins.request_api_key=APIConstants.DATA
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             handler_ins.request_body=CommonUtil.create_api_supported_input_json(self.get_zcrmnote_as_json(zcrm_note_ins), APIConstants.DATA)
             api_response= APIRequest(handler_ins).get_api_response()
             details=api_response.response_json[APIConstants.DATA][0][APIConstants.DETAILS]
@@ -525,7 +526,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     def get_notes(self,sort_by,sort_order,page,per_page):
         try:
@@ -549,7 +550,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     
     def get_attachments(self,page,per_page):
@@ -570,7 +571,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def get_zcrmnote_as_json(self,zcrm_note_ins):
@@ -582,7 +583,7 @@ class RelatedListAPIHandler(APIHandler):
     
     def get_zcrm_note(self,note_details,zcrm_note_ins):
         if zcrm_note_ins is None:
-            from Operations import ZCRMNote
+            from .Operations import ZCRMNote
             zcrm_note_ins=ZCRMNote.get_instance(self.parent_record, long(note_details['id']))
         if 'id' in note_details:
             zcrm_note_ins.id=long(note_details['id'])
@@ -590,7 +591,7 @@ class RelatedListAPIHandler(APIHandler):
             zcrm_note_ins.title=note_details['Note_Title']
         if 'Note_Content' in note_details:
             zcrm_note_ins.content=note_details['Note_Content']
-        from Operations import ZCRMUser
+        from .Operations import ZCRMUser
         if 'Owner' in note_details:
             zcrm_note_ins.owner=ZCRMUser.get_instance(long(note_details['Owner']['id']), note_details['Owner']['name'])
         zcrm_note_ins.created_by=ZCRMUser.get_instance(long(note_details['Created_By']['id']), note_details['Created_By']['name'])
@@ -617,7 +618,7 @@ class RelatedListAPIHandler(APIHandler):
         return zcrm_note_ins
     
     def get_zcrm_attachment(self,attachment_details):
-        from Operations import ZCRMAttachment,ZCRMUser
+        from .Operations import ZCRMAttachment,ZCRMUser
         attachment_ins=ZCRMAttachment.get_instance(self.parent_record, long(attachment_details['id']))
         file_name=attachment_details["File_Name"]
         attachment_ins.file_name=file_name
@@ -643,14 +644,14 @@ class RelatedListAPIHandler(APIHandler):
             handler_ins.request_api_key=APIConstants.DATA
             api_response_ins= APIRequest(handler_ins).upload_attachment(file_path)
             details=api_response_ins.response_json[APIConstants.DATA][0]['details']
-            from Operations import ZCRMAttachment
+            from .Operations import ZCRMAttachment
             attachment_ins=ZCRMAttachment.get_instance(self.parent_record, long(details['id']))
             api_response_ins.data=attachment_ins
             return api_response_ins
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     def upload_link_as_attachment(self,link_url):
         try:
@@ -664,14 +665,14 @@ class RelatedListAPIHandler(APIHandler):
             #handler_ins.add_param(APIConstants.ATTACHMENT_URL, link_url)
             api_response_ins= APIRequest(handler_ins).upload_link_as_attachment()
             details=api_response_ins.response_json[APIConstants.DATA][0]['details']
-            from Operations import ZCRMAttachment
+            from .Operations import ZCRMAttachment
             attachment_ins=ZCRMAttachment.get_instance(self.parent_record, long(details['id']))
             api_response_ins.data=attachment_ins
             return api_response_ins
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def download_attachment(self,attachment_id):
@@ -683,7 +684,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def delete_attachment(self,attachment_id):
@@ -696,9 +697,10 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
+
 class MassEntityAPIHandler(APIHandler):
         
     def __init__(self,module_instance):
@@ -707,7 +709,8 @@ class MassEntityAPIHandler(APIHandler):
     @staticmethod
     def get_instance(module_instance):
         return MassEntityAPIHandler(module_instance)
-    def get_records(self,cvid,sort_by,sort_order,page,per_page):
+
+    def get_records(self, cvid, sort_by, sort_order, page, per_page):
         try:
             handler_ins=APIHandler()
             handler_ins.request_url_path=self.module_instance.api_name
@@ -724,7 +727,7 @@ class MassEntityAPIHandler(APIHandler):
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
             data_arr=bulk_api_response.response_json[APIConstants.DATA]
             record_ins_list=list()
-            from Operations import ZCRMRecord
+            from .Operations import ZCRMRecord
             for record_data in data_arr:
                 zcrm_record=ZCRMRecord.get_instance(self.module_instance.api_name, long(record_data['id']))
                 EntityAPIHandler.get_instance(zcrm_record).set_record_properties(record_data)
@@ -734,11 +737,12 @@ class MassEntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            
     def create_records(self,record_ins_list):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if len(record_ins_list)>100:
                 CommonUtil.raise_exception('Records_Create',"records count must be less than or equals to 100",'MORE RECORDS PROVIDED',"MORE RECORDS")
             handler_ins=APIHandler()
@@ -777,7 +781,7 @@ class MassEntityAPIHandler(APIHandler):
         
     def upsert_records(self,record_ins_list):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if len(record_ins_list)>100:
                 CommonUtil.raise_exception('Records_Upsert',"records count must be less than or equals to 100",'MORE RECORDS PROVIDED',"MORE RECORDS")
             handler_ins=APIHandler()
@@ -816,7 +820,7 @@ class MassEntityAPIHandler(APIHandler):
     
     def update_records(self,record_ins_list):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if len(record_ins_list)>100:
                 CommonUtil.raise_exception('Records_Update',"records count must be less than or equals to 100",'MORE RECORDS PROVIDED',"MORE RECORDS")
             handler_ins=APIHandler()
@@ -855,7 +859,7 @@ class MassEntityAPIHandler(APIHandler):
 
     def update_mass_records(self,entityid_list,field_api_name,value):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if len(entityid_list)>100:
                 CommonUtil.raise_exception('Records_Mass_Update',"entity id count must be less than or equals to 100",'MORE RECORDS PROVIDED',"MORE RECORDS")
             handler_ins=APIHandler()
@@ -869,7 +873,7 @@ class MassEntityAPIHandler(APIHandler):
             updated_records=list()
             entity_responses=bulk_api_response.bulk_entity_response
             length=len(entity_responses)
-            from Operations import ZCRMRecord
+            from .Operations import ZCRMRecord
             for i in range(0,length):
                 entity_response_ins=entity_responses[i]
                 if entity_response_ins.status==APIConstants.STATUS_SUCCESS:
@@ -887,7 +891,7 @@ class MassEntityAPIHandler(APIHandler):
     
     def delete_records(self,entityid_list):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if len(entityid_list)>100:
                 CommonUtil.raise_exception('Records_delete',"entity id count must be less than or equals to 100",'MORE RECORDS PROVIDED',"MORE RECORDS")
             handler_ins=APIHandler()
@@ -900,7 +904,7 @@ class MassEntityAPIHandler(APIHandler):
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
             
             entity_responses=bulk_api_response.bulk_entity_response
-            from Operations import ZCRMRecord
+            from .Operations import ZCRMRecord
             length=len(entity_responses)
             for i in range(0,length):
                 entity_response_ins=entity_responses[i]
@@ -930,7 +934,7 @@ class MassEntityAPIHandler(APIHandler):
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
             data_arr=bulk_api_response.response_json[APIConstants.DATA]
             record_ins_list=list()
-            from Operations import ZCRMTrashRecord
+            from .Operations import ZCRMTrashRecord
             for record_data in data_arr:
                 trash_record=ZCRMTrashRecord.get_instance(record_data['type'], long(record_data['id']))
                 self.set_trash_record_properties(trash_record, record_data)
@@ -940,7 +944,7 @@ class MassEntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def search_records(self,search_word,page,per_page):
@@ -955,7 +959,7 @@ class MassEntityAPIHandler(APIHandler):
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
             data_arr=bulk_api_response.response_json[APIConstants.DATA]
             record_ins_list=list()
-            from Operations import ZCRMRecord
+            from .Operations import ZCRMRecord
             for record_data in data_arr:
                 zcrm_record=ZCRMRecord.get_instance(self.module_instance.api_name, long(record_data['id']))
                 EntityAPIHandler.get_instance(zcrm_record).set_record_properties(record_data)
@@ -965,11 +969,11 @@ class MassEntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
             
     def set_trash_record_properties(self,trash_record_ins,trash_record_prop):
-        from Operations import ZCRMUser
+        from .Operations import ZCRMUser
         if 'display_name' in trash_record_prop:
             trash_record_ins.display_name=trash_record_prop['display_name']
         if 'created_by' in trash_record_prop and trash_record_prop['created_by'] is not None:
@@ -1002,7 +1006,7 @@ class ModuleAPIHandler(APIHandler):
     def get_field(self,field_id):
         try:
             if field_id is None:
-                from Utility import CommonUtil
+                from .Utility import CommonUtil
                 CommonUtil.raise_exception('Field_GET',"field id must be given",'FIELD ID IS NOT PROVIDED',"FIELD ID")
             handler_ins=APIHandler()
             handler_ins.request_url_path="settings/fields/"+str(field_id)
@@ -1034,7 +1038,7 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def get_all_layouts(self):
@@ -1054,13 +1058,13 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def get_layout(self,layout_id):
         try:
             if layout_id is None:
-                from Utility import CommonUtil
+                from .Utility import CommonUtil
                 CommonUtil.raise_exception('Layout_GET',"layout id must be given",'LAYOUT ID IS NOT PROVIDED',"LAYOUT ID")
             handler_ins=APIHandler()
             handler_ins.request_url_path="settings/layouts/"+str(layout_id)
@@ -1094,13 +1098,13 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def get_customview(self,customview_id):
         try:
             if customview_id is None:
-                from Utility import CommonUtil
+                from .Utility import CommonUtil
                 CommonUtil.raise_exception('Customview_GET',"custom view id must be given",'CUSTOM VIEW ID IS NOT PROVIDED',"CUSTOM VIEW ID")
             handler_ins=APIHandler()
             handler_ins.request_url_path="settings/custom_views/"+str(customview_id)
@@ -1128,7 +1132,7 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     def update_customview(self,customview_instance):
         try:
@@ -1141,7 +1145,7 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     def get_all_relatedlists(self):
         try:
@@ -1154,7 +1158,7 @@ class ModuleAPIHandler(APIHandler):
             related_lists=response_json[APIConstants.RELATED_LISTS]
             relatedlist_instances=list()
             for related_list in related_lists:
-                from Operations import ZCRMModuleRelatedList
+                from .Operations import ZCRMModuleRelatedList
                 relatedlist_ins=ZCRMModuleRelatedList.get_instance(related_list['api_name'])
                 relatedlist_instances.append(relatedlist_ins.set_relatedlist_properties(related_list))
             bulk_api_response.data=relatedlist_instances
@@ -1162,7 +1166,7 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     
     def get_relatedlist(self,relatedlist_id):
@@ -1174,14 +1178,14 @@ class ModuleAPIHandler(APIHandler):
             api_response=APIRequest(handler_ins).get_api_response()
             response_json=api_response.response_json
             related_list=response_json[APIConstants.RELATED_LISTS][0]
-            from Operations import ZCRMModuleRelatedList
+            from .Operations import ZCRMModuleRelatedList
             relatedlist_ins=ZCRMModuleRelatedList.get_instance(related_list['api_name'])
             api_response.data=relatedlist_ins.set_relatedlist_properties(related_list)
             return api_response
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
     def construct_json_for_cv_update(self,customview_instance):
@@ -1218,7 +1222,7 @@ class ModuleAPIHandler(APIHandler):
         input_json[APIConstants.MODULES]=[module_settings]
         return input_json
     def get_zcrm_customview(self,customview_details,categories):
-        from Operations import ZCRMCustomView,ZCRMCustomViewCriteria
+        from .Operations import ZCRMCustomView,ZCRMCustomViewCriteria
         customview_instance=ZCRMCustomView.get_instance(self.module_instance.api_name,long(customview_details['id']))
         customview_instance.display_value=customview_details['display_value']
         customview_instance.is_default=bool(customview_details['default'])
@@ -1257,7 +1261,7 @@ class ModuleAPIHandler(APIHandler):
                 criteria_instance.comparator=criteria_list['comparator'] if 'comparator' in criteria_list else None
                 customview_instance.criteria=[criteria_instance]
         if categories is not None:
-            from Operations import ZCRMCustomViewCategory
+            from .Operations import ZCRMCustomViewCategory
             category_instances=list()
             for category in categories:
                 cv_category_instance=ZCRMCustomViewCategory.get_instance()
@@ -1271,7 +1275,7 @@ class ModuleAPIHandler(APIHandler):
         return customview_instance
     
     def get_zcrmlayout(self,layout_details):
-        from Operations import ZCRMLayout,ZCRMUser,ZCRMProfile
+        from .Operations import ZCRMLayout,ZCRMUser,ZCRMProfile
         layout_instance=ZCRMLayout.get_instance(long(layout_details['id']))
         layout_instance.created_time=layout_details['created_time']
         layout_instance.modified_time=layout_details['modified_time']
@@ -1292,7 +1296,7 @@ class ModuleAPIHandler(APIHandler):
         layout_instance.sections=self.get_all_sections_of_layout(layout_details['sections'])
         layout_instance.status=layout_details['status']
         if 'convert_mapping' in layout_details:
-            from Operations import ZCRMLeadConvertMapping,ZCRMLeadConvertMappingField
+            from .Operations import ZCRMLeadConvertMapping,ZCRMLeadConvertMappingField
             convert_modules=['Contacts','Deals','Accounts']
             for convert_module in convert_modules:
                 if convert_module in layout_details['convert_mapping']:
@@ -1310,7 +1314,7 @@ class ModuleAPIHandler(APIHandler):
     
     def get_all_sections_of_layout(self,all_section_details):
         section_instances=list()
-        from Operations import ZCRMSection
+        from .Operations import ZCRMSection
         for section in all_section_details:
             section_ins=ZCRMSection.get_instance(section['name'])
             section_ins.display_label=section['display_label']
@@ -1326,7 +1330,7 @@ class ModuleAPIHandler(APIHandler):
             section_fields.append(self.get_zcrmfield(field))
         return section_fields
     def get_zcrmfield(self,field_details):
-        from Operations import ZCRMField
+        from .Operations import ZCRMField
         field_instance=ZCRMField.get_instance(field_details['api_name'])
         field_instance.sequence_number=int(field_details['sequence_number']) if 'sequence_number' in field_details else None
         field_instance.id=long(field_details['id'])
@@ -1393,7 +1397,7 @@ class ModuleAPIHandler(APIHandler):
             
         return field_instance
     def get_picklist_value_instance(self,picklist):
-        from Operations import ZCRMPickListValue
+        from .Operations import ZCRMPickListValue
         picklist_ins=ZCRMPickListValue.get_instance()
         picklist_ins.display_value=picklist['display_value']
         picklist_ins.actual_value=picklist['actual_value']
@@ -1405,7 +1409,7 @@ class ModuleAPIHandler(APIHandler):
         return picklist_ins
     
     def get_lookup_field_instance(self,lookup_field_details):
-        from Operations import ZCRMLookupField
+        from .Operations import ZCRMLookupField
         lookup_field_instance=ZCRMLookupField.get_instance(lookup_field_details['api_name'])
         lookup_field_instance.display_label=lookup_field_details['display_label']
         lookup_field_instance.id=long(lookup_field_details['id'])
@@ -1446,7 +1450,7 @@ class MetaDataAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
             
     def get_module(self,module_api_name):
@@ -1462,12 +1466,12 @@ class MetaDataAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
         
     def get_zcrmmodule(self,module_details):
-        from Operations import ZCRMModule
+        from .Operations import ZCRMModule
         crmmodule_instance=ZCRMModule.get_instance(module_details[APIConstants.API_NAME])
         crmmodule_instance.is_viewable=bool(module_details['viewable'])
         crmmodule_instance.is_creatable=bool(module_details['creatable'])
@@ -1485,7 +1489,7 @@ class MetaDataAPIHandler(APIHandler):
         crmmodule_instance.business_card_field_limit=int(module_details['business_card_field_limit']) if 'business_card_field_limit' in module_details else None
         crmmodule_instance.sequence_number=module_details['sequence_number'] if 'sequence_number' in module_details else None
         crmmodule_instance.is_global_search_supported=bool(module_details['global_search_supported']) if 'global_search_supported' in module_details else None
-        from Operations import ZCRMUser,ZCRMProfile,ZCRMModuleRelatedList
+        from .Operations import ZCRMUser,ZCRMProfile,ZCRMModuleRelatedList
         if module_details['modified_by'] is not None:
             crmmodule_instance.modified_by=ZCRMUser.get_instance(long(module_details['modified_by']["id"]),module_details['modified_by']["name"])
         
@@ -1539,7 +1543,7 @@ class MetaDataAPIHandler(APIHandler):
         return crmmodule_instance
             
     def get_relatedlist_property_instance(self,relatedlist_property):
-        from Operations import ZCRMRelatedListProperties
+        from .Operations import ZCRMRelatedListProperties
         reltedlist_property_instance=ZCRMRelatedListProperties.get_instance()
         reltedlist_property_instance.sort_by=relatedlist_property['sort_by'] if 'sort_by' in relatedlist_property else None
         reltedlist_property_instance.sort_order=relatedlist_property['sort_order'] if 'sort_order' in relatedlist_property else None
@@ -1565,7 +1569,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
             
     def get_all_roles(self):
@@ -1584,12 +1588,12 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     
     def get_role(self,role_id):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if role_id is None:
                 CommonUtil.raise_exception('Role_GET',"role id must be given",'ROLE ID IS NOT PROVIDED',"ROLE ID")
             handler_ins=APIHandler()
@@ -1606,7 +1610,7 @@ class OrganizationAPIHandler(APIHandler):
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     def get_all_profiles(self):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             handler_ins=APIHandler()
             handler_ins.request_url_path="settings/profiles"
             handler_ins.request_method=APIConstants.REQUEST_METHOD_GET
@@ -1624,7 +1628,7 @@ class OrganizationAPIHandler(APIHandler):
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     def get_profile(self,profile_id):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if profile_id is None:
                 CommonUtil.raise_exception('Profile_GET',"profile id must be given",'PROFILE ID IS NOT PROVIDED',"PROFILE ID")
             handler_ins=APIHandler()
@@ -1641,7 +1645,7 @@ class OrganizationAPIHandler(APIHandler):
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     def create_user(self,user_instance):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if user_instance is None:
                 CommonUtil.raise_exception('User_POST',"user instance must be given",'USER INSTANCE IS NOT PROVIDED',"USER INSTANCE ID")
             handler_ins=APIHandler()
@@ -1657,7 +1661,7 @@ class OrganizationAPIHandler(APIHandler):
             
     def update_user(self,user_instance):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if user_instance is None or user_instance.id is None:
                 CommonUtil.raise_exception('User_PUT',"user instance and id must be given",'USER INSTANCE OR ID IS NOT PROVIDED',"USER INSTANCE ID")
             handler_ins=APIHandler()
@@ -1673,7 +1677,7 @@ class OrganizationAPIHandler(APIHandler):
             
     def delete_user(self,user_id):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if user_id is None :
                 CommonUtil.raise_exception('User_DELETE',"user id must be given",'USER ID IS NOT PROVIDED',"USER ID")
             handler_ins=APIHandler()
@@ -1688,7 +1692,7 @@ class OrganizationAPIHandler(APIHandler):
             
     def get_user(self,user_id):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             if user_id is None:
                 CommonUtil.raise_exception('User_GET',"user id must be given",'USER ID IS NOT PROVIDED',"USER ID")
             handler_ins=APIHandler()
@@ -1725,7 +1729,7 @@ class OrganizationAPIHandler(APIHandler):
         return self.get_users('CurrentUser')
     def get_users(self,user_type=None):
         try:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             handler_ins=APIHandler()
             if user_type is not None:
                 handler_ins.add_param('type', user_type)
@@ -1807,10 +1811,10 @@ class OrganizationAPIHandler(APIHandler):
         customFieldsData=user_instance.field_apiname_vs_value
         for key in customFieldsData:
             user_info_json[key]=customFieldsData[key]
-        from Utility import CommonUtil
+        from .Utility import CommonUtil
         return CommonUtil.create_api_supported_input_json(user_info_json,APIConstants.USERS)
     def get_zcrm_role(self,role_details):
-        from Operations import ZCRMRole,ZCRMUser
+        from .Operations import ZCRMRole,ZCRMUser
         role_instance=ZCRMRole.get_instance(long(role_details['id']),role_details['name'])
         role_instance.display_label=role_details['display_label']
         role_instance.is_admin=bool(role_details['admin_user'])
@@ -1818,7 +1822,7 @@ class OrganizationAPIHandler(APIHandler):
             role_instance.reporting_to=ZCRMUser.get_instance(long(role_details['reporting_to']['id']),role_details['reporting_to']['name'])
         return role_instance
     def get_zcrm_profile(self,profile_details):
-        from Operations import ZCRMProfile,ZCRMUser,ZCRMPermission,ZCRMProfileSection,ZCRMProfileCategory
+        from .Operations import ZCRMProfile,ZCRMUser,ZCRMPermission,ZCRMProfileSection,ZCRMProfileCategory
         profile_instance=ZCRMProfile.get_instance(long(profile_details['id']), profile_details['name'])
         profile_instance.created_time=profile_details['created_time']
         profile_instance.modified_time=profile_details['modified_time']
@@ -1851,7 +1855,7 @@ class OrganizationAPIHandler(APIHandler):
                 profile_instance.sections.append(profile_section_instance)
         return profile_instance
     def get_zcrm_organization(self,org_details):
-        from Org import ZCRMOrganization
+        from .Org import ZCRMOrganization
         org_instance=ZCRMOrganization.get_instance(org_details['company_name'],org_details['id'])
         org_instance.alias=org_details['alias']
         org_instance.city=org_details['city']
@@ -1886,7 +1890,7 @@ class OrganizationAPIHandler(APIHandler):
             org_instance.trial_expiry=license_details['trial_expiry']
         return org_instance
     def get_zcrm_user(self,user_details):
-        from Operations import ZCRMUser,ZCRMRole,ZCRMProfile
+        from .Operations import ZCRMUser,ZCRMRole,ZCRMProfile
         user_instance=ZCRMUser.get_instance(long(user_details['id']),user_details['name'] if 'name' in user_details else None)
         user_instance.country=user_details['country'] if 'country' in user_details else None
         user_instance.role=ZCRMRole.get_instance(long(user_details['role']['id']),user_details['role']['name'])
@@ -1940,11 +1944,11 @@ class OrganizationAPIHandler(APIHandler):
                 if userkey not in ZCRMUser.defaultKeys:
                     user_instance.field_apiname_vs_value[userkey]=user_details[userkey]
         except Exception as e:
-            print e
+            print(e)
         
         return user_instance
     def get_zcrm_user_customizeinfo(self,customize_info):
-        from Operations import ZCRMUserCustomizeInfo
+        from .Operations import ZCRMUserCustomizeInfo
         customize_info_instance=ZCRMUserCustomizeInfo.get_instance()
         customize_info_instance.notes_desc=customize_info['notes_desc']
         customize_info_instance.is_to_show_right_panel=bool(customize_info['show_right_panel']) if 'show_right_panel' in customize_info else None
@@ -1955,11 +1959,10 @@ class OrganizationAPIHandler(APIHandler):
         return customize_info_instance
     
     def get_zcrm_user_theme(self,user_theme_info):
-        from Operations import ZCRMUserTheme
+        from .Operations import ZCRMUserTheme
         user_theme_instance=ZCRMUserTheme.get_instance()
         user_theme_instance.normal_tab_font_color=user_theme_info['normal_tab']['font_color']
         user_theme_instance.normal_tab_background=user_theme_info['normal_tab']['background']
         user_theme_instance.selected_tab_font_color=user_theme_info['selected_tab']['font_color']
         user_theme_instance.selected_tab_background=user_theme_info['selected_tab']['background']
         return user_theme_instance
-    

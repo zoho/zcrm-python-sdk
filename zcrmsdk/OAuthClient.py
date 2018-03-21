@@ -3,16 +3,17 @@ Created on Aug 16, 2017
 
 @author: sumanth-3058
 '''
-from OAuthUtility import OAuthLogger,ZohoOAuthConstants,ZohoOAuthException,ZohoOAuthHTTPConnector,ZohoOAuthParams
-from Persistence import ZohoOAuthPersistenceHandler,ZohoOAuthPersistenceFileHandler
+from .OAuthUtility import OAuthLogger,ZohoOAuthConstants,ZohoOAuthException,ZohoOAuthHTTPConnector,ZohoOAuthParams
+from .Persistence import ZohoOAuthPersistenceHandler,ZohoOAuthPersistenceFileHandler
 import logging
+
+
 class ZohoOAuth(object):
     '''
     This class is to load oauth configurations and provide OAuth request URIs
     '''
     configProperties={}
-    #iamURL='https://accounts.zoho.com'
-    
+
     def __init__(self):
         '''
         Constructor
@@ -20,7 +21,7 @@ class ZohoOAuth(object):
     @staticmethod
     def initialize():
         try:
-            from Path import PathIdentifier
+            from .Path import PathIdentifier
             import os
             #dirSplit=os.path.split(PathIdentifier.get_client_library_root())
             #resources_path = os.path.join(dirSplit[0],'resources','oauth_configuration.properties')

@@ -3,6 +3,8 @@ Created on Aug 16, 2017
 
 @author: sumanth-3058
 '''
+
+
 class ZCRMModule(object):
     '''
     This class is to deal with Zoho CRM modules
@@ -50,68 +52,68 @@ class ZCRMModule(object):
     def get_instance(module_apiname):
         return ZCRMModule(module_apiname)
     def get_record(self,entityID):
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         record=ZCRMRecord.get_instance(self.api_name, entityID)
         return EntityAPIHandler.get_instance(record).get_record()
     def get_records(self,cvid=None,sort_by=None,sort_order=None,page=0,per_page=200):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).get_records(cvid,sort_by,sort_order,page,per_page)
     def create_records(self,record_ins_list):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).create_records(record_ins_list)
     def upsert_records(self,record_ins_list):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).upsert_records(record_ins_list)
     def update_records(self,record_ins_list):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).update_records(record_ins_list)
     def mass_update_records(self,entityid_list,field_api_name,value):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).update_mass_records(entityid_list,field_api_name,value)
     def delete_records(self,entityid_list):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).delete_records(entityid_list)
     def get_all_deleted_records(self):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).get_all_deleted_records()
     def get_recyclebin_records(self):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).get_recyclebin_records()
     def get_permanently_deleted_records(self):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).get_permanently_deleted_records()
     def search_records(self,search_word,page=0,per_page=200):
-        from Handler import MassEntityAPIHandler
+        from .Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).search_records(search_word,page,per_page)
     def get_all_fields(self):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).get_all_fields()
     def get_field(self,field_id):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).get_field(field_id)
     def get_all_layouts(self):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).get_all_layouts()
     def get_layout(self,layout_id):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).get_layout(layout_id)
     def get_all_customviews(self):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).get_all_customviews()
     def get_customview(self,customview_id):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).get_customview(customview_id)
     def get_all_relatedlists(self):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).get_all_relatedlists()
     def get_relatedlist(self,relatedlist_id):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).get_relatedlist(relatedlist_id)
     def update_module_settings(self):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).update_module_settings()
     def update_customview(self,customview_instance):
-        from Handler import ModuleAPIHandler
+        from .Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).update_customview(customview_instance)
     
 
@@ -151,101 +153,101 @@ class ZCRMRecord(object):
     
     def get(self):
         if self.entity_id is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Record_Get',"id should be set for the record",'ID DOES NOT PROVIDED',"ID")
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).get_record()
     def create(self):
         if self.entity_id is not None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Record_Create',"id should not be set for the record",'ID PROVIDED',"ID")
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).create_record()
     def update(self):
         if self.entity_id is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Record_Update',"id should be set for the record",'ID DOES NOT PROVIDED',"ID")
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).update_record()
     def delete(self):
         if self.entity_id is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Record_Delete',"id should be set for the record",'ID DOES NOT PROVIDED',"ID")
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).delete_record()
     def convert(self,potential_record=None, assign_to_user=None):
         if self.entity_id is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Convert_Record',"id should be set for the record",'ID DOES NOT PROVIDED',"ID")
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).convert_record(potential_record, assign_to_user)
     
     def upload_attachment(self,file_path):
         if file_path is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Upload_Attachment',"file path must be given",'FILEPATH NOT PROVIDED',"FILEPATH")
         return ZCRMModuleRelation.get_instance(self, "Attachments").upload_attachment(file_path)
     
     def upload_link_as_attachment(self,link_url):
         if link_url is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Upload_Link_As_Attachment',"link URL must be given",'URL_LINK NOT PROVIDED',"URL_LINK")
         return ZCRMModuleRelation.get_instance(self, "Attachments").upload_link_as_attachment(link_url)
     
     def download_attachment(self,attachment_id):
         if attachment_id is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Download_Attachment',"attachment id must be given",'ID DOES NOT PROVIDED',"ID")
         return ZCRMModuleRelation.get_instance(self, "Attachments").download_attachment(attachment_id)
     
     def delete_attachment(self,attachment_id):
         if attachment_id is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Delete_Attachment',"attachment id must be given",'ID DOES NOT PROVIDED',"ID")
         return ZCRMModuleRelation.get_instance(self, "Attachments").delete_attachment(attachment_id)
     
     def upload_photo(self,file_path):
         if file_path is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('Upload_Photo',"file path must be given",'FILEPATH NOT PROVIDED',"FILEPATH")
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).upload_photo(file_path)
     
     def download_photo(self):
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).download_photo()
     
     def delete_photo(self):
-        from Handler import EntityAPIHandler
+        from .Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).delete_photo()
     
     def add_relation(self,junction_record):
         if junction_record is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('add_relation',"junction_record must be given",'JUNCTION RECORD NOT PROVIDED',"JUNCTION RECORD")
         return ZCRMModuleRelation.get_instance(self,junction_record).add_relation()
     
     def remove_relation(self,junction_record):
         if junction_record is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('remove_relation',"junction_record must be given",'JUNCTION RECORD NOT PROVIDED',"JUNCTION RECORD")
         return ZCRMModuleRelation.get_instance(self,junction_record).remove_relation()
     
     def add_note(self,note_ins):
         if note_ins is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('add_note',"note instance must be given",'NOTE INSTANCE NOT PROVIDED',"NOTE INSTANCE")
         return ZCRMModuleRelation.get_instance(self,"Notes").add_note(note_ins)
     
     def update_note(self,note_ins):
         if note_ins is None or note_ins.id is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('update_note',"note instance and note id must be given",'NOTE INSTANCE OR NOTE ID NOT PROVIDED',"NOTE INSTANCE OR ID")
         return ZCRMModuleRelation.get_instance(self,"Notes").update_note(note_ins)
     
     def delete_note(self,note_ins):
         if note_ins is None or note_ins.id is None:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             CommonUtil.raise_exception('delete_note',"note instance and note id must be given",'NOTE INSTANCE OR NOTE ID NOT PROVIDED',"NOTE INSTANCE OR ID")
         return ZCRMModuleRelation.get_instance(self,"Notes").delete_note(note_ins)
     
@@ -633,40 +635,40 @@ class ZCRMModuleRelation(object):
         return ZCRMModuleRelation(parentmodule_apiname_or_parentrecord,related_list_apiname_or_junction_record)
     
     def get_records(self,sort_by_field=None,sort_order=None,page=1,per_page=20):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).get_records(sort_by_field,sort_order,page,per_page)
     def upload_attachment(self,file_path):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).upload_attachment(file_path)
     def upload_link_as_attachment(self,link_url):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).upload_link_as_attachment(link_url)
     def download_attachment(self,attachment_id):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).download_attachment(attachment_id)
     def delete_attachment(self,attachment_id):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).delete_attachment(attachment_id)
     def add_relation(self):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self.junction_record).add_relation()
     def remove_relation(self):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self.junction_record).remove_relation()
     def add_note(self,zcrm_note_ins):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).add_note(zcrm_note_ins)
     def update_note(self,zcrm_note_ins):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).update_note(zcrm_note_ins)
     def delete_note(self,zcrm_note_ins):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).delete_note(zcrm_note_ins)
     def get_notes(self,sort_by,sort_order,page,per_page):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).get_notes(sort_by,sort_order,page,per_page)
     def get_attachments(self,page,per_page):
-        from Handler import RelatedListAPIHandler
+        from .Handler import RelatedListAPIHandler
         return RelatedListAPIHandler.get_instance(self.parent_record,self).get_attachments(page,per_page)
     
 class ZCRMNote(object):
@@ -795,4 +797,3 @@ class ZCRMTrashRecord(object):
     @staticmethod
     def get_instance(entity_type,entity_id=None):
         return ZCRMTrashRecord(entity_type,entity_id)
-    

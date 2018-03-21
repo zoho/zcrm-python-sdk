@@ -4,47 +4,49 @@ Created on Aug 16, 2017
 @author: sumanth-3058
 '''
 
+
 class ZohoOAuthConstants(object):
     '''
     OAuth constants
     '''
-    IAM_URL="accounts_url";
-    SCOPES="scope";
-    STATE="state";
-    STATE_OBTAINING_GRANT_TOKEN="OBTAIN_GRANT_TOKEN";
-    RESPONSE_TYPE="response_type";
-    RESPONSE_TYPE_CODE="code";
-    CLIENT_ID="client_id";
-    CLIENT_SECRET="client_secret";
-    REDIRECT_URL="redirect_uri";
-    ACCESS_TYPE="access_type";
-    ACCESS_TYPE_OFFLINE="offline";
-    ACCESS_TYPE_ONLINE="online";
-    PROMPT="prompt";
-    PROMPT_CONSENT="consent";
-    GRANT_TYPE="grant_type";
-    GRANT_TYPE_AUTH_CODE="authorization_code";
-    TOKEN_PERSISTENCE_PATH="token_persistence_path";
-    PERSISTENCE_FILE_NAME="zcrm_oauthtokens.pkl"
-    
-    GRANT_TYPE_REFRESH="refresh_token";
-    CODE="code";
-    GRANT_TOKEN="grant_token";
-    ACCESS_TOKEN="access_token";
-    REFRESH_TOKEN="refresh_token";
-    EXPIRES_IN = "expires_in";
-    EXPIRIY_TIME = "expiry_time";
-    PERSISTENCE_HANDLER_CLASS = "persistence_handler_class";
-    TOKEN = "token";
-    DISPATCH_TO = "dispatchTo";
-    OAUTH_TOKENS_PARAM = "oauth_tokens";
-    
-    OAUTH_HEADER_PREFIX="Zoho-oauthtoken ";
-    AUTHORIZATION="Authorization";
-    REQUEST_METHOD_GET="GET";
-    REQUEST_METHOD_POST="POST";
-    
-    RESPONSECODE_OK=200;
+    IAM_URL = "accounts_url"
+    SCOPES = "scope"
+    STATE = "state"
+    STATE_OBTAINING_GRANT_TOKEN = "OBTAIN_GRANT_TOKEN"
+    RESPONSE_TYPE = "response_type"
+    RESPONSE_TYPE_CODE = "code"
+    CLIENT_ID = "client_id"
+    CLIENT_SECRET = "client_secret"
+    REDIRECT_URL = "redirect_uri"
+    ACCESS_TYPE = "access_type"
+    ACCESS_TYPE_OFFLINE = "offline"
+    ACCESS_TYPE_ONLINE = "online"
+    PROMPT = "prompt"
+    PROMPT_CONSENT = "consent"
+    GRANT_TYPE = "grant_type"
+    GRANT_TYPE_AUTH_CODE = "authorization_code"
+    TOKEN_PERSISTENCE_PATH = "token_persistence_path"
+    PERSISTENCE_FILE_NAME = "zcrm_oauthtokens.pkl"
+
+    GRANT_TYPE_REFRESH = "refresh_token"
+    CODE = "code"
+    GRANT_TOKEN = "grant_token"
+    ACCESS_TOKEN = "access_token"
+    REFRESH_TOKEN = "refresh_token"
+    EXPIRES_IN = "expires_in"
+    EXPIRIY_TIME = "expiry_time"
+    PERSISTENCE_HANDLER_CLASS = "persistence_handler_class"
+    TOKEN = "token"
+    DISPATCH_TO = "dispatchTo"
+    OAUTH_TOKENS_PARAM = "oauth_tokens"
+
+    OAUTH_HEADER_PREFIX = "Zoho-oauthtoken "
+    AUTHORIZATION = "Authorization"
+    REQUEST_METHOD_GET = "GET"
+    REQUEST_METHOD_POST = "POST"
+
+    RESPONSECODE_OK = 200
+
 
 class ZohoOAuthException(Exception):
     '''
@@ -132,7 +134,7 @@ class OAuthLogger(object):
         # create formatter and add it to the handlers
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         
-        from Utility import ZCRMConfigUtil
+        from .Utility import ZCRMConfigUtil
         log_path=ZCRMConfigUtil.config_prop_dict['applicationLogFilePath']
         if log_path is not None and log_path.strip()!="":
             import os
