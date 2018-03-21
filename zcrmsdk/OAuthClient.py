@@ -10,28 +10,43 @@ class ZohoOAuth(object):
     '''
     This class is to load oauth configurations and provide OAuth request URIs
     '''
-    configProperties={}
-    #iamURL='https://accounts.zoho.com'
-    
+    configProperties = {}
+
     def __init__(self):
         '''
         Constructor
         '''
+
     @staticmethod
     def initialize():
         try:
             from Path import PathIdentifier
             import os
-            #dirSplit=os.path.split(PathIdentifier.get_client_library_root())
-            #resources_path = os.path.join(dirSplit[0],'resources','oauth_configuration.properties')
-            resources_path = os.path.join(PathIdentifier.get_client_library_root(),'resources','oauth_configuration.properties')
-            filePointer=open(resources_path,"r")
-            ZohoOAuth.configProperties=ZohoOAuth.get_file_content_as_dictionary(filePointer)
-            oAuthParams=ZohoOAuthParams.get_instance(ZohoOAuth.configProperties[ZohoOAuthConstants.CLIENT_ID], ZohoOAuth.configProperties[ZohoOAuthConstants.CLIENT_SECRET], ZohoOAuth.configProperties[ZohoOAuthConstants.REDIRECT_URL])
+
+            if os.environ.get('USE_ENV_FOR_ZOHO_CONFIG') == 'true':
+                zoho_oauth_config = dict(
+                    client_id=os.environ.get('ZOHO_OAUTH_CLIENT_ID'),
+                    client_secret=os.environ.get('ZOHO_OAUTH_SECRET'),
+                    redirect_uri=os.environ.get('ZOHO_OAUTH_REDIRECT_URI'),
+                    accounts_url=os.environ.get('ZOHO_OAUTH_ACCOUNTS_URL'),
+                    token_persistence_path=os.environ.get('ZOHO_OAUTH_TOKEN_PERSISTENCE_PATH'),
+                    access_type=os.environ.get('ZOHO_OAUTH_ACCESS_TYPE')
+                )
+            else:
+                resources_path = os.path.join(PathIdentifier.get_client_library_root(), 'resources',
+                                              'oauth_configuration.properties')
+                file_pointer = open(resources_path, "r")
+                zoho_oauth_config = ZohoOAuth.get_file_content_as_dictionary(file_pointer)
+
+            ZohoOAuth.configProperties = zoho_oauth_config
+            oAuthParams = ZohoOAuthParams.get_instance(ZohoOAuth.configProperties[ZohoOAuthConstants.CLIENT_ID],
+                                                       ZohoOAuth.configProperties[ZohoOAuthConstants.CLIENT_SECRET],
+                                                       ZohoOAuth.configProperties[ZohoOAuthConstants.REDIRECT_URL])
             ZohoOAuthClient.get_instance(oAuthParams)
         except Exception as ex:
-            OAuthLogger.add_log('Exception occured while reading oauth configurations',logging.ERROR,ex)
+            OAuthLogger.add_log('Exception occured while reading oauth configurations', logging.ERROR, ex)
             raise ex
+
     @staticmethod
     def get_file_content_as_dictionary(filePointer) :
         dictionary={}
