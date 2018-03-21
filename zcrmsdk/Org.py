@@ -3,7 +3,9 @@ Created on Sep 14, 2017
 
 @author: sumanth-3058
 '''
-from Handler import OrganizationAPIHandler
+from .Handler import OrganizationAPIHandler
+
+
 class ZCRMOrganization(object):
     '''
     classdocs
@@ -83,4 +85,3 @@ class ZCRMOrganization(object):
         return OrganizationAPIHandler.get_instance().update_user(user_instance)
     def delete_user(self,user_id):
         return OrganizationAPIHandler.get_instance().delete_user(user_id)
-    

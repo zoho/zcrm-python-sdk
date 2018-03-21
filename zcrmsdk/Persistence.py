@@ -3,9 +3,10 @@ Created on Aug 16, 2017
 
 @author: sumanth-3058
 '''
-from OAuthUtility import OAuthLogger
-#import MySQLdb
+from .OAuthUtility import OAuthLogger
 import mysql.connector
+
+
 class ZohoOAuthPersistenceHandler(object):
     '''
     This class deals with persistance of oauth related tokens
@@ -37,7 +38,7 @@ class ZohoOAuthPersistenceHandler(object):
             row_count=0
             for(useridentifier,accesstoken,refreshtoken,expirytime) in cursor:
                 row_count=row_count+1
-                from OAuthClient import ZohoOAuthTokens
+                from .OAuthClient import ZohoOAuthTokens
                 return ZohoOAuthTokens(refreshtoken,accesstoken,expirytime,useridentifier)
             if row_count==0:
                 raise Exception('No rows found for the given user')
@@ -52,7 +53,6 @@ class ZohoOAuthPersistenceHandler(object):
         try:
             connection=self.getDBConnection()
             cursor=connection.cursor()
-            #sqlQuery="DELETE FROM oauthtokens where useridentifier='"+userEmail+"'"
             sqlQuery="DELETE FROM oauthtokens where useridentifier=%s"
             cursor.execute(sqlQuery,(userEmail,))
             connection.commit()
@@ -67,8 +67,8 @@ class ZohoOAuthPersistenceHandler(object):
     def getDBConnection(self):
         connection=mysql.connector.connect(user='root', password='',host='127.0.0.1',database='zohooauth')
         return connection
-        #connection=MySQLdb.connect(host="localhost",user="root",passwd="",db="zohooauth")
-        #return connection
+    
+    
 class ZohoOAuthPersistenceFileHandler(object):
     '''
     This class deals with persistance of oauth related tokens in File
@@ -76,8 +76,8 @@ class ZohoOAuthPersistenceFileHandler(object):
     def saveOAuthTokens(self,oAuthTokens):
         try:
             self.deleteOAuthTokens(oAuthTokens.userEmail)
-            from OAuthClient import ZohoOAuth
-            from OAuthUtility import ZohoOAuthConstants
+            from .OAuthClient import ZohoOAuth
+            from .OAuthUtility import ZohoOAuthConstants
             import os
             os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
             import pickle
@@ -96,8 +96,8 @@ class ZohoOAuthPersistenceFileHandler(object):
     def getOAuthTokens(self,userEmail):
         try:
             import pickle
-            from OAuthClient import ZohoOAuth,ZohoOAuthTokens
-            from OAuthUtility import ZohoOAuthConstants
+            from .OAuthClient import ZohoOAuth,ZohoOAuthTokens
+            from .OAuthUtility import ZohoOAuthConstants
             import os
             os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
             responseObj=ZohoOAuthTokens(None,None,None,None)
@@ -121,8 +121,8 @@ class ZohoOAuthPersistenceFileHandler(object):
     def deleteOAuthTokens(self,userEmail):
         try:
             import pickle
-            from OAuthClient import ZohoOAuth
-            from OAuthUtility import ZohoOAuthConstants
+            from .OAuthClient import ZohoOAuth
+            from .OAuthUtility import ZohoOAuthConstants
             import os
             os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
             if not os.path.isfile(ZohoOAuthConstants.PERSISTENCE_FILE_NAME):

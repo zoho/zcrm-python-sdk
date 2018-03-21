@@ -3,10 +3,11 @@ Created on Jul 28, 2017
 
 @author: sumanth-3058
 '''
-from Utility import ZCRMConfigUtil, APIConstants,HTTPConnector
-from CLException import ZCRMException
-from Response import APIResponse, BulkAPIResponse,\
-    FileAPIResponse
+from .Utility import ZCRMConfigUtil, APIConstants, HTTPConnector
+from .CLException import ZCRMException
+from .Response import APIResponse, BulkAPIResponse, FileAPIResponse
+
+
 class APIRequest(object):
     '''
     This class is to wrap the API request related stuff like request params,headers,body,..etc
@@ -46,7 +47,7 @@ class APIRequest(object):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             import traceback
             CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())
         
@@ -59,7 +60,7 @@ class APIRequest(object):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             import traceback
             CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())
         
@@ -77,7 +78,7 @@ class APIRequest(object):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             import traceback
             CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())
     def upload_link_as_attachment(self):
@@ -91,7 +92,7 @@ class APIRequest(object):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             import traceback
             CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())
       
@@ -119,6 +120,6 @@ class APIRequest(object):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            from Utility import CommonUtil
+            from .Utility import CommonUtil
             import traceback
             CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())  
