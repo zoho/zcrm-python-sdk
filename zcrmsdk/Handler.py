@@ -77,14 +77,14 @@ class EntityAPIHandler(APIHandler):
             self.zcrmrecord.created_time=reponseDetails['Created_Time']
             createdBy=reponseDetails['Created_By']
             from .Operations import ZCRMUser
-            self.zcrmrecord.created_by=ZCRMUser.get_instance(long(createdBy['id']),createdBy['name'])
+            self.zcrmrecord.created_by=ZCRMUser.get_instance(createdBy['id']),createdBy['name']
             apiResponse.data=self.zcrmrecord
             return apiResponse
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def update_record(self):
         try:
             handler_ins=APIHandler()
@@ -101,16 +101,16 @@ class EntityAPIHandler(APIHandler):
             self.zcrmrecord.modified_time=reponseDetails['Modified_Time']
             createdBy=reponseDetails['Created_By']
             from .Operations import ZCRMUser
-            self.zcrmrecord.created_by=ZCRMUser.get_instance(long(createdBy['id']),createdBy['name'])
+            self.zcrmrecord.created_by=ZCRMUser.get_instance(createdBy['id']),createdBy['name']
             modifiedBy=reponseDetails['Modified_By']
-            self.zcrmrecord.modified_by=ZCRMUser.get_instance(long(modifiedBy['id']),modifiedBy['name'])
+            self.zcrmrecord.modified_by=ZCRMUser.get_instance(modifiedBy['id']),modifiedBy['name']
             api_response.data=self.zcrmrecord
             return api_response
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def delete_record(self):
         try:
             handler_ins=APIHandler()
@@ -124,7 +124,7 @@ class EntityAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-    
+
     def convert_record(self,potential_record,assign_to_user):
         try:
             handler_ins=APIHandler()
@@ -146,19 +146,19 @@ class EntityAPIHandler(APIHandler):
             converted_dict=dict()
             convertedIdsJson=api_response.response_json[APIConstants.DATA][0]
             if APIConstants.CONTACTS in convertedIdsJson and convertedIdsJson[APIConstants.CONTACTS] is not None:
-                converted_dict[APIConstants.CONTACTS]=long(convertedIdsJson[APIConstants.CONTACTS])
+                converted_dict[APIConstants.CONTACTS]=convertedIdsJson[APIConstants.CONTACTS]
             if APIConstants.ACCOUNTS in convertedIdsJson and convertedIdsJson[APIConstants.ACCOUNTS] is not None:
-                converted_dict[APIConstants.ACCOUNTS]=long(convertedIdsJson[APIConstants.ACCOUNTS])
+                converted_dict[APIConstants.ACCOUNTS]=convertedIdsJson[APIConstants.ACCOUNTS]
             if APIConstants.DEALS in convertedIdsJson and convertedIdsJson[APIConstants.DEALS] is not None:
-                converted_dict[APIConstants.DEALS]=long(convertedIdsJson[APIConstants.DEALS])
-            
+                converted_dict[APIConstants.DEALS]=convertedIdsJson[APIConstants.DEALS]
+
             return converted_dict
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def upload_photo(self,file_path):
         try:
             handler_ins=APIHandler()
@@ -171,7 +171,7 @@ class EntityAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def download_photo(self):
         try:
             handler_ins=APIHandler()
@@ -184,7 +184,7 @@ class EntityAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-    
+
     def delete_photo(self):
         try:
             handler_ins=APIHandler()
@@ -197,7 +197,7 @@ class EntityAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def get_zcrmrecord_as_json(self):
         from .Operations import ZCRMRecord
         from .Operations import ZCRMUser
@@ -214,7 +214,7 @@ class EntityAPIHandler(APIHandler):
             elif isinstance(value, ZCRMUser):
                 value=str(value.id)
             record_json[key]=value
-        
+
         if len(self.zcrmrecord.line_items)>0:
             record_json["Product_Details"]=self.get_line_item_json(self.zcrmrecord.line_items)
         if len(self.zcrmrecord.participants)>0:
@@ -224,21 +224,21 @@ class EntityAPIHandler(APIHandler):
         if len(self.zcrmrecord.tax_list)>0:
             record_json["Tax"]=self.get_tax_list_as_json()
         return record_json
-        
+
     def get_tax_list_as_json(self):
         taxListJsonArr=list()
         taxList=self.zcrmrecord.tax_list
         for taxIns in taxList:
             taxListJsonArr.append(taxIns.name)
         return taxListJsonArr
-        
+
     def get_price_details_as_jsonarray(self):
         priceDetailsArr = list()
         priceDetailsList = self.zcrmrecord.participants
         for priceBookPricingIns in priceDetailsList:
             priceDetailsArr.append(self.get_zcrmprice_detail_as_json(priceBookPricingIns))
         return priceDetailsArr
-    
+
     def get_zcrmprice_detail_as_json(self,priceBookPricingIns):
         priceDetailJSON = dict()
         if priceBookPricingIns.id != None:
@@ -247,14 +247,14 @@ class EntityAPIHandler(APIHandler):
         priceDetailJSON["to_range"]=priceBookPricingIns.to_range
         priceDetailJSON["from_range"]=priceBookPricingIns.from_range
         return priceDetailJSON
-    
+
     def get_participants_as_jsonarray(self):
         participantsArr = list()
         participantsList = self.zcrmrecord.participants
         for participantIns in participantsList:
             participantsArr.append(self.get_zcrmparticipant_as_json(participantIns))
         return participantsArr
-        
+
     def get_zcrmparticipant_as_json(self,participantIns):
         participantJSON = dict()
         participantJSON["participant"]= str(participantIns.id)
@@ -264,7 +264,7 @@ class EntityAPIHandler(APIHandler):
         participantJSON["invited"]=bool(participantIns.is_invited)
         participantJSON["status"]=str(participantIns.status)
         return participantJSON;
-        
+
     def get_line_item_json(self,lineItemsArray):
         lineItemsAsJSONArray=list()
         for lineItem in lineItemsArray:
@@ -295,7 +295,7 @@ class EntityAPIHandler(APIHandler):
             lineItemData['line_tax']=lineTaxArray
             lineItemsAsJSONArray.append(lineItemData)
         return lineItemsAsJSONArray
-    
+
     def set_record_properties(self,responseDict):
         from .Operations import ZCRMUser
         from .Operations import ZCRMLayout
@@ -306,7 +306,7 @@ class EntityAPIHandler(APIHandler):
             if(value is None):
                 continue
             if(key=="id"):
-                self.zcrmrecord.entity_id=long(value)
+                self.zcrmrecord.entity_id=value
             elif("Product_Details"==key):
                 self.set_inventory_line_items(value)
             elif("Participants"==key):
@@ -314,10 +314,10 @@ class EntityAPIHandler(APIHandler):
             elif ("Pricing_Details"==key):
                 self.set_price_details(value)
             elif("Created_By"==key):
-                createdBy = ZCRMUser.get_instance(long(value["id"]), value["name"])
+                createdBy = ZCRMUser.get_instance(value["id"]), value["name"]
                 self.zcrmrecord.created_by=createdBy
             elif("Modified_By"==key):
-                modifiedBy = ZCRMUser.get_instance(long(value["id"]), value["name"])
+                modifiedBy = ZCRMUser.get_instance(value["id"]), value["name"]
                 self.zcrmrecord.modified_by=modifiedBy
             elif("Created_Time"==key):
                 self.zcrmrecord.created_time=str(value)
@@ -326,16 +326,16 @@ class EntityAPIHandler(APIHandler):
             elif("Last_Activity_Time"==key):
                 self.zcrmrecord.last_activity_time=str(value)
             elif("Owner"==key):
-                owner =ZCRMUser.get_instance(long(value["id"]), value["name"])
+                owner =ZCRMUser.get_instance(value["id"]), value["name"]
                 self.zcrmrecord.owner=owner
             elif("Layout"==key):
                 layout = None
                 if(value is not None):
-                    layout = ZCRMLayout.get_instance(long(value["id"]))
+                    layout = ZCRMLayout.get_instance(value["id"])
                     layout.name=value["name"]
                 self.zcrmrecord.layout=layout
             elif("Handler"==key and value is not None):
-                handler = ZCRMUser.get_instance(long(value["id"]), value["name"])
+                handler = ZCRMUser.get_instance(value["id"]), value["name"]
                 self.zcrmrecord.field_data[key]= handler
             elif ("Tax"==key and isinstance(value, array)):
                 for taxName in value:
@@ -345,54 +345,54 @@ class EntityAPIHandler(APIHandler):
                 self.zcrmrecord.properties[key.replace('$','')]= value
             elif(isinstance(value,array)):
                 if("id" in value):
-                    lookupRecord = ZCRMRecord.get_instance(key, long(value["id"]))
+                    lookupRecord = ZCRMRecord.get_instance(key, value["id"])
                     lookupRecord.lookup_label=value if ("name" in value) else None
                     self.zcrmrecord.field_data[key]=lookupRecord
                 else:
                     self.zcrmrecord.field_data[key]= value
             else:
                 self.zcrmrecord.field_data[key]=responseDict[key]
-    
+
     def set_price_details(self,priceDetails):
         for priceDetail in priceDetails:
             self.zcrmrecord.price_details.append(self.get_zcrm_pricebook_pricing(priceDetail))
     def get_zcrm_pricebook_pricing(self,priceDetails):
         from .Operations import ZCRMPriceBookPricing
-        priceDetailIns = ZCRMPriceBookPricing.get_instance(long(priceDetails["id"]))
+        priceDetailIns = ZCRMPriceBookPricing.get_instance(priceDetails["id"])
         priceDetailIns.discount=Decimal(priceDetails["discount"])
         priceDetailIns.to_range=Decimal(priceDetails["to_range"])
         priceDetailIns.from_range=Decimal(priceDetails["from_range"])
-        return priceDetailIns;       
+        return priceDetailIns
     def set_participants(self,participants):
         for participant in participants:
             self.zcrmrecord.participants.append(self.get_zcrmparticipant(participant))
     def get_zcrmparticipant(self,participantDetails):
         from .Operations import ZCRMEventParticipant
-        participant = ZCRMEventParticipant.get_instance(participantDetails['type'],long(participantDetails['participant']))
+        participant = ZCRMEventParticipant.get_instance(participantDetails['type'],participantDetails['participant'])
         participant.name=participantDetails["name"]
         participant.email=participantDetails["Email"]
         participant.is_invited=bool(participantDetails["invited"])
         participant.status=participantDetails["status"]
-        
+
         return participant
-    
+
     def set_inventory_line_items(self,lineItems):
         for lineItem in lineItems:
             self.zcrmrecord.line_items.append(self.get_zcrminventory_line_item(lineItem))
-    
+
     def get_zcrminventory_line_item(self,lineItemDetails):
         from .Operations import ZCRMInventoryLineItem
         from .Operations import ZCRMRecord
         from .Operations import ZCRMTax
         productDetails = lineItemDetails["product"]
-        lineItemInstance = ZCRMInventoryLineItem.get_instance(long(lineItemDetails["id"]))
-        product = ZCRMRecord.get_instance("Products", long(productDetails["id"]))
+        lineItemInstance = ZCRMInventoryLineItem.get_instance(lineItemDetails["id"])
+        product = ZCRMRecord.get_instance("Products", productDetails["id"])
         product.lookup_label=productDetails["name"]
         if 'Product_Code' in productDetails:
             product.field_data['Product_Code']=productDetails['Product_Code']
         lineItemInstance.product=product
         lineItemInstance.description=lineItemDetails["product_description"]
-        lineItemInstance.quantity=long(lineItemDetails["quantity"])
+        lineItemInstance.quantity=lineItemDetails["quantity"]
         lineItemInstance.list_price=float(lineItemDetails["list_price"])
         lineItemInstance.total=float(lineItemDetails["total"])
         lineItemInstance.discount=float(lineItemDetails["Discount"])
@@ -405,11 +405,11 @@ class EntityAPIHandler(APIHandler):
             taxInstance.value=float(lineTax['value'])
             lineItemInstance.line_tax.append(taxInstance)
         lineItemInstance.net_total=float(lineItemDetails["net_total"])
-        
-        return lineItemInstance 
+
+        return lineItemInstance
 
 class RelatedListAPIHandler(APIHandler):
-    
+
     def __init__(self,parent_record,related_list_or_junction_record):
         self.parent_record=parent_record
         from .Operations import ZCRMModuleRelation
@@ -419,11 +419,11 @@ class RelatedListAPIHandler(APIHandler):
         else:
             self.junction_record=related_list_or_junction_record
             self.related_lists=None
-    
+
     @staticmethod
     def get_instance(parent_record,related_list_or_junction_record):
         return RelatedListAPIHandler(parent_record,related_list_or_junction_record)
-    
+
     def get_records(self,sort_by_field,sort_order,page,per_page):
         try:
             handler_ins=APIHandler()
@@ -441,7 +441,7 @@ class RelatedListAPIHandler(APIHandler):
             records_ins_list=list()
             from .Operations import ZCRMRecord
             for record_json in records_json:
-                record_ins=ZCRMRecord.get_instance(self.related_lists.api_name, long(record_json['id']))
+                record_ins=ZCRMRecord.get_instance(self.related_lists.api_name, record_json['id'])
                 EntityAPIHandler.get_instance(record_ins).set_record_properties(record_json)
                 records_ins_list.append(record_ins)
             bulk_api_response.data=records_ins_list
@@ -451,7 +451,7 @@ class RelatedListAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def add_relation(self):
         try:
             handler_ins=APIHandler()
@@ -466,7 +466,7 @@ class RelatedListAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def remove_relation(self):
         try:
             handler_ins=APIHandler()
@@ -479,7 +479,7 @@ class RelatedListAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def add_note(self,zcrm_note_ins):
         try:
             handler_ins=APIHandler()
@@ -497,7 +497,7 @@ class RelatedListAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def update_note(self,zcrm_note_ins):
         try:
             handler_ins=APIHandler()
@@ -515,7 +515,7 @@ class RelatedListAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def delete_note(self,zcrm_note_ins):
         try:
             handler_ins=APIHandler()
@@ -552,7 +552,7 @@ class RelatedListAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-    
+
     def get_attachments(self,page,per_page):
         try:
             handler_ins=APIHandler()
@@ -573,29 +573,29 @@ class RelatedListAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def get_zcrmnote_as_json(self,zcrm_note_ins):
         note_json=dict()
         if zcrm_note_ins.title is not None:
             note_json['Note_Title']=zcrm_note_ins.title
         note_json['Note_Content']=zcrm_note_ins.content
         return note_json
-    
+
     def get_zcrm_note(self,note_details,zcrm_note_ins):
         if zcrm_note_ins is None:
             from .Operations import ZCRMNote
-            zcrm_note_ins=ZCRMNote.get_instance(self.parent_record, long(note_details['id']))
+            zcrm_note_ins=ZCRMNote.get_instance(self.parent_record, note_details['id'])
         if 'id' in note_details:
-            zcrm_note_ins.id=long(note_details['id'])
+            zcrm_note_ins.id=note_details['id']
         if 'Note_Title' in note_details:
             zcrm_note_ins.title=note_details['Note_Title']
         if 'Note_Content' in note_details:
             zcrm_note_ins.content=note_details['Note_Content']
         from .Operations import ZCRMUser
         if 'Owner' in note_details:
-            zcrm_note_ins.owner=ZCRMUser.get_instance(long(note_details['Owner']['id']), note_details['Owner']['name'])
-        zcrm_note_ins.created_by=ZCRMUser.get_instance(long(note_details['Created_By']['id']), note_details['Created_By']['name'])
-        zcrm_note_ins.modified_by=ZCRMUser.get_instance(long(note_details['Modified_By']['id']), note_details['Modified_By']['name'])
+            zcrm_note_ins.owner=ZCRMUser.get_instance(note_details['Owner']['id']), note_details['Owner']['name']
+        zcrm_note_ins.created_by=ZCRMUser.get_instance(note_details['Created_By']['id']), note_details['Created_By']['name']
+        zcrm_note_ins.modified_by=ZCRMUser.get_instance(note_details['Modified_By']['id']), note_details['Modified_By']['name']
         if 'Created_Time' in note_details:
             zcrm_note_ins.created_time=note_details['Created_Time']
         if 'Modified_Time' in note_details:
@@ -616,26 +616,26 @@ class RelatedListAPIHandler(APIHandler):
                 attachment_ins_arr.append(self.get_zcrm_attachment(attachment_details))
             zcrm_note_ins.attachments=attachment_ins_arr
         return zcrm_note_ins
-    
+
     def get_zcrm_attachment(self,attachment_details):
         from .Operations import ZCRMAttachment,ZCRMUser
-        attachment_ins=ZCRMAttachment.get_instance(self.parent_record, long(attachment_details['id']))
+        attachment_ins=ZCRMAttachment.get_instance(self.parent_record, attachment_details['id'])
         file_name=attachment_details["File_Name"]
         attachment_ins.file_name=file_name
         if '.' in file_name:
             attachment_ins.file_type=file_name[file_name.index('.')+1:]
         attachment_ins.size=attachment_details['Size']
-        attachment_ins.owner = ZCRMUser.get_instance(long(attachment_details["Owner"]["id"]), attachment_details["Owner"]["name"])
-        attachment_ins.created_by = ZCRMUser.get_instance(long(attachment_details["Created_By"]["id"]), attachment_details["Created_By"]["name"])
-        attachment_ins.modified_by = ZCRMUser.get_instance(long(attachment_details["Modified_By"]["id"]), attachment_details["Modified_By"]["name"])
+        attachment_ins.owner = ZCRMUser.get_instance(attachment_details["Owner"]["id"]), attachment_details["Owner"]["name"]
+        attachment_ins.created_by = ZCRMUser.get_instance(attachment_details["Created_By"]["id"]), attachment_details["Created_By"]["name"]
+        attachment_ins.modified_by = ZCRMUser.get_instance(attachment_details["Modified_By"]["id"]), attachment_details["Modified_By"]["name"]
         attachment_ins.created_time=attachment_details["Created_Time"]
         attachment_ins.modified_time=attachment_details["Modified_Time"]
         attachment_ins.parent_module=attachment_details['$se_module']
         attachment_ins.attachment_type=attachment_details['$type']
-        attachment_ins.parent_id=long(attachment_details['Parent_Id']['id'])
+        attachment_ins.parent_id=attachment_details['Parent_Id']['id']
         attachment_ins.parent_name=attachment_details['Parent_Id']['name']
         return attachment_ins
-        
+
     def upload_attachment(self,file_path):
         try:
             handler_ins=APIHandler()
@@ -645,7 +645,7 @@ class RelatedListAPIHandler(APIHandler):
             api_response_ins= APIRequest(handler_ins).upload_attachment(file_path)
             details=api_response_ins.response_json[APIConstants.DATA][0]['details']
             from .Operations import ZCRMAttachment
-            attachment_ins=ZCRMAttachment.get_instance(self.parent_record, long(details['id']))
+            attachment_ins=ZCRMAttachment.get_instance(self.parent_record, details['id'])
             api_response_ins.data=attachment_ins
             return api_response_ins
         except ZCRMException as ex:
@@ -666,7 +666,7 @@ class RelatedListAPIHandler(APIHandler):
             api_response_ins= APIRequest(handler_ins).upload_link_as_attachment()
             details=api_response_ins.response_json[APIConstants.DATA][0]['details']
             from .Operations import ZCRMAttachment
-            attachment_ins=ZCRMAttachment.get_instance(self.parent_record, long(details['id']))
+            attachment_ins=ZCRMAttachment.get_instance(self.parent_record, details['id'])
             api_response_ins.data=attachment_ins
             return api_response_ins
         except ZCRMException as ex:
@@ -674,7 +674,7 @@ class RelatedListAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def download_attachment(self,attachment_id):
         try:
             handler_ins=APIHandler()
@@ -686,7 +686,7 @@ class RelatedListAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def delete_attachment(self,attachment_id):
         try:
             handler_ins=APIHandler()
@@ -702,10 +702,10 @@ class RelatedListAPIHandler(APIHandler):
 
 
 class MassEntityAPIHandler(APIHandler):
-        
+
     def __init__(self,module_instance):
         self.module_instance=module_instance
-            
+
     @staticmethod
     def get_instance(module_instance):
         return MassEntityAPIHandler(module_instance)
@@ -729,7 +729,7 @@ class MassEntityAPIHandler(APIHandler):
             record_ins_list=list()
             from .Operations import ZCRMRecord
             for record_data in data_arr:
-                zcrm_record=ZCRMRecord.get_instance(self.module_instance.api_name, long(record_data['id']))
+                zcrm_record=ZCRMRecord.get_instance(self.module_instance.api_name, record_data['id'])
                 EntityAPIHandler.get_instance(zcrm_record).set_record_properties(record_data)
                 record_ins_list.append(zcrm_record)
             bulk_api_response.data=record_ins_list
@@ -739,7 +739,7 @@ class MassEntityAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def create_records(self,record_ins_list):
         try:
             from .Utility import CommonUtil
@@ -758,9 +758,9 @@ class MassEntityAPIHandler(APIHandler):
             request_json=dict()
             request_json[APIConstants.DATA]=data_array
             handler_ins.request_body=request_json
-            
+
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
-            
+
             created_records=list()
             entity_responses=bulk_api_response.bulk_entity_response
             length=len(entity_responses)
@@ -778,7 +778,7 @@ class MassEntityAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def upsert_records(self,record_ins_list):
         try:
             from .Utility import CommonUtil
@@ -797,9 +797,9 @@ class MassEntityAPIHandler(APIHandler):
             request_json=dict()
             request_json[APIConstants.DATA]=data_array
             handler_ins.request_body=request_json
-            
+
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
-            
+
             created_records=list()
             entity_responses=bulk_api_response.bulk_entity_response
             length=len(entity_responses)
@@ -817,7 +817,7 @@ class MassEntityAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-    
+
     def update_records(self,record_ins_list):
         try:
             from .Utility import CommonUtil
@@ -836,9 +836,9 @@ class MassEntityAPIHandler(APIHandler):
             request_json=dict()
             request_json[APIConstants.DATA]=data_array
             handler_ins.request_body=request_json
-            
+
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
-            
+
             created_records=list()
             entity_responses=bulk_api_response.bulk_entity_response
             length=len(entity_responses)
@@ -867,9 +867,9 @@ class MassEntityAPIHandler(APIHandler):
             handler_ins.request_method=APIConstants.REQUEST_METHOD_PUT
             handler_ins.request_api_key=APIConstants.DATA
             handler_ins.request_body=self.construct_json_for_massupdate(entityid_list,field_api_name,value)
-            
+
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
-            
+
             updated_records=list()
             entity_responses=bulk_api_response.bulk_entity_response
             length=len(entity_responses)
@@ -878,7 +878,7 @@ class MassEntityAPIHandler(APIHandler):
                 entity_response_ins=entity_responses[i]
                 if entity_response_ins.status==APIConstants.STATUS_SUCCESS:
                     record_update_details=entity_response_ins.details
-                    updated_record=ZCRMRecord.get_instance(self.module_instance.api_name, long(record_update_details['id']))
+                    updated_record=ZCRMRecord.get_instance(self.module_instance.api_name, record_update_details['id'])
                     EntityAPIHandler.get_instance(updated_record).set_record_properties(record_update_details)
                     updated_records.append(updated_record)
                     entity_response_ins.data=updated_record
@@ -888,7 +888,7 @@ class MassEntityAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-    
+
     def delete_records(self,entityid_list):
         try:
             from .Utility import CommonUtil
@@ -900,23 +900,23 @@ class MassEntityAPIHandler(APIHandler):
             handler_ins.request_api_key=APIConstants.DATA
             ids_as_string=','.join(str(entity_id) for entity_id in entityid_list)
             handler_ins.add_param('ids', ids_as_string)
-            
+
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
-            
+
             entity_responses=bulk_api_response.bulk_entity_response
             from .Operations import ZCRMRecord
             length=len(entity_responses)
             for i in range(0,length):
                 entity_response_ins=entity_responses[i]
                 record_delete_details=entity_response_ins.details
-                deleted_record=ZCRMRecord.get_instance(self.module_instance.api_name, long(record_delete_details['id']))
+                deleted_record=ZCRMRecord.get_instance(self.module_instance.api_name, record_delete_details['id'])
                 entity_response_ins.data=deleted_record
             return bulk_api_response
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def get_all_deleted_records(self):
         return self.get_deleted_records('all')
     def get_recyclebin_records(self):
@@ -936,7 +936,7 @@ class MassEntityAPIHandler(APIHandler):
             record_ins_list=list()
             from .Operations import ZCRMTrashRecord
             for record_data in data_arr:
-                trash_record=ZCRMTrashRecord.get_instance(record_data['type'], long(record_data['id']))
+                trash_record=ZCRMTrashRecord.get_instance(record_data['type'], record_data['id'])
                 self.set_trash_record_properties(trash_record, record_data)
                 record_ins_list.append(trash_record)
             bulk_api_response.data=record_ins_list
@@ -946,7 +946,7 @@ class MassEntityAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def search_records(self,search_word,page,per_page):
         try:
             handler_ins=APIHandler()
@@ -961,7 +961,7 @@ class MassEntityAPIHandler(APIHandler):
             record_ins_list=list()
             from .Operations import ZCRMRecord
             for record_data in data_arr:
-                zcrm_record=ZCRMRecord.get_instance(self.module_instance.api_name, long(record_data['id']))
+                zcrm_record=ZCRMRecord.get_instance(self.module_instance.api_name, record_data['id'])
                 EntityAPIHandler.get_instance(zcrm_record).set_record_properties(record_data)
                 record_ins_list.append(zcrm_record)
             bulk_api_response.data=record_ins_list
@@ -971,7 +971,7 @@ class MassEntityAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def set_trash_record_properties(self,trash_record_ins,trash_record_prop):
         from .Operations import ZCRMUser
         if 'display_name' in trash_record_prop:
@@ -981,8 +981,8 @@ class MassEntityAPIHandler(APIHandler):
         if 'deleted_by' in trash_record_prop and trash_record_prop['deleted_by'] is not None:
             trash_record_ins.deleted_by=ZCRMUser.get_instance(trash_record_prop['deleted_by']['id'],trash_record_prop['deleted_by']['name'])
         trash_record_ins.deleted_time=trash_record_prop['deleted_time']
-            
-        
+
+
     def construct_json_for_massupdate(self,entityid_list,field_api_name,field_value):
         input_json_arr=list()
         for entity_id in entityid_list:
@@ -995,14 +995,14 @@ class MassEntityAPIHandler(APIHandler):
         return data_json
 
 class ModuleAPIHandler(APIHandler):
-    
+
     def __init__(self,module_instance):
         self.module_instance=module_instance
-        
+
     @staticmethod
     def get_instance(module_ins):
         return ModuleAPIHandler(module_ins)
-    
+
     def get_field(self,field_id):
         try:
             if field_id is None:
@@ -1020,7 +1020,7 @@ class ModuleAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def get_all_fields(self):
         try:
             handler_ins=APIHandler()
@@ -1040,7 +1040,7 @@ class ModuleAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def get_all_layouts(self):
         try:
             handler_ins=APIHandler()
@@ -1060,7 +1060,7 @@ class ModuleAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def get_layout(self,layout_id):
         try:
             if layout_id is None:
@@ -1078,7 +1078,7 @@ class ModuleAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def get_all_customviews(self):
         try:
             handler_ins=APIHandler()
@@ -1100,7 +1100,7 @@ class ModuleAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def get_customview(self,customview_id):
         try:
             if customview_id is None:
@@ -1120,7 +1120,7 @@ class ModuleAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def update_module_settings(self):
         try:
             handler_ins=APIHandler()
@@ -1168,7 +1168,7 @@ class ModuleAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-    
+
     def get_relatedlist(self,relatedlist_id):
         try:
             handler_ins=APIHandler()
@@ -1187,7 +1187,7 @@ class ModuleAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def construct_json_for_cv_update(self,customview_instance):
         cv_settings=dict()
         if customview_instance.sort_by is not None:
@@ -1197,7 +1197,7 @@ class ModuleAPIHandler(APIHandler):
         input_json=dict()
         input_json[APIConstants.CUSTOM_VIEWS]=[cv_settings]
         return input_json
-      
+
     def construct_json_for_module_update(self,module_instance):
         module_settings=dict()
         if module_instance.per_page is not None:
@@ -1223,7 +1223,7 @@ class ModuleAPIHandler(APIHandler):
         return input_json
     def get_zcrm_customview(self,customview_details,categories):
         from .Operations import ZCRMCustomView,ZCRMCustomViewCriteria
-        customview_instance=ZCRMCustomView.get_instance(self.module_instance.api_name,long(customview_details['id']))
+        customview_instance=ZCRMCustomView.get_instance(self.module_instance.api_name,customview_details['id'])
         customview_instance.display_value=customview_details['display_value']
         customview_instance.is_default=bool(customview_details['default'])
         customview_instance.name=customview_details['name']
@@ -1271,25 +1271,25 @@ class ModuleAPIHandler(APIHandler):
             customview_instance.categories=category_instances
         if 'offline' in customview_details:
             customview_instance.is_off_line=customview_details['offline']
-        
+
         return customview_instance
-    
+
     def get_zcrmlayout(self,layout_details):
         from .Operations import ZCRMLayout,ZCRMUser,ZCRMProfile
-        layout_instance=ZCRMLayout.get_instance(long(layout_details['id']))
+        layout_instance=ZCRMLayout.get_instance(layout_details['id'])
         layout_instance.created_time=layout_details['created_time']
         layout_instance.modified_time=layout_details['modified_time']
         layout_instance.name=layout_details['name']
         layout_instance.is_visible=bool(layout_details['visible'])
         if layout_details['created_by'] is not None:
-            layout_instance.created_by=ZCRMUser.get_instance(long(layout_details['created_by']['id']),layout_details['created_by']['name'])
+            layout_instance.created_by=ZCRMUser.get_instance(layout_details['created_by']['id']),layout_details['created_by']['name']
         if layout_details['modified_by'] is not None:
-            layout_instance.modified_by=ZCRMUser.get_instance(long(layout_details['modified_by']['id']),layout_details['modified_by']['name'])
-        
+            layout_instance.modified_by=ZCRMUser.get_instance(layout_details['modified_by']['id']),layout_details['modified_by']['name']
+
         accessible_profile_arr=layout_details['profiles']
         accessible_profile_instances=list()
         for profile in accessible_profile_arr:
-            profile_ins=ZCRMProfile.get_instance(long(profile['id']),profile['name'])
+            profile_ins=ZCRMProfile.get_instance(profile['id']),profile['name']
             profile_ins.is_default=bool(profile['default'])
             accessible_profile_instances.append(profile_ins)
         layout_instance.accessible_profiles=accessible_profile_instances
@@ -1301,17 +1301,17 @@ class ModuleAPIHandler(APIHandler):
             for convert_module in convert_modules:
                 if convert_module in layout_details['convert_mapping']:
                     convert_map=layout_details['convert_mapping'][convert_module]
-                    convert_map_ins=ZCRMLeadConvertMapping.get_instance(convert_map['name'],long(convert_map['id']))
+                    convert_map_ins=ZCRMLeadConvertMapping.get_instance(convert_map['name'],convert_map['id'])
                     if 'fields' in convert_map:
                         field_data=convert_map['fields']
                         for each_field_data in field_data:
-                            convert_mapping_field_ins=ZCRMLeadConvertMappingField.get_instance(each_field_data['api_name'],long(each_field_data['id']))
+                            convert_mapping_field_ins=ZCRMLeadConvertMappingField.get_instance(each_field_data['api_name'],each_field_data['id'])
                             convert_mapping_field_ins.field_label=each_field_data['field_label']
                             convert_mapping_field_ins.is_required=bool(each_field_data['required'])
                             convert_map_ins.fields.append(convert_mapping_field_ins)
                     layout_instance.convert_mapping[convert_module]=convert_map_ins
         return layout_instance
-    
+
     def get_all_sections_of_layout(self,all_section_details):
         section_instances=list()
         from .Operations import ZCRMSection
@@ -1323,7 +1323,7 @@ class ModuleAPIHandler(APIHandler):
             section_ins.fields=self.get_section_fields(section['fields'])
             section_instances.append(section_ins)
         return section_instances
-        
+
     def get_section_fields(self,fields):
         section_fields=list()
         for field in fields:
@@ -1333,7 +1333,7 @@ class ModuleAPIHandler(APIHandler):
         from .Operations import ZCRMField
         field_instance=ZCRMField.get_instance(field_details['api_name'])
         field_instance.sequence_number=int(field_details['sequence_number']) if 'sequence_number' in field_details else None
-        field_instance.id=long(field_details['id'])
+        field_instance.id=field_details['id']
         field_instance.is_mandatory=bool(field_details['required']) if 'required' in field_details else None
         field_instance.default_value=field_details['default_value'] if 'default_value' in field_details else None
         field_instance.is_custom_field=bool(field_details['custom_field']) if 'custom_field' in field_details else None
@@ -1345,7 +1345,7 @@ class ModuleAPIHandler(APIHandler):
         field_instance.is_business_card_supported=bool(field_details['businesscard_supported']) if 'businesscard_supported' in field_details else None
         field_instance.data_type=field_details['data_type'] if 'data_type' in field_details else None
         field_instance.convert_mapping=field_details['convert_mapping'] if 'convert_mapping' in field_details else None
-        
+
         if 'view_type' in field_details:
             viewtype_dict=field_details['view_type']
             field_layout_permissions=list()
@@ -1358,43 +1358,43 @@ class ModuleAPIHandler(APIHandler):
             if viewtype_dict['edit']:
                 field_layout_permissions.append('EDIT')
             field_instance.field_layout_permissions=field_layout_permissions
-        
+
         picklist_arr=field_details['pick_list_values']
         if len(picklist_arr)>0:
             picklist_instance_arr=list()
             for picklist in picklist_arr:
                 picklist_instance_arr.append(self.get_picklist_value_instance(picklist))
             field_instance.picklist_values=picklist_instance_arr
-            
+
         if 'lookup' in field_details and len(field_details['lookup'])>0:
             field_instance.lookup_field=self.get_lookup_field_instance(field_details['lookup'])
-        
+
         if 'unique' in field_details and len(field_details['unique'])>0:
             field_instance.is_unique_field=True
             field_instance.is_case_sensitive=bool(field_details['unique']['casesensitive'])
-            
+
         if 'decimal_place' in field_details and field_details['decimal_place'] is not None:
             field_instance.decimal_place=field_details['decimal_place']
-        
+
         if 'json_type' in field_details and field_details['json_type'] is not None:
             field_instance.json_type=field_details['json_type']
-            
+
         if 'formula' in field_details and len(field_details['formula'])>0:
             field_instance.is_formula_field=True
             field_instance.formula_return_type=field_details['formula']['return_type']
             field_instance.formula_expression=field_details['formula']['expression'] if 'expression' in field_details['formula'] else None
-        
+
         if 'currency' in field_details and len(field_details['currency'])>0:
             field_instance.is_currency_field=True
             field_instance.precision=int(field_details['currency']['precision']) if 'precision' in field_details['currency'] else None
             field_instance.rounding_option=field_details['currency']['rounding_option'] if 'rounding_option' in field_details['currency'] else None
-        
+
         if 'auto_number' in field_details and len(field_details['auto_number'])>0:
             field_instance.is_auto_number=True
             field_instance.prefix=field_details['auto_number']['prefix'] if 'prefix' in field_details['auto_number'] else None
             field_instance.suffix=field_details['auto_number']['suffix'] if 'suffix' in field_details['auto_number'] else None
             field_instance.start_number=field_details['auto_number']['start_number'] if 'start_number' in field_details['auto_number'] else None
-            
+
         return field_instance
     def get_picklist_value_instance(self,picklist):
         from .Operations import ZCRMPickListValue
@@ -1405,35 +1405,35 @@ class ModuleAPIHandler(APIHandler):
             picklist_ins.sequence_number=picklist['sequence_number']
         if 'maps' in picklist:
             picklist_ins.maps=picklist['maps']
-            
+
         return picklist_ins
-    
+
     def get_lookup_field_instance(self,lookup_field_details):
         from .Operations import ZCRMLookupField
         lookup_field_instance=ZCRMLookupField.get_instance(lookup_field_details['api_name'])
         lookup_field_instance.display_label=lookup_field_details['display_label']
-        lookup_field_instance.id=long(lookup_field_details['id'])
+        lookup_field_instance.id=lookup_field_details['id']
         lookup_field_instance.module=lookup_field_details['module']
         return lookup_field_instance
-    
+
     def get_zcrmlayouts(self,layouts):
         layout_instances=list()
         for each_layout_details in layouts:
             layout_instances.append(self.get_zcrmlayout(each_layout_details))
         return layout_instances
-    
+
     def get_zcrmfields(self,fields):
         field_instances=list()
         for field in fields:
             field_instances.append(self.get_zcrmfield(field))
         return field_instances
-    
+
 class MetaDataAPIHandler(APIHandler):
-    
+
     @staticmethod
     def get_instance():
         return MetaDataAPIHandler()
-    
+
     def get_all_modules(self):
         try:
             handler_ins=APIHandler()
@@ -1452,7 +1452,7 @@ class MetaDataAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def get_module(self,module_api_name):
         try:
             handler_ins=APIHandler()
@@ -1468,8 +1468,8 @@ class MetaDataAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
-        
+
+
     def get_zcrmmodule(self,module_details):
         from .Operations import ZCRMModule
         crmmodule_instance=ZCRMModule.get_instance(module_details[APIConstants.API_NAME])
@@ -1481,7 +1481,7 @@ class MetaDataAPIHandler(APIHandler):
         crmmodule_instance.web_link=module_details['web_link'] if 'web_link' in module_details else None
         crmmodule_instance.singular_label=module_details['singular_label']
         crmmodule_instance.plural_label=module_details['plural_label']
-        crmmodule_instance.id=long(module_details['id'])
+        crmmodule_instance.id=module_details['id']
         crmmodule_instance.modified_time=module_details['modified_time']
         crmmodule_instance.is_api_supported=bool(module_details['api_supported'])
         crmmodule_instance.is_scoring_supported=bool(module_details['scoring_supported'])
@@ -1491,21 +1491,21 @@ class MetaDataAPIHandler(APIHandler):
         crmmodule_instance.is_global_search_supported=bool(module_details['global_search_supported']) if 'global_search_supported' in module_details else None
         from .Operations import ZCRMUser,ZCRMProfile,ZCRMModuleRelatedList
         if module_details['modified_by'] is not None:
-            crmmodule_instance.modified_by=ZCRMUser.get_instance(long(module_details['modified_by']["id"]),module_details['modified_by']["name"])
-        
+            crmmodule_instance.modified_by=ZCRMUser.get_instance(module_details['modified_by']["id"]),module_details['modified_by']["name"]
+
         crmmodule_instance.is_custom_module='custom'==module_details['generated_type']
-        
+
         if 'business_card_fields' in module_details:
             crmmodule_instance.business_card_fields=module_details['business_card_fields']
-        
+
         profiles=module_details['profiles']
         for profile in profiles:
-            crmmodule_instance.profiles.append(ZCRMProfile.get_instance(long(profile['id']),profile['name']))
-        
+            crmmodule_instance.profiles.append(ZCRMProfile.get_instance(profile['id']),profile['name'])
+
         if 'display_field' in module_details and module_details['display_field'] is not None:
             crmmodule_instance.display_field_name=module_details['display_field']['name'] if 'name' in module_details['display_field'] else None
-            crmmodule_instance.display_field_id=long(module_details['display_field']['id']) if 'id' in module_details['display_field'] else None
-        
+            crmmodule_instance.display_field_id=module_details['display_field']['id'] if 'id' in module_details['display_field'] else None
+
         if 'related_lists' in module_details and module_details['related_lists'] is not None:
             relatedlists=module_details['related_lists']
             relatedlist_instances=list()
@@ -1513,35 +1513,35 @@ class MetaDataAPIHandler(APIHandler):
                 module_relatedlist_ins=ZCRMModuleRelatedList.get_instance(relatedlist['api_name'])
                 relatedlist_instances.append(module_relatedlist_ins.set_relatedlist_properties(relatedlist))
             crmmodule_instance.related_lists=relatedlist_instances
-        
+
         if 'layouts' in module_details and module_details['layouts'] is not None:
             crmmodule_instance.layouts=ModuleAPIHandler.get_instance(ZCRMModule.get_instance(module_details[APIConstants.API_NAME])).get_zcrmlayouts(module_details['layouts'])
-        
+
         if 'fields' in module_details and module_details['fields'] is not None:
             crmmodule_instance.fields=ModuleAPIHandler.get_instance(ZCRMModule.get_instance(module_details[APIConstants.API_NAME])).get_zcrmfields(module_details['fields'])
-        
+
         if 'related_list_properties' in module_details and module_details['related_list_properties'] is not None:
             crmmodule_instance.related_list_properties=self.get_relatedlist_property_instance(module_details['related_list_properties'])
-        
+
         if '$properties' in module_details and module_details['$properties'] is not None:
             crmmodule_instance.properties=module_details['$properties']
-            
+
         if 'per_page' in module_details and module_details['per_page'] is not None:
             crmmodule_instance.per_page=int(module_details['per_page'])
-        
+
         if 'search_layout_fields' in module_details and module_details['search_layout_fields'] is not None:
             crmmodule_instance.search_layout_fields=module_details['search_layout_fields']
-        
+
         if 'custom_view' in module_details and module_details['custom_view'] is not None:
             crmmodule_instance.default_custom_view=ModuleAPIHandler.get_instance(ZCRMModule.get_instance(module_details[APIConstants.API_NAME])).get_zcrm_customview(module_details['custom_view'],None)
-            crmmodule_instance.default_custom_view_id=long(module_details['custom_view']['id'])
-        
+            crmmodule_instance.default_custom_view_id=module_details['custom_view']['id']
+
         if 'territory' in module_details and module_details['territory'] is not None:
-            crmmodule_instance.default_territory_id=long(module_details['territory']['id'])
+            crmmodule_instance.default_territory_id=module_details['territory']['id']
             crmmodule_instance.default_territory_name=module_details['territory']['name']
-            
+
         return crmmodule_instance
-            
+
     def get_relatedlist_property_instance(self,relatedlist_property):
         from .Operations import ZCRMRelatedListProperties
         reltedlist_property_instance=ZCRMRelatedListProperties.get_instance()
@@ -1549,13 +1549,13 @@ class MetaDataAPIHandler(APIHandler):
         reltedlist_property_instance.sort_order=relatedlist_property['sort_order'] if 'sort_order' in relatedlist_property else None
         reltedlist_property_instance.fields=relatedlist_property['fields'] if 'fields' in relatedlist_property else None
         return reltedlist_property_instance
-    
+
 class OrganizationAPIHandler(APIHandler):
-    
+
     @staticmethod
     def get_instance():
         return OrganizationAPIHandler()
-    
+
     def get_organization_details(self):
         try:
             handler_ins=APIHandler()
@@ -1571,7 +1571,7 @@ class OrganizationAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def get_all_roles(self):
         try:
             handler_ins=APIHandler()
@@ -1590,7 +1590,7 @@ class OrganizationAPIHandler(APIHandler):
         except Exception as ex:
             from .Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-    
+
     def get_role(self,role_id):
         try:
             from .Utility import CommonUtil
@@ -1658,7 +1658,7 @@ class OrganizationAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def update_user(self,user_instance):
         try:
             from .Utility import CommonUtil
@@ -1674,7 +1674,7 @@ class OrganizationAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def delete_user(self,user_id):
         try:
             from .Utility import CommonUtil
@@ -1689,7 +1689,7 @@ class OrganizationAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-            
+
     def get_user(self,user_id):
         try:
             from .Utility import CommonUtil
@@ -1706,7 +1706,7 @@ class OrganizationAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-    
+
     def get_all_users(self):
         return self.get_users()
     def get_all_deactive_users(self):
@@ -1747,7 +1747,7 @@ class OrganizationAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
     def construct_json_from_user_instance(self,user_instance):
         user_info_json=dict()
         if user_instance.role is not None:
@@ -1815,27 +1815,27 @@ class OrganizationAPIHandler(APIHandler):
         return CommonUtil.create_api_supported_input_json(user_info_json,APIConstants.USERS)
     def get_zcrm_role(self,role_details):
         from .Operations import ZCRMRole,ZCRMUser
-        role_instance=ZCRMRole.get_instance(long(role_details['id']),role_details['name'])
+        role_instance=ZCRMRole.get_instance(role_details['id']),role_details['name']
         role_instance.display_label=role_details['display_label']
         role_instance.is_admin=bool(role_details['admin_user'])
         if 'reporting_to' in role_details and role_details['reporting_to'] is not None:
-            role_instance.reporting_to=ZCRMUser.get_instance(long(role_details['reporting_to']['id']),role_details['reporting_to']['name'])
+            role_instance.reporting_to=ZCRMUser.get_instance(role_details['reporting_to']['id']),role_details['reporting_to']['name']
         return role_instance
     def get_zcrm_profile(self,profile_details):
         from .Operations import ZCRMProfile,ZCRMUser,ZCRMPermission,ZCRMProfileSection,ZCRMProfileCategory
-        profile_instance=ZCRMProfile.get_instance(long(profile_details['id']), profile_details['name'])
+        profile_instance=ZCRMProfile.get_instance(profile_details['id']), profile_details['name']
         profile_instance.created_time=profile_details['created_time']
         profile_instance.modified_time=profile_details['modified_time']
         profile_instance.description=profile_details['description']
         profile_instance.category=profile_details['category']
         if profile_details['modified_by'] is not None:
-            profile_instance.modified_by=ZCRMUser.get_instance(long(profile_details['modified_by']['id']), profile_details['modified_by']['name'])
+            profile_instance.modified_by=ZCRMUser.get_instance(profile_details['modified_by']['id']), profile_details['modified_by']['name']
         if profile_details['created_by'] is not None:
-            profile_instance.created_by=ZCRMUser.get_instance(long(profile_details['created_by']['id']), profile_details['created_by']['name'])
+            profile_instance.created_by=ZCRMUser.get_instance(profile_details['created_by']['id']), profile_details['created_by']['name']
         if 'permissions_details' in profile_details:
             permissions=profile_details['permissions_details']
             for permission in permissions:
-                permission_ins=ZCRMPermission.get_instance(permission['name'],long(permission['id']))
+                permission_ins=ZCRMPermission.get_instance(permission['name'],permission['id'])
                 permission_ins.display_label=permission['display_label']
                 permission_ins.module=permission['module']
                 permission_ins.is_enabled=bool(permission['enabled'])
@@ -1870,7 +1870,7 @@ class OrganizationAPIHandler(APIHandler):
         org_instance.iso_code=org_details['iso_code']
         org_instance.mc_status=org_details['mc_status']
         org_instance.mobile=org_details['mobile']
-        
+
         org_instance.phone=org_details['phone']
         org_instance.primary_email=org_details['primary_email']
         org_instance.primary_zuid=org_details['primary_zuid']
@@ -1880,7 +1880,7 @@ class OrganizationAPIHandler(APIHandler):
         org_instance.website=org_details['website']
         org_instance.zgid=org_details['zgid']
         org_instance.zip_code=org_details['zip']
-        
+
         if org_details['license_details'] is not None:
             license_details=org_details['license_details']
             org_instance.is_paid_account=bool(license_details['paid'])
@@ -1891,9 +1891,9 @@ class OrganizationAPIHandler(APIHandler):
         return org_instance
     def get_zcrm_user(self,user_details):
         from .Operations import ZCRMUser,ZCRMRole,ZCRMProfile
-        user_instance=ZCRMUser.get_instance(long(user_details['id']),user_details['name'] if 'name' in user_details else None)
+        user_instance=ZCRMUser.get_instance(user_details['id']),user_details['name'] if 'name' in user_details else None
         user_instance.country=user_details['country'] if 'country' in user_details else None
-        user_instance.role=ZCRMRole.get_instance(long(user_details['role']['id']),user_details['role']['name'])
+        user_instance.role=ZCRMRole.get_instance(user_details['role']['id']),user_details['role']['name']
         if 'customize_info' in user_details:
             user_instance.customize_info=self.get_zcrm_user_customizeinfo(user_details['customize_info'])
         user_instance.city=user_details['city']
@@ -1917,7 +1917,7 @@ class OrganizationAPIHandler(APIHandler):
         user_instance.decimal_separator=user_details['decimal_separator'] if 'decimal_separator' in user_details else None
         user_instance.website=user_details['website']
         user_instance.time_format=user_details['time_format']
-        user_instance.profile=ZCRMProfile.get_instance(long(user_details['profile']['id']),user_details['profile']['name'])
+        user_instance.profile=ZCRMProfile.get_instance(user_details['profile']['id']),user_details['profile']['name']
         user_instance.mobile=user_details['mobile']
         user_instance.last_name=user_details['last_name']
         user_instance.time_zone=user_details['time_zone']
