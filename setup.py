@@ -42,6 +42,7 @@ setup(
     ],
     install_requires=[
         'requests',
+        'mysql-connector-python'
     ],
 
     # What does your project relate to?
