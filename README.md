@@ -69,7 +69,24 @@ Please fill the values for the following keys alone.
 client_secret=  
 redirect_uri=  
 accounts_url=https://accounts.zoho.com  
-token_persistence_path=  
+token_persistence_path= 
+
+Alternatively, you can provide the values for configuration and OAuth by using environment variables:
+Setting `USE_ENV_FOR_ZOHO_CONFIG` to 'true' will enable the environment configuration. The variables are listed below and map to the configuration file keys above:
+
+* `ZOHO_API_BASE_URL`
+* `ZOHO_API_VERSION`
+* `ZOHO_SANDBOX`
+* `ZOHO_APPLICATION_LOG_FILE_PATH`
+* `ZOHO_CURRENT_USER_EMAIL`
+
+* `ZOHO_OAUTH_CLIENT_ID`
+* `ZOHO_OAUTH_SECRET`
+* `ZOHO_OAUTH_REDIRECT_URI`
+* `ZOHO_OAUTH_ACCOUNTS_URL`
+* `ZOHO_OAUTH_TOKEN_PERSISTENCE_PATH`
+* `ZOHO_OAUTH_ACCESS_TYPE`
+ 
 
 client_id, client_secret and redirect_uri are your OAuth client’s configurations that you get after registering your Zoho client.
 
