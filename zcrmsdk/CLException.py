@@ -34,7 +34,10 @@ class Logger(object):
         console_handler = logging.StreamHandler()
         # create formatter and add it to the handlers
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        from Utility import ZCRMConfigUtil
+        try:
+            from .Utility import ZCRMConfigUtil
+        except ImportError:
+            from Utility import ZCRMConfigUtil
         log_path=ZCRMConfigUtil.config_prop_dict['applicationLogFilePath']
         if log_path is not None and log_path.strip()!="":
             import os

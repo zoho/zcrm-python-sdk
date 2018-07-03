@@ -5,8 +5,12 @@ Created on Aug 16, 2017
 '''
 import requests
 import json
-from OAuthClient import ZohoOAuth
-from CLException import ZCRMException
+try:
+    from .OAuthClient import ZohoOAuth
+    from .CLException import ZCRMException
+except ImportError:
+    from OAuthClient import ZohoOAuth
+    from CLException import ZCRMException
 
 class HTTPConnector(object):
     '''
@@ -172,7 +176,10 @@ class ZCRMConfigUtil(object):
     @staticmethod
     def initialize(isToInitializeOAuth):
         import os
-        from Path import PathIdentifier
+        try:
+            from .Path import PathIdentifier
+        except ImportError:
+            from Path import PathIdentifier
         resources_path = os.path.join(PathIdentifier.get_client_library_root(),'resources','configuration.properties')
         filePointer=open(resources_path,"r")
         ZCRMConfigUtil.config_prop_dict=CommonUtil.get_file_content_as_dictionary(filePointer)
@@ -185,7 +192,10 @@ class ZCRMConfigUtil(object):
     def get_api_version():
         return ZCRMConfigUtil.config_prop_dict["apiVersion"]
     def get_access_token(self):
-        from RestClient import ZCRMRestClient
+        try:
+            from .RestClient import ZCRMRestClient
+        except ImportError:
+            from RestClient import ZCRMRestClient
         userEmail=ZCRMRestClient.get_instance().get_current_user_email_id()
         if(userEmail==None and (ZCRMConfigUtil.config_prop_dict['currentUserEmail']==None or ZCRMConfigUtil.config_prop_dict['currentUserEmail'].strip()=='')):
             raise ZCRMException('fetching current user email',400,'Current user should either be set in ZCRMRestClient or in configuration.properties file',APIConstants.STATUS_ERROR)
@@ -213,7 +223,10 @@ class CommonUtil(object):
     def raise_exception(url,message,details,content=None):
         zcrm_exception=ZCRMException(url,APIConstants.RESPONSECODE_INVALID_INPUT,message,APIConstants.STATUS_ERROR,details,content)
         import logging
-        from CLException import Logger
+        try:
+            from .CLException import Logger
+        except ImportError:
+            from CLException import Logger
         Logger.add_log(message,logging.ERROR,zcrm_exception)
         raise zcrm_exception
     

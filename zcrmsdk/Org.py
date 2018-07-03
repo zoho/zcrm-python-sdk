@@ -3,7 +3,12 @@ Created on Sep 14, 2017
 
 @author: sumanth-3058
 '''
-from Handler import OrganizationAPIHandler
+
+try:
+    from .Handler import OrganizationAPIHandler
+except ImportError:
+    from Handler import OrganizationAPIHandler
+
 class ZCRMOrganization(object):
     '''
     classdocs

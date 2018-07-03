@@ -4,10 +4,16 @@ Created on Aug 16, 2017
 @author: sumanth-3058
 '''
 import threading
-from Utility import ZCRMConfigUtil
-from Handler import MetaDataAPIHandler,OrganizationAPIHandler
-from Org import ZCRMOrganization
-from Operations import ZCRMModule, ZCRMRecord
+try:
+    from .Utility import ZCRMConfigUtil
+    from .Handler import MetaDataAPIHandler,OrganizationAPIHandler
+    from .Org import ZCRMOrganization
+    from .Operations import ZCRMModule, ZCRMRecord
+except ImportError:
+    from Utility import ZCRMConfigUtil
+    from Handler import MetaDataAPIHandler,OrganizationAPIHandler
+    from Org import ZCRMOrganization
+    from Operations import ZCRMModule, ZCRMRecord
 
 class ZCRMRestClient(object):
     '''

@@ -3,8 +3,12 @@ Created on Aug 16, 2017
 
 @author: sumanth-3058
 '''
-from OAuthUtility import OAuthLogger,ZohoOAuthConstants,ZohoOAuthException,ZohoOAuthHTTPConnector,ZohoOAuthParams
-from Persistence import ZohoOAuthPersistenceHandler,ZohoOAuthPersistenceFileHandler
+try:
+    from .OAuthUtility import OAuthLogger,ZohoOAuthConstants,ZohoOAuthException,ZohoOAuthHTTPConnector,ZohoOAuthParams
+    from .Persistence import ZohoOAuthPersistenceHandler,ZohoOAuthPersistenceFileHandler
+except ImportError:
+    from OAuthUtility import OAuthLogger,ZohoOAuthConstants,ZohoOAuthException,ZohoOAuthHTTPConnector,ZohoOAuthParams
+    from Persistence import ZohoOAuthPersistenceHandler,ZohoOAuthPersistenceFileHandler
 import logging
 class ZohoOAuth(object):
     '''
@@ -20,7 +24,10 @@ class ZohoOAuth(object):
     @staticmethod
     def initialize():
         try:
-            from Path import PathIdentifier
+            try:
+                from .Path import PathIdentifier
+            except ImportError:
+                from Path import PathIdentifier
             import os
             #dirSplit=os.path.split(PathIdentifier.get_client_library_root())
             #resources_path = os.path.join(dirSplit[0],'resources','oauth_configuration.properties')

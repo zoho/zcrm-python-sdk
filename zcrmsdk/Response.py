@@ -3,8 +3,12 @@ Created on Aug 1, 2017
 
 @author: sumanth-3058
 '''
-from CLException import ZCRMException
-from Utility import APIConstants
+try:
+    from .CLException import ZCRMException
+    from .Utility import APIConstants
+except ImportError:
+    from CLException import ZCRMException
+    from Utility import APIConstants
 
 class CommonAPIResponse(object):
     def __init__(self,response,status_code,url,apiKey=None):

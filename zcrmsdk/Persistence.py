@@ -3,7 +3,10 @@ Created on Aug 16, 2017
 
 @author: sumanth-3058
 '''
-from OAuthUtility import OAuthLogger
+try:
+    from .OAuthUtility import OAuthLogger
+except ImportError:
+    from OAuthUtility import OAuthLogger
 #import MySQLdb
 import mysql.connector
 class ZohoOAuthPersistenceHandler(object):
@@ -37,7 +40,10 @@ class ZohoOAuthPersistenceHandler(object):
             row_count=0
             for(useridentifier,accesstoken,refreshtoken,expirytime) in cursor:
                 row_count=row_count+1
-                from OAuthClient import ZohoOAuthTokens
+                try:
+                    from .OAuthClient import ZohoOAuthTokens
+                except ImportError:
+                    from OAuthClient import ZohoOAuthTokens
                 return ZohoOAuthTokens(refreshtoken,accesstoken,expirytime,useridentifier)
             if row_count==0:
                 raise Exception('No rows found for the given user')
@@ -76,8 +82,12 @@ class ZohoOAuthPersistenceFileHandler(object):
     def saveOAuthTokens(self,oAuthTokens):
         try:
             self.deleteOAuthTokens(oAuthTokens.userEmail)
-            from OAuthClient import ZohoOAuth
-            from OAuthUtility import ZohoOAuthConstants
+            try:
+                from .OAuthClient import ZohoOAuth
+                from .OAuthUtility import ZohoOAuthConstants
+            except ImportError:
+                from OAuthClient import ZohoOAuth
+                from OAuthUtility import ZohoOAuthConstants
             import os
             os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
             import pickle
@@ -96,8 +106,12 @@ class ZohoOAuthPersistenceFileHandler(object):
     def getOAuthTokens(self,userEmail):
         try:
             import pickle
-            from OAuthClient import ZohoOAuth,ZohoOAuthTokens
-            from OAuthUtility import ZohoOAuthConstants
+            try:
+                from .OAuthClient import ZohoOAuth,ZohoOAuthTokens
+                from .OAuthUtility import ZohoOAuthConstants
+            except ImportError:
+                from OAuthClient import ZohoOAuth,ZohoOAuthTokens
+                from OAuthUtility import ZohoOAuthConstants
             import os
             os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
             responseObj=ZohoOAuthTokens(None,None,None,None)
@@ -121,8 +135,12 @@ class ZohoOAuthPersistenceFileHandler(object):
     def deleteOAuthTokens(self,userEmail):
         try:
             import pickle
-            from OAuthClient import ZohoOAuth
-            from OAuthUtility import ZohoOAuthConstants
+            try:
+                from .OAuthClient import ZohoOAuth
+                from .OAuthUtility import ZohoOAuthConstants
+            except ImportError:
+                from OAuthClient import ZohoOAuth
+                from OAuthUtility import ZohoOAuthConstants
             import os
             os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
             if not os.path.isfile(ZohoOAuthConstants.PERSISTENCE_FILE_NAME):
