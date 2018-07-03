@@ -681,7 +681,7 @@ class ZCRMJunctionRecord(object):
 class ZCRMLeadConvertMapping(object):
     
     def __init__(self,name,converted_id):
-        self.id=long(converted_id)
+        self.id=converted_id
         self.name=name
         self.fields=list()
     @staticmethod
@@ -730,7 +730,7 @@ class ZCRMModuleRelatedList(object):
         return ZCRMModuleRelatedList(api_name)
     
     def set_relatedlist_properties(self,relatedlist_prop):
-        self.id=long(relatedlist_prop['id'])
+        self.id=relatedlist_prop['id']
         self.module=relatedlist_prop['module']
         self.display_label=relatedlist_prop['display_label']
         self.name=relatedlist_prop['name']
@@ -963,4 +963,3 @@ class ZCRMTrashRecord(object):
     @staticmethod
     def get_instance(entity_type,entity_id=None):
         return ZCRMTrashRecord(entity_type,entity_id)
-    
