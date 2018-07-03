@@ -8,7 +8,7 @@ try:
 except ImportError:
     from OAuthUtility import OAuthLogger
 #import MySQLdb
-import mysql.connector
+#import mysql.connector
 class ZohoOAuthPersistenceHandler(object):
     '''
     This class deals with persistance of oauth related tokens
@@ -71,6 +71,7 @@ class ZohoOAuthPersistenceHandler(object):
             connection.close()
             
     def getDBConnection(self):
+        import mysql.connector
         connection=mysql.connector.connect(user='root', password='',host='127.0.0.1',database='zohooauth')
         return connection
         #connection=MySQLdb.connect(host="localhost",user="root",passwd="",db="zohooauth")
