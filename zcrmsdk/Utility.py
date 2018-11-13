@@ -7,9 +7,11 @@ import requests
 import json
 try:
     from .OAuthClient import ZohoOAuth
+    from .OAuthUtility import ZohoOAuthException,ZohoOAuthConstants
     from .CLException import ZCRMException
 except ImportError:
     from OAuthClient import ZohoOAuth
+    from OAuthUtility import ZohoOAuthException,ZohoOAuthConstants
     from CLException import ZCRMException
 
 class HTTPConnector(object):
@@ -152,6 +154,10 @@ class APIConstants(object):
     DOWNLOAD_FILE_PATH="../../../../../../resources"
     
     USER_EMAIL_ID="user_email_id"
+    CURRENT_USER_EMAIL="currentUserEmail"
+    API_BASEURL="apiBaseUrl"
+    API_VERSION="apiVersion"
+    APPLICATION_LOGFILE_PATH="applicationLogFilePath" 
     ACTION="action"
     DUPLICATE_FIELD="duplicate_field"
     NO_CONTENT="No Content"
@@ -174,23 +180,48 @@ class ZCRMConfigUtil(object):
     def get_instance():
         return ZCRMConfigUtil()
     @staticmethod
-    def initialize(isToInitializeOAuth):
+    def initialize(isToInitializeOAuth,config_dict = None):
+        mandatory_keys = [ZohoOAuthConstants.CLIENT_ID,ZohoOAuthConstants.CLIENT_SECRET,ZohoOAuthConstants.REDIRECT_URL,APIConstants.CURRENT_USER_EMAIL]
         import os
         try:
             from .Path import PathIdentifier
+            from .RestClient import ZCRMRestClient
         except ImportError:
             from Path import PathIdentifier
-        resources_path = os.path.join(PathIdentifier.get_client_library_root(),'resources','configuration.properties')
-        filePointer=open(resources_path,"r")
-        ZCRMConfigUtil.config_prop_dict=CommonUtil.get_file_content_as_dictionary(filePointer)
+            from RestClient import ZCRMRestClient
+        if(config_dict is None):
+            resources_path = os.path.join(PathIdentifier.get_client_library_root(),'resources','configuration.properties')
+            filePointer=open(resources_path,"r")
+            ZCRMConfigUtil.config_prop_dict=CommonUtil.get_file_content_as_dictionary(filePointer)
+        else:
+            for key in mandatory_keys:
+                if(key not in config_dict):
+                    if(key != APIConstants.CURRENT_USER_EMAIL or ZCRMRestClient.get_instance().get_current_user_email_id() == None):
+                        raise ZohoOAuthException(key+ ' is mandatory')
+                elif(key in config_dict and (config_dict[key] is None or config_dict[key] == "" )):
+                    if (key != APIConstants.CURRENT_USER_EMAIL or ZCRMRestClient.get_instance().get_current_user_email_id() == None):
+                        raise ZohoOAuthException(key+ ' value is missing')
+            ZCRMConfigUtil.set_config_values(config_dict)
         if(isToInitializeOAuth):
-            ZohoOAuth.initialize()
+            ZohoOAuth.initialize(config_dict)
     @staticmethod
     def get_api_base_url():
         return ZCRMConfigUtil.config_prop_dict["apiBaseUrl"]
     @staticmethod
     def get_api_version():
         return ZCRMConfigUtil.config_prop_dict["apiVersion"]
+    @staticmethod
+    def set_config_values(config_dict):
+        config_keys = [APIConstants.CURRENT_USER_EMAIL,ZohoOAuthConstants.SANDBOX,APIConstants.API_BASEURL,APIConstants.API_VERSION,APIConstants.APPLICATION_LOGFILE_PATH]
+        if(ZohoOAuthConstants.SANDBOX not in config_dict or config_dict[ZohoOAuthConstants.SANDBOX]==""):
+            ZCRMConfigUtil.config_prop_dict[ZohoOAuthConstants.SANDBOX] = "false"
+        if(APIConstants.API_BASEURL not in config_dict or config_dict[APIConstants.API_BASEURL]==""):
+            ZCRMConfigUtil.config_prop_dict[APIConstants.API_BASEURL] = "www.zohoapis.com"
+        if(APIConstants.API_VERSION not in config_dict or config_dict[APIConstants.API_VERSION]==""):
+            ZCRMConfigUtil.config_prop_dict[APIConstants.API_VERSION] = "v2"
+        for key in config_keys:
+            if(key in config_dict and config_dict[key] !=""):
+                ZCRMConfigUtil.config_prop_dict[key] = config_dict[key].strip()
     def get_access_token(self):
         try:
             from .RestClient import ZCRMRestClient

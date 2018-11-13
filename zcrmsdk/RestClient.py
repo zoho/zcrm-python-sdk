@@ -27,8 +27,8 @@ class ZCRMRestClient(object):
         return threading.current_thread().__getattribute__('current_user_email') if 'current_user_email' in threading.current_thread().__dict__ else None 
     
     @staticmethod
-    def initialize():
-        ZCRMConfigUtil.initialize(True)
+    def initialize(config_dict = None):
+        ZCRMConfigUtil.initialize(True,config_dict)
         
     def get_all_modules(self):
         return MetaDataAPIHandler.get_instance().get_all_modules()
