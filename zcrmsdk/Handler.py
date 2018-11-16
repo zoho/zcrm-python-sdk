@@ -2150,53 +2150,53 @@ class OrganizationAPIHandler(APIHandler):
         except ImportError:
             from Operations import ZCRMUser,ZCRMRole,ZCRMProfile
         user_instance=ZCRMUser.get_instance(user_details['id'],user_details['name'] if 'name' in user_details else None)
-        user_instance.country=user_details['country'] if 'country' in user_details else None
         user_instance.role=ZCRMRole.get_instance(user_details['role']['id'],user_details['role']['name'])
+        user_instance.profile=ZCRMProfile.get_instance(user_details['profile']['id'],user_details['profile']['name'])
         if 'customize_info' in user_details:
             user_instance.customize_info=self.get_zcrm_user_customizeinfo(user_details['customize_info'])
-        user_instance.city=user_details['city']
-        user_instance.signature=user_details['signature'] if 'signature' in user_details else None
-        user_instance.name_format=user_details['name_format'] if 'name_format' in user_details else None
-        user_instance.language=user_details['language']
-        user_instance.locale=user_details['locale']
-        user_instance.is_personal_account=bool(user_details['personal_account']) if 'personal_account' in user_details else None
-        user_instance.default_tab_group=user_details['default_tab_group'] if 'default_tab_group' in user_details else None
-        user_instance.alias=user_details['alias']
-        user_instance.street=user_details['street']
-        user_instance.city=user_details['city']
         if 'theme' in user_details:
             user_instance.theme=self.get_zcrm_user_theme(user_details['theme'])
-        user_instance.state=user_details['state']
-        user_instance.country_locale=user_details['country_locale']
-        user_instance.fax=user_details['fax']
-        user_instance.first_name=user_details['first_name']
-        user_instance.email=user_details['email']
-        user_instance.zip=user_details['zip']
-        user_instance.decimal_separator=user_details['decimal_separator'] if 'decimal_separator' in user_details else None
-        user_instance.website=user_details['website']
-        user_instance.time_format=user_details['time_format']
-        user_instance.profile=ZCRMProfile.get_instance(user_details['profile']['id'],user_details['profile']['name'])
-        user_instance.mobile=user_details['mobile']
-        user_instance.last_name=user_details['last_name']
-        user_instance.time_zone=user_details['time_zone']
-        user_instance.zuid=user_details['zuid']
-        user_instance.is_confirm=bool(user_details['confirm'])
-        user_instance.full_name=user_details['full_name']
-        user_instance.phone=user_details['phone']
-        user_instance.dob=user_details['dob']
-        user_instance.date_format=user_details['date_format']
-        user_instance.status=user_details['status']
-        if 'territories' in user_details:
-            user_instance.territories=user_details['territories']
-        if 'reporting_to' in user_details:
-            user_instance.reporting_to=user_details['reporting_to']
-        if 'Currency' in user_details:
-            user_instance.currency=user_details['Currency']
-        user_instance.created_by=user_details['created_by']
-        user_instance.modified_by=user_details['Modified_By']
-        user_instance.is_online=user_details['Isonline']
-        user_instance.created_time=user_details['created_time']
-        user_instance.modified_time=user_details['Modified_Time']
+
+        user_instance.is_personal_account=bool(user_details.get('personal_account', False)) if 'personal_account' in user_details else None
+        user_instance.is_confirm=bool(user_details.get('confirm', False))
+
+        user_instance.country=user_details.get('country')
+        user_instance.city=user_details.get('city')
+        user_instance.signature=user_details.get('signature')
+        user_instance.name_format=user_details.get('name_format')
+        user_instance.language=user_details.get('language')
+        user_instance.locale=user_details.get('locale')
+        user_instance.default_tab_group=user_details.get('default_tab_group')
+        user_instance.alias=user_details.get('alias')
+        user_instance.street=user_details.get('street')
+        user_instance.city=user_details.get('city')
+        user_instance.state=user_details.get('state')
+        user_instance.country_locale=user_details.get('country_locale')
+        user_instance.fax=user_details.get('fax')
+        user_instance.first_name=user_details.get('first_name')
+        user_instance.email=user_details.get('email')
+        user_instance.zip=user_details.get('zip')
+        user_instance.decimal_separator=user_details.get('decimal_separator')
+        user_instance.website=user_details.get('website')
+        user_instance.time_format=user_details.get('time_format')
+        user_instance.mobile=user_details.get('mobile')
+        user_instance.last_name=user_details.get('last_name')
+        user_instance.time_zone=user_details.get('time_zone')
+        user_instance.zuid=user_details.get('zuid')
+        user_instance.full_name=user_details.get('full_name')
+        user_instance.phone=user_details.get('phone')
+        user_instance.dob=user_details.get('dob')
+        user_instance.date_format=user_details.get('date_format')
+        user_instance.status=user_details.get('status')
+        user_instance.territories=user_details.get('territories')
+        user_instance.reporting_to=user_details.get('reporting_to')
+        user_instance.currency=user_details.get('Currency')
+        user_instance.created_by=user_details.get('created_by')
+        user_instance.modified_by=user_details.get('Modified_By')
+        user_instance.is_online=user_details.get('Isonline')
+        user_instance.created_time=user_details.get('created_time')
+        user_instance.modified_time=user_details.get('Modified_Time')
+
         try:
             for userkey in user_details:
                 if userkey not in ZCRMUser.defaultKeys:
@@ -2229,3 +2229,4 @@ class OrganizationAPIHandler(APIHandler):
         user_theme_instance.selected_tab_font_color=user_theme_info['selected_tab']['font_color']
         user_theme_instance.selected_tab_background=user_theme_info['selected_tab']['background']
         return user_theme_instance
+    
