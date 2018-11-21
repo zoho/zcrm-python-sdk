@@ -22,23 +22,46 @@ class ZohoOAuth(object):
         Constructor
         '''
     @staticmethod
-    def initialize():
+    def initialize(config_dict = None):
         try:
             try:
                 from .Path import PathIdentifier
             except ImportError:
                 from Path import PathIdentifier
             import os
-            #dirSplit=os.path.split(PathIdentifier.get_client_library_root())
-            #resources_path = os.path.join(dirSplit[0],'resources','oauth_configuration.properties')
-            resources_path = os.path.join(PathIdentifier.get_client_library_root(),'resources','oauth_configuration.properties')
-            filePointer=open(resources_path,"r")
-            ZohoOAuth.configProperties=ZohoOAuth.get_file_content_as_dictionary(filePointer)
+            if(config_dict is None):
+                #dirSplit=os.path.split(PathIdentifier.get_client_library_root())
+                #resources_path = os.path.join(dirSplit[0],'resources','oauth_configuration.properties')
+                resources_path = os.path.join(PathIdentifier.get_client_library_root(),'resources','oauth_configuration.properties')
+                filePointer=open(resources_path,"r")
+                ZohoOAuth.configProperties=ZohoOAuth.get_file_content_as_dictionary(filePointer)
+            else:
+                ZohoOAuth.set_config_values(config_dict)
+            if(ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH] ==""):
+                if(ZohoOAuthConstants.DATABASE_PORT not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT]==""):
+                    ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT]="3306"
+                if(ZohoOAuthConstants.DATABASE_USERNAME not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME]==""):
+                    ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME]="root"
+                if(ZohoOAuthConstants.DATABASE_PASSWORD not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD]==""):
+                    ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD]=""
             oAuthParams=ZohoOAuthParams.get_instance(ZohoOAuth.configProperties[ZohoOAuthConstants.CLIENT_ID], ZohoOAuth.configProperties[ZohoOAuthConstants.CLIENT_SECRET], ZohoOAuth.configProperties[ZohoOAuthConstants.REDIRECT_URL])
             ZohoOAuthClient.get_instance(oAuthParams)
         except Exception as ex:
             OAuthLogger.add_log('Exception occured while reading oauth configurations',logging.ERROR,ex)
             raise ex
+    
+    @staticmethod
+    def set_config_values(config_dict):
+        config_keys = [ZohoOAuthConstants.CLIENT_ID,ZohoOAuthConstants.CLIENT_SECRET,ZohoOAuthConstants.REDIRECT_URL,ZohoOAuthConstants.ACCESS_TYPE
+			,ZohoOAuthConstants.IAM_URL,ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH,ZohoOAuthConstants.DATABASE_PORT
+			,ZohoOAuthConstants.DATABASE_PASSWORD,ZohoOAuthConstants.DATABASE_USERNAME]
+        if(ZohoOAuthConstants.ACCESS_TYPE not in config_dict or config_dict[ZohoOAuthConstants.ACCESS_TYPE] is None):
+            ZohoOAuth.configProperties[ZohoOAuthConstants.ACCESS_TYPE] = "offline"
+        if(ZohoOAuthConstants.IAM_URL not in config_dict or config_dict[ZohoOAuthConstants.IAM_URL] == ""):
+            ZohoOAuth.configProperties[ZohoOAuthConstants.IAM_URL] = "https://accounts.zoho.com"
+        for key in config_keys:
+            if(key in config_dict and config_dict[key] !=""):
+                ZohoOAuth.configProperties[key] = config_dict[key].strip()
     @staticmethod
     def get_file_content_as_dictionary(filePointer) :
         dictionary={}
@@ -72,7 +95,7 @@ class ZohoOAuth(object):
         return oauth_client_ins
     @staticmethod
     def get_persistence_instance():
-        if(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH]==''):
+        if(ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH]==""):
             return ZohoOAuthPersistenceHandler()
         else:
             return ZohoOAuthPersistenceFileHandler()

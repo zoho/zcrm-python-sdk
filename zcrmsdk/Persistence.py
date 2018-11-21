@@ -71,8 +71,14 @@ class ZohoOAuthPersistenceHandler(object):
             connection.close()
             
     def getDBConnection(self):
+        try:
+            from .OAuthClient import ZohoOAuth
+            from .OAuthUtility import ZohoOAuthConstants
+        except ImportError:
+            from OAuthClient import ZohoOAuth
+            from OAuthUtility import ZohoOAuthConstants
         import mysql.connector
-        connection=mysql.connector.connect(user='root', password='',host='127.0.0.1',database='zohooauth')
+        connection=mysql.connector.connect(user=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME], password=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD],port=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT],database='zohooauth')
         return connection
         #connection=MySQLdb.connect(host="localhost",user="root",passwd="",db="zohooauth")
         #return connection

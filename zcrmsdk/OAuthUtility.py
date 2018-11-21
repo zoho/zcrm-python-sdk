@@ -25,6 +25,10 @@ class ZohoOAuthConstants(object):
     GRANT_TYPE="grant_type";
     GRANT_TYPE_AUTH_CODE="authorization_code";
     TOKEN_PERSISTENCE_PATH="token_persistence_path";
+    SANDBOX="sandbox";
+    DATABASE_PORT="mysql_port";
+    DATABASE_PASSWORD="mysql_password";
+    DATABASE_USERNAME="mysql_username";
     PERSISTENCE_FILE_NAME="zcrm_oauthtokens.pkl"
     
     GRANT_TYPE_REFRESH="refresh_token";
@@ -34,7 +38,6 @@ class ZohoOAuthConstants(object):
     REFRESH_TOKEN="refresh_token";
     EXPIRES_IN = "expires_in";
     EXPIRIY_TIME = "expiry_time";
-    PERSISTENCE_HANDLER_CLASS = "persistence_handler_class";
     TOKEN = "token";
     DISPATCH_TO = "dispatchTo";
     OAUTH_TOKENS_PARAM = "oauth_tokens";
@@ -133,10 +136,12 @@ class OAuthLogger(object):
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         
         try:
-            from .Utility import ZCRMConfigUtil
+            from .Utility import ZCRMConfigUtil,APIConstants
         except ImportError:
-            from Utility import ZCRMConfigUtil
-        log_path=ZCRMConfigUtil.config_prop_dict['applicationLogFilePath']
+            from Utility import ZCRMConfigUtil,APIConstants
+        log_path = None
+        if(APIConstants.APPLICATION_LOGFILE_PATH in ZCRMConfigUtil.config_prop_dict):
+            log_path=ZCRMConfigUtil.config_prop_dict[APIConstants.APPLICATION_LOGFILE_PATH]
         if log_path is not None and log_path.strip()!="":
             import os
             log_path=os.path.join(log_path,'oauth.log')
