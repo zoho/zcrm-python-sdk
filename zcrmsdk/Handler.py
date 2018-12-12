@@ -479,6 +479,8 @@ class RelatedListAPIHandler(APIHandler):
                 handler_ins.add_param('sort_by', sort_by_field)
             if sort_order is not None:
                 handler_ins.add_param('sort_order', sort_order)
+            if since is not None:
+                handler_ins.add_header('If-Modified-Since',since)
             handler_ins.add_param('page', page)
             handler_ins.add_param('per_page', per_page)
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
