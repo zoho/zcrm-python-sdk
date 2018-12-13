@@ -1076,13 +1076,13 @@ class MassEntityAPIHandler(APIHandler):
                 from Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
-    def search_records(self,search_word,page,per_page):
+    def search_records(self,search_word,page,per_page,type):
         try:
             handler_ins=APIHandler()
             handler_ins.request_url_path=self.module_instance.api_name+"/search"
             handler_ins.request_method=APIConstants.REQUEST_METHOD_GET
             handler_ins.request_api_key=APIConstants.DATA
-            handler_ins.add_param("word", search_word)
+            handler_ins.add_param(type, search_word)
             handler_ins.add_param("page", page)
             handler_ins.add_param("per_page", per_page)
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()

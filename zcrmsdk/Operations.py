@@ -115,7 +115,25 @@ class ZCRMModule(object):
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).search_records(search_word,page,per_page)
+        return MassEntityAPIHandler.get_instance(self).search_records(search_word,page,per_page,'word')
+    def search_records_by_phone(self,phone,page=0,per_page=200):
+        try:
+            from .Handler import MassEntityAPIHandler
+        except ImportError:
+            from Handler import MassEntityAPIHandler
+        return MassEntityAPIHandler.get_instance(self).search_records(phone,page,per_page,'phone')
+    def search_records_by_email(self,email,page=0,per_page=200):
+        try:
+            from .Handler import MassEntityAPIHandler
+        except ImportError:
+            from Handler import MassEntityAPIHandler
+        return MassEntityAPIHandler.get_instance(self).search_records(email,page,per_page,'email')
+    def search_records_by_criteria(self,criteria,page=0,per_page=200):
+        try:
+            from .Handler import MassEntityAPIHandler
+        except ImportError:
+            from Handler import MassEntityAPIHandler
+        return MassEntityAPIHandler.get_instance(self).search_records(criteria,page,per_page,'criteria')
     def get_all_fields(self):
         try:
             from .Handler import ModuleAPIHandler
