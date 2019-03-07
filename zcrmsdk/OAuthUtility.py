@@ -26,6 +26,7 @@ class ZohoOAuthConstants(object):
     GRANT_TYPE_AUTH_CODE="authorization_code";
     TOKEN_PERSISTENCE_PATH="token_persistence_path";
     SANDBOX="sandbox";
+    DATABASE_HOST="mysql_host";
     DATABASE_PORT="mysql_port";
     DATABASE_PASSWORD="mysql_password";
     DATABASE_USERNAME="mysql_username";
