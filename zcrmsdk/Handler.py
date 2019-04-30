@@ -897,8 +897,7 @@ class MassEntityAPIHandler(APIHandler):
             handler_ins.request_method=APIConstants.REQUEST_METHOD_POST
             handler_ins.request_api_key=APIConstants.DATA
             if (duplicate_check_fields is not None):
-                duplicate_check_fields_as_string = ','.join(
-                    str(duplicate_check_field) for duplicate_check_field in duplicate_check_fields)
+                duplicate_check_fields_as_string = ','.join(str(duplicate_check_field) for duplicate_check_field in duplicate_check_fields)
                 handler_ins.add_param('duplicate_check_fields', duplicate_check_fields_as_string)
             data_array=list()
             for record_ins in record_ins_list:
