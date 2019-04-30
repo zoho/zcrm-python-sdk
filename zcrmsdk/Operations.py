@@ -68,12 +68,12 @@ class ZCRMModule(object):
         except ImportError:
             from Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).create_records(record_ins_list)
-    def upsert_records(self,record_ins_list):
+    def upsert_records(self,record_ins_list,duplicate_check_fields):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).upsert_records(record_ins_list)
+        return MassEntityAPIHandler.get_instance(self).upsert_records(record_ins_list,duplicate_check_fields)
     def update_records(self,record_ins_list):
         try:
             from .Handler import MassEntityAPIHandler

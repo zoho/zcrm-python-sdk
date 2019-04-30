@@ -884,7 +884,7 @@ class MassEntityAPIHandler(APIHandler):
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
-    def upsert_records(self,record_ins_list):
+    def upsert_records(self,record_ins_list,duplicate_check_fields):
         try:
             try:
                 from .Utility import CommonUtil
@@ -896,6 +896,10 @@ class MassEntityAPIHandler(APIHandler):
             handler_ins.request_url_path=self.module_instance.api_name+"/upsert"
             handler_ins.request_method=APIConstants.REQUEST_METHOD_POST
             handler_ins.request_api_key=APIConstants.DATA
+            if (duplicate_check_fields is not None):
+                duplicate_check_fields_as_string = ','.join(
+                    str(duplicate_check_field) for duplicate_check_field in duplicate_check_fields)
+                handler_ins.add_param('duplicate_check_fields', duplicate_check_fields_as_string)
             data_array=list()
             for record_ins in record_ins_list:
                 record_json=EntityAPIHandler.get_instance(record_ins).get_zcrmrecord_as_json()

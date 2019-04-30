@@ -581,7 +581,9 @@ class MyClass(object):
             line_item.line_tax.append(taxIns)
             record.add_line_item(line_item)
             record_ins_list.append(record)
-            resp=ZCRMModule.get_instance('Invoices').upsert_records(record_ins_list)
+            duplicate_check_fields=list();
+            duplicate_check_fields.append("field1");
+            resp=ZCRMModule.get_instance('Invoices').upsert_records(record_ins_list,duplicate_check_fields)
             print resp.status_code
             entity_responses=resp.bulk_entity_response
             for entity_response in entity_responses:
