@@ -1950,27 +1950,27 @@ class OrganizationAPIHandler(APIHandler):
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
     
-    def get_all_users(self):
-        return self.get_users()
-    def get_all_deactive_users(self):
-        return self.get_users('DeactiveUsers')
-    def get_all_active_users(self):
-        return self.get_users('ActiveUsers')
-    def get_all_confirmed_users(self):
-        return self.get_users('ConfirmedUsers')
-    def get_all_not_confirmed_users(self):
-        return self.get_users('NotConfirmedUsers')
-    def get_all_deleted_users(self):
-        return self.get_users('DeletedUsers')
-    def get_all_active_confirmed_users(self):
-        return self.get_users('ActiveConfirmedUsers')
-    def get_all_admin_users(self):
-        return self.get_users('AdminUsers')
-    def get_all_active_confirmed_admin_users(self):
-        return self.get_users('ActiveConfirmedAdmins')
+    def get_all_users(self,page,per_page):
+        return self.get_users(None,page,per_page)
+    def get_all_deactive_users(self,page,per_page):
+        return self.get_users('DeactiveUsers',page,per_page)
+    def get_all_active_users(self,page,per_page):
+        return self.get_users('ActiveUsers',page,per_page)
+    def get_all_confirmed_users(self,page,per_page):
+        return self.get_users('ConfirmedUsers',page,per_page)
+    def get_all_not_confirmed_users(self,page,per_page):
+        return self.get_users('NotConfirmedUsers',page,per_page)
+    def get_all_deleted_users(self,page,per_page):
+        return self.get_users('DeletedUsers',page,per_page)
+    def get_all_active_confirmed_users(self,page,per_page):
+        return self.get_users('ActiveConfirmedUsers',page,per_page)
+    def get_all_admin_users(self,page,per_page):
+        return self.get_users('AdminUsers',page,per_page)
+    def get_all_active_confirmed_admin_users(self,page,per_page):
+        return self.get_users('ActiveConfirmedAdmins',page,per_page)
     def get_current_user(self):
-        return self.get_users('CurrentUser')
-    def get_users(self,user_type=None):
+        return self.get_users('CurrentUser',1,200)
+    def get_users(self,user_type,page,per_page):
         try:
             try:
                 from .Utility import CommonUtil
@@ -1980,6 +1980,8 @@ class OrganizationAPIHandler(APIHandler):
             if user_type is not None:
                 handler_ins.add_param('type', user_type)
             handler_ins.request_url_path="users"
+            handler_ins.add_param('page', page)
+            handler_ins.add_param('per_page', per_page)
             handler_ins.request_method=APIConstants.REQUEST_METHOD_GET
             handler_ins.request_api_key=APIConstants.USERS
             bulk_api_response= APIRequest(handler_ins).get_bulk_api_response()

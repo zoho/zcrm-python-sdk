@@ -1,6 +1,5 @@
 '''
 Created on Jul 31, 2017
-
 @author: sumanth-3058
 '''
 from RestClient import ZCRMRestClient
@@ -21,7 +20,7 @@ class MyThread(threading.Thread):
     def run(self):
         self.local.email=self.email
         print self.local.email
-    
+
 class MyClass(object):
     '''
     classdocs
@@ -41,7 +40,7 @@ class MyClass(object):
         print resp.data.line_items[0].list_price
         print resp.data.line_items[0].product.lookup_label
         print resp.data.line_items[0].product.get_field_value('Product_Code')
-    
+
     def create_record(self):
         try:
             record=ZCRMRecord.get_instance('Invoices')
@@ -71,7 +70,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def update_record(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -93,7 +92,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def delete_record(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001422011)
@@ -109,7 +108,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def get_record(self):
         try:
             #record=ZCRMRecord.get_instance('Leads',440872000000219003)
@@ -155,7 +154,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def convert_record(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001422007)
@@ -175,7 +174,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def upload_attachment(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -186,7 +185,7 @@ class MyClass(object):
             print ex.error_message
             print ex.error_code
             print ex.error_details
-            print ex.error_content 
+            print ex.error_content
     def upload_link_as_attachment(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -198,7 +197,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def download_attachment(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -215,8 +214,8 @@ class MyClass(object):
             print ex.error_message
             print ex.error_code
             print ex.error_details
-            print ex.error_content 
-            
+            print ex.error_content
+
     def delete_attachment(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -232,7 +231,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def upload_photo(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -246,8 +245,8 @@ class MyClass(object):
             print ex.error_message
             print ex.error_code
             print ex.error_details
-            print ex.error_content 
-    
+            print ex.error_content
+
     def download_photo(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -265,7 +264,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def delete_photo(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -281,7 +280,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def add_relation(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -298,7 +297,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def remove_relation(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -333,7 +332,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def update_note(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -353,7 +352,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def delete_note(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -370,7 +369,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def get_notes(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -393,7 +392,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_attachments(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -422,7 +421,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def get_related_records(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -484,7 +483,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def create_records(self):
         try:
             record_ins_list=list()
@@ -547,7 +546,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def upsert_records(self):
         try:
             record_ins_list=list()
@@ -602,7 +601,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def delete_records(self):
         try:
             entityid_list=[1386586000001856020,1386586000001856019]
@@ -622,7 +621,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_deleted_records(self,delete_type):
         try:
             module_ins=ZCRMModule.get_instance('Invoices')
@@ -634,7 +633,7 @@ class MyClass(object):
                 resp=module_ins.get_all_deleted_records()
             print resp.status_code
             trash_record_ins_arr=resp.data
-            
+
             resp_info=resp.info
             print resp_info.count
             print resp_info.page
@@ -656,7 +655,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def search_records(self):
         try:
             module_ins=ZCRMModule.get_instance('Products')
@@ -700,7 +699,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_fields(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -746,7 +745,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_field(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -791,7 +790,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_all_layouts(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -811,7 +810,7 @@ class MyClass(object):
                 if profiles is not None:
                     for profile in profiles:
                         print "\n\n"
-                        print profile.id 
+                        print profile.id
                         print profile.name
                         print profile.is_default
                 print layout_ins.created_by
@@ -864,7 +863,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_layout(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -884,7 +883,7 @@ class MyClass(object):
                 if profiles is not None:
                     for profile in profiles:
                         print "\n\n"
-                        print profile.id 
+                        print profile.id
                         print profile.name
                         print profile.is_default
                 print layout_ins.created_by
@@ -943,7 +942,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def get_all_customviews(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -987,7 +986,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_customview(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -1031,7 +1030,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def update_module_settings(self):
         try:
             module_instance=ZCRMModule.get_instance('Accounts')
@@ -1051,7 +1050,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def update_customview(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -1070,7 +1069,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_all_relatedlists(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -1093,7 +1092,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_relatedlist(self):
         try:
             module_ins=ZCRMModule.get_instance('Accounts')
@@ -1116,7 +1115,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_org_details(self):
         try:
             resp=ZCRMRestClient.get_instance().get_organization_details()
@@ -1157,48 +1156,48 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
-    def get_all_users(self):
-        return self.get_users('all')
-    def get_all_deactive_users(self):
-        return self.get_users('DeactiveUsers')
-    def get_all_active_users(self):
-        return self.get_users('ActiveUsers')
-    def get_all_confirmed_users(self):
-        return self.get_users('ConfirmedUsers')
-    def get_all_not_confirmed_users(self):
-        return self.get_users('NotConfirmedUsers')
-    def get_all_deleted_users(self):
-        return self.get_users('DeletedUsers')
-    def get_all_active_confirmed_users(self):
-        return self.get_users('ActiveConfirmedUsers')
-    def get_all_admin_users(self):
-        return self.get_users('AdminUsers')
-    def get_all_active_confirmed_admin_users(self):
-        return self.get_users('ActiveConfirmedAdmins')
+
+    def get_all_users(self,page=1,per_page=200):
+        return self.get_users('all',page,per_page)
+    def get_all_deactive_users(self,page=1,per_page=200):
+        return self.get_users('DeactiveUsers',page,per_page)
+    def get_all_active_users(self,page=1,per_page=200):
+        return self.get_users('ActiveUsers',page,per_page)
+    def get_all_confirmed_users(self,page=1,per_page=200):
+        return self.get_users('ConfirmedUsers',page,per_page)
+    def get_all_not_confirmed_users(self,page=1,per_page=200):
+        return self.get_users('NotConfirmedUsers',page,per_page)
+    def get_all_deleted_users(self,page=1,per_page=200):
+        return self.get_users('DeletedUsers',page,per_page)
+    def get_all_active_confirmed_users(self,page=1,per_page=200):
+        return self.get_users('ActiveConfirmedUsers',page,per_page)
+    def get_all_admin_users(self,page=1,per_page=200):
+        return self.get_users('AdminUsers',page,per_page)
+    def get_all_active_confirmed_admin_users(self,page=1,per_page=200):
+        return self.get_users('ActiveConfirmedAdmins',page,per_page)
     def get_current_user(self):
         return self.get_users('CurrentUser')
-             
-    def get_users(self,user_type):
+
+    def get_users(self,user_type,page,per_page):
         try:
             if user_type=='all':
-                resp=ZCRMOrganization.get_instance().get_all_users()
+                resp=ZCRMOrganization.get_instance().get_all_users(page,per_page)
             elif user_type=='DeactiveUsers':
-                resp=ZCRMOrganization.get_instance().get_all_deactive_users()
+                resp=ZCRMOrganization.get_instance().get_all_deactive_users(page,per_page)
             elif user_type=='ActiveUsers':
-                resp=ZCRMOrganization.get_instance().get_all_active_users()
+                resp=ZCRMOrganization.get_instance().get_all_active_users(page,per_page)
             elif user_type=='ConfirmedUsers':
-                resp=ZCRMOrganization.get_instance().get_all_confirmed_users()
+                resp=ZCRMOrganization.get_instance().get_all_confirmed_users(page,per_page)
             elif user_type=='NotConfirmedUsers':
-                resp=ZCRMOrganization.get_instance().get_all_not_confirmed_users()
+                resp=ZCRMOrganization.get_instance().get_all_not_confirmed_users(page,per_page)
             elif user_type=='DeletedUsers':
-                resp=ZCRMOrganization.get_instance().get_all_deleted_users()
+                resp=ZCRMOrganization.get_instance().get_all_deleted_users(page,per_page)
             elif user_type=='ActiveConfirmedUsers':
-                resp=ZCRMOrganization.get_instance().get_all_active_confirmed_users()
+                resp=ZCRMOrganization.get_instance().get_all_active_confirmed_users(page,per_page)
             elif user_type=='AdminUsers':
-                resp=ZCRMOrganization.get_instance().get_all_admin_users()
+                resp=ZCRMOrganization.get_instance().get_all_admin_users(page,per_page)
             elif user_type=='ActiveConfirmedAdmins':
-                resp=ZCRMOrganization.get_instance().get_all_active_confirmed_admin_users()
+                resp=ZCRMOrganization.get_instance().get_all_active_confirmed_admin_users(page,per_page)
             elif user_type=='CurrentUser':
                 resp=ZCRMOrganization.get_instance().get_current_user()
             print resp.status_code
@@ -1333,7 +1332,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def create_user(self):
         try:
             user_ins=ZCRMUser.get_instance()
@@ -1354,12 +1353,12 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def update_user(self):
         try:
             user_ins=ZCRMUser.get_instance(1386586000001409001,'Python Automation user2')
             user_ins.first_name="Poornima"
-            
+
             resp=ZCRMOrganization.get_instance().update_user(user_ins)
             print resp.status_code
             print resp.message
@@ -1388,7 +1387,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_profiles(self):
         try:
             resp=ZCRMOrganization.get_instance().get_all_profiles()
@@ -1417,7 +1416,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_profile(self):
         try:
             resp=ZCRMOrganization.get_instance().get_profile(1386586000000026014)
@@ -1460,7 +1459,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_roles(self):
         try:
             resp=ZCRMOrganization.get_instance().get_all_roles()
@@ -1481,7 +1480,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def get_role(self):
         try:
             resp=ZCRMOrganization.get_instance().get_role(1386586000000026008)
@@ -1501,7 +1500,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-            
+
     def get_modules(self):
         try:
             resp=ZCRMRestClient.get_instance().get_all_modules()
@@ -1569,7 +1568,7 @@ class MyClass(object):
             print ex.error_code
             print ex.error_details
             print ex.error_content
-    
+
     def print_layout(self,layout_ins):
         print  "\n\n:::LAYOUT DETAILS:::"
         print  layout_ins.name
@@ -1583,7 +1582,7 @@ class MyClass(object):
         if profiles is not None:
             for profile in profiles:
                 print  "\n\n"
-                print  profile.id 
+                print  profile.id
                 print  profile.name
                 print  profile.is_default
         print  layout_ins.created_by
@@ -1600,7 +1599,7 @@ class MyClass(object):
                     print  "\n:::FIELD DETAILS:::"
                     for field_ins in fields:
                         self.print_field(field_ins)
-                    
+
     def print_field(self,field_ins):
         try:
             print field_ins.api_name
@@ -1709,7 +1708,7 @@ class MyClass(object):
             print ex.error_details
             print ex.error_content
 
-        
+
 obj=MyClass()
 #threading.current_thread().setName('support@zohocrm.com')
 #threading.current_thread().__setattr__('current_user_email','support@zohocrm.com')

@@ -56,24 +56,24 @@ class ZCRMOrganization(object):
         return OrganizationAPIHandler.get_instance().get_user(user_id)
     def get_current_user(self):
         return OrganizationAPIHandler.get_instance().get_current_user()
-    def get_all_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_users()
-    def get_all_active_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_active_users()
-    def get_all_deactive_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_deactive_users()
-    def get_all_confirmed_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_confirmed_users()
-    def get_all_not_confirmed_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_not_confirmed_users()
-    def get_all_deleted_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_deleted_users()
-    def get_all_active_confirmed_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_active_confirmed_users()
-    def get_all_admin_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_admin_users()
-    def get_all_active_confirmed_admin_users(self):
-        return OrganizationAPIHandler.get_instance().get_all_active_confirmed_admin_users()
+    def get_all_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_users(page,per_page)
+    def get_all_active_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_active_users(page,per_page)
+    def get_all_deactive_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_deactive_users(page,per_page)
+    def get_all_confirmed_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_confirmed_users(page,per_page)
+    def get_all_not_confirmed_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_not_confirmed_users(page,per_page)
+    def get_all_deleted_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_deleted_users(page,per_page)
+    def get_all_active_confirmed_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_active_confirmed_users(page,per_page)
+    def get_all_admin_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_admin_users(page,per_page)
+    def get_all_active_confirmed_admin_users(self,page=1,per_page=200):
+        return OrganizationAPIHandler.get_instance().get_all_active_confirmed_admin_users(page,per_page)
     def get_all_profiles(self):
         return OrganizationAPIHandler.get_instance().get_all_profiles()
     def get_profile(self,profile_id):

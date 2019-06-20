@@ -212,7 +212,7 @@ class ZohoOAuthTokens(object):
         self.userEmail=user_email
         
     def get_access_token(self):
-        if((self.expiryTime-self.get_current_time_in_millis())>10):
+        if((self.expiryTime-self.get_current_time_in_millis())>5000):
             return self.accessToken
         else:
             raise ZohoOAuthException("Access token got expired!")
