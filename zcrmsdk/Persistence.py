@@ -13,9 +13,9 @@ class ZohoOAuthPersistenceHandler(object):
     '''
     This class deals with persistance of oauth related tokens
     '''
-    def saveOAuthTokens(self,oAuthTokens):
+    def save_oauthtokens(self,oAuthTokens):
         try:
-            self.deleteOAuthTokens(oAuthTokens.userEmail)
+            self.delete_oauthtokens(oAuthTokens.userEmail)
             connection=self.getDBConnection()
             cursor=connection.cursor()
             #sqlQuery="INSERT INTO oauthtokens(useridentifier,accesstoken,refreshtoken,expirytime) VALUES('"+oAuthTokens.userEmail+"','"+oAuthTokens.accessToken+"','"+oAuthTokens.refreshToken+"',"+oAuthTokens.expiryTime+")";
@@ -31,7 +31,7 @@ class ZohoOAuthPersistenceHandler(object):
             cursor.close()
             connection.close()    
         
-    def getOAuthTokens(self,userEmail):
+    def get_oauthtokens(self,userEmail):
         try:
             connection=self.getDBConnection()
             cursor=connection.cursor()
@@ -54,7 +54,7 @@ class ZohoOAuthPersistenceHandler(object):
         finally:
             cursor.close()
             connection.close()
-    def deleteOAuthTokens(self,userEmail):
+    def delete_oauthtokens(self,userEmail):
         try:
             connection=self.getDBConnection()
             cursor=connection.cursor()
@@ -86,9 +86,9 @@ class ZohoOAuthPersistenceFileHandler(object):
     '''
     This class deals with persistance of oauth related tokens in File
     '''
-    def saveOAuthTokens(self,oAuthTokens):
+    def save_oauthtokens(self,oAuthTokens):
         try:
-            self.deleteOAuthTokens(oAuthTokens.userEmail)
+            self.delete_oauthtokens(oAuthTokens.userEmail)
             try:
                 from .OAuthClient import ZohoOAuth
                 from .OAuthUtility import ZohoOAuthConstants
@@ -110,7 +110,7 @@ class ZohoOAuthPersistenceFileHandler(object):
             OAuthLogger.add_log("Exception occured while saving oauthtokens into File ",logging.ERROR,ex)
             raise ex
         
-    def getOAuthTokens(self,userEmail):
+    def get_oauthtokens(self,userEmail):
         try:
             import pickle
             try:
@@ -139,7 +139,7 @@ class ZohoOAuthPersistenceFileHandler(object):
             OAuthLogger.add_log("Exception occured while fetching oauthtokens from File ",logging.ERROR,ex)
             raise ex
             
-    def deleteOAuthTokens(self,userEmail):
+    def delete_oauthtokens(self,userEmail):
         try:
             import pickle
             try:

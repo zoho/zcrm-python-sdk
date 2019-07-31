@@ -25,6 +25,8 @@ class ZohoOAuthConstants(object):
     GRANT_TYPE="grant_type";
     GRANT_TYPE_AUTH_CODE="authorization_code";
     TOKEN_PERSISTENCE_PATH="token_persistence_path";
+    CUSTOM_PERSISTENCE_HANDLER_PATH = "persistence_handler_path";
+    CUSTOM_PERSISTENCE_HANDLER_CLASS = "persistence_handler_class";
     SANDBOX="sandbox";
     DATABASE_PORT="mysql_port";
     DATABASE_PASSWORD="mysql_password";

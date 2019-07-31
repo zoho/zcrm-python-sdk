@@ -24,20 +24,9 @@ class ZohoOAuth(object):
     @staticmethod
     def initialize(config_dict = None):
         try:
-            try:
-                from .Path import PathIdentifier
-            except ImportError:
-                from Path import PathIdentifier
-            import os
-            if(config_dict is None):
-                #dirSplit=os.path.split(PathIdentifier.get_client_library_root())
-                #resources_path = os.path.join(dirSplit[0],'resources','oauth_configuration.properties')
-                resources_path = os.path.join(PathIdentifier.get_client_library_root(),'resources','oauth_configuration.properties')
-                filePointer=open(resources_path,"r")
-                ZohoOAuth.configProperties=ZohoOAuth.get_file_content_as_dictionary(filePointer)
-            else:
-                ZohoOAuth.set_config_values(config_dict)
-            if(ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH] ==""):
+            ZohoOAuth.set_config_values(config_dict)
+            if((ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH] =="") and \
+                    (ZohoOAuthConstants.CUSTOM_PERSISTENCE_HANDLER_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.CUSTOM_PERSISTENCE_HANDLER_PATH] == "")):
                 if(ZohoOAuthConstants.DATABASE_PORT not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT]==""):
                     ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT]="3306"
                 if(ZohoOAuthConstants.DATABASE_USERNAME not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME]==""):
@@ -52,9 +41,9 @@ class ZohoOAuth(object):
     
     @staticmethod
     def set_config_values(config_dict):
-        config_keys = [ZohoOAuthConstants.CLIENT_ID,ZohoOAuthConstants.CLIENT_SECRET,ZohoOAuthConstants.REDIRECT_URL,ZohoOAuthConstants.ACCESS_TYPE
-			,ZohoOAuthConstants.IAM_URL,ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH,ZohoOAuthConstants.DATABASE_PORT
-			,ZohoOAuthConstants.DATABASE_PASSWORD,ZohoOAuthConstants.DATABASE_USERNAME]
+        config_keys = [ZohoOAuthConstants.CLIENT_ID, ZohoOAuthConstants.CLIENT_SECRET, ZohoOAuthConstants.REDIRECT_URL, ZohoOAuthConstants.ACCESS_TYPE
+			, ZohoOAuthConstants.IAM_URL, ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH, ZohoOAuthConstants.DATABASE_PORT
+			, ZohoOAuthConstants.DATABASE_PASSWORD, ZohoOAuthConstants.DATABASE_USERNAME, ZohoOAuthConstants.CUSTOM_PERSISTENCE_HANDLER_PATH, ZohoOAuthConstants.CUSTOM_PERSISTENCE_HANDLER_CLASS]
         if(ZohoOAuthConstants.ACCESS_TYPE not in config_dict or config_dict[ZohoOAuthConstants.ACCESS_TYPE] is None):
             ZohoOAuth.configProperties[ZohoOAuthConstants.ACCESS_TYPE] = "offline"
         if(ZohoOAuthConstants.IAM_URL not in config_dict or config_dict[ZohoOAuthConstants.IAM_URL] == ""):
@@ -95,10 +84,33 @@ class ZohoOAuth(object):
         return oauth_client_ins
     @staticmethod
     def get_persistence_instance():
-        if(ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH]==""):
+        if((ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH]=="") and \
+                (ZohoOAuthConstants.CUSTOM_PERSISTENCE_HANDLER_PATH not in ZohoOAuth.configProperties or ZohoOAuth.configProperties[ZohoOAuthConstants.CUSTOM_PERSISTENCE_HANDLER_PATH] == "")):
             return ZohoOAuthPersistenceHandler()
-        else:
+        elif((ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH in ZohoOAuth.configProperties) and ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH] != ""):
             return ZohoOAuthPersistenceFileHandler()
+        else:
+            try:
+                from sys import path
+                import importlib
+                custompersistence_handler = ZohoOAuth.configProperties[ZohoOAuthConstants.CUSTOM_PERSISTENCE_HANDLER_PATH]
+                custompersistence_classname = ZohoOAuth.configProperties[ZohoOAuthConstants.CUSTOM_PERSISTENCE_HANDLER_CLASS]
+                if custompersistence_classname == "":
+                    raise ZohoOAuthException("Token Persistence Class must be given.")
+                splitter = "/" if "/" in custompersistence_handler else "\\"
+                custompersistence_directory = custompersistence_handler.strip(custompersistence_handler.split(splitter)[-1]).rstrip(splitter)
+                path.append(custompersistence_directory)
+                custompersistence_modulename = custompersistence_handler.split(splitter)[-1].rstrip(".py")
+                try:
+                    custompersistence_module = importlib.import_module(custompersistence_modulename)
+                    custompersistence_class = getattr(custompersistence_module, custompersistence_modulename)
+                    custompersistence_instance = custompersistence_class()
+                    return custompersistence_instance
+                except Exception as e:
+                    raise e
+            except Exception as ex:
+                OAuthLogger.add_log("Exception occured while fetching instance for Custom DB Persistence", logging.ERROR, ex)
+                raise ex
 
 class ZohoOAuthClient(object):
     '''
@@ -122,7 +134,7 @@ class ZohoOAuthClient(object):
     def get_access_token(self,userEmail):
         try:
             handler=ZohoOAuth.get_persistence_instance()
-            oAuthTokens=handler.getOAuthTokens(userEmail)
+            oAuthTokens=handler.get_oauthtokens(userEmail)
             try:
                 return oAuthTokens.get_access_token()
             except Exception as e:
@@ -148,7 +160,7 @@ class ZohoOAuthClient(object):
                 oAuthTokens=self.get_tokens_from_json(responseJSON)
                 oAuthTokens.set_user_email(userEmail)
                 oAuthTokens.refreshToken=refreshToken
-                ZohoOAuth.get_persistence_instance().saveOAuthTokens(oAuthTokens)
+                ZohoOAuth.get_persistence_instance().save_oauthtokens(oAuthTokens)
                 return oAuthTokens
             
         except ZohoOAuthException as ex:
@@ -168,7 +180,7 @@ class ZohoOAuthClient(object):
             if(ZohoOAuthConstants.ACCESS_TOKEN in responseJSON):
                 oAuthTokens=self.get_tokens_from_json(responseJSON)
                 oAuthTokens.set_user_email(self.get_user_email_from_iam(oAuthTokens.accessToken))
-                ZohoOAuth.get_persistence_instance().saveOAuthTokens(oAuthTokens)
+                ZohoOAuth.get_persistence_instance().save_oauthtokens(oAuthTokens)
                 return oAuthTokens
             else:
                 raise ZohoOAuthException("Exception occured while fetching accesstoken from Grant Token;Response is:"+str(responseJSON))
@@ -222,3 +234,17 @@ class ZohoOAuthTokens(object):
         return int(round(time.time() * 1000))
     def set_user_email(self,userEmail):
         self.userEmail=userEmail
+
+from abc import ABC, abstractmethod
+class AbstractZohoOAuthPersistence(ABC):
+    @abstractmethod
+    def get_oauthtokens(self,user_email):
+        pass
+
+    @abstractmethod
+    def save_oauthtokens(self, oauthtokens):
+        pass
+
+    @abstractmethod
+    def delete_oauthtokens(self, user_email):
+        pass

@@ -181,27 +181,21 @@ class ZCRMConfigUtil(object):
         return ZCRMConfigUtil()
     @staticmethod
     def initialize(isToInitializeOAuth,config_dict = None):
+        if (config_dict is None):
+            raise ZohoOAuthException("Configuration dictionary is mandatory to initialize RestClient")
         mandatory_keys = [ZohoOAuthConstants.CLIENT_ID,ZohoOAuthConstants.CLIENT_SECRET,ZohoOAuthConstants.REDIRECT_URL,APIConstants.CURRENT_USER_EMAIL]
-        import os
         try:
-            from .Path import PathIdentifier
             from .RestClient import ZCRMRestClient
         except ImportError:
-            from Path import PathIdentifier
             from RestClient import ZCRMRestClient
-        if(config_dict is None):
-            resources_path = os.path.join(PathIdentifier.get_client_library_root(),'resources','configuration.properties')
-            filePointer=open(resources_path,"r")
-            ZCRMConfigUtil.config_prop_dict=CommonUtil.get_file_content_as_dictionary(filePointer)
-        else:
-            for key in mandatory_keys:
-                if(key not in config_dict):
-                    if(key != APIConstants.CURRENT_USER_EMAIL or ZCRMRestClient.get_instance().get_current_user_email_id() == None):
-                        raise ZohoOAuthException(key+ ' is mandatory')
-                elif(key in config_dict and (config_dict[key] is None or config_dict[key] == "" )):
-                    if (key != APIConstants.CURRENT_USER_EMAIL or ZCRMRestClient.get_instance().get_current_user_email_id() == None):
-                        raise ZohoOAuthException(key+ ' value is missing')
-            ZCRMConfigUtil.set_config_values(config_dict)
+        for key in mandatory_keys:
+            if(key not in config_dict):
+                if(key != APIConstants.CURRENT_USER_EMAIL or ZCRMRestClient.get_instance().get_current_user_email_id() == None):
+                    raise ZohoOAuthException(key+ ' is mandatory')
+            elif(key in config_dict and (config_dict[key] is None or config_dict[key] == "" )):
+                if (key != APIConstants.CURRENT_USER_EMAIL or ZCRMRestClient.get_instance().get_current_user_email_id() == None):
+                    raise ZohoOAuthException(key+ ' value is missing')
+        ZCRMConfigUtil.set_config_values(config_dict)
         if(isToInitializeOAuth):
             ZohoOAuth.initialize(config_dict)
     @staticmethod
@@ -229,7 +223,7 @@ class ZCRMConfigUtil(object):
             from RestClient import ZCRMRestClient
         userEmail=ZCRMRestClient.get_instance().get_current_user_email_id()
         if(userEmail==None and (ZCRMConfigUtil.config_prop_dict['currentUserEmail']==None or ZCRMConfigUtil.config_prop_dict['currentUserEmail'].strip()=='')):
-            raise ZCRMException('fetching current user email',400,'Current user should either be set in ZCRMRestClient or in configuration.properties file',APIConstants.STATUS_ERROR)
+            raise ZCRMException('fetching current user email',400,'Current user should either be set in ZCRMRestClient or in configuration dictionary',APIConstants.STATUS_ERROR)
         elif(userEmail==None):
             userEmail=ZCRMConfigUtil.config_prop_dict['currentUserEmail']
         clientIns=ZohoOAuth.get_client_instance()

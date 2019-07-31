@@ -16,7 +16,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='zcrmsdk',
-    version='1.0.9',
+    version='2.0.0',
 
     description='Zoho CRM SDK for Python developers',
     long_description=long_description,
@@ -50,8 +50,6 @@ setup(
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages(),
-    package_data={'zcrmsdk': ['resources/*.properties']},
-
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
     # for example:
