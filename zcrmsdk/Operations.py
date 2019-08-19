@@ -450,8 +450,8 @@ class ZCRMTax(object):
     
 class ZCRMEventParticipant(object):
     def __init__(self,participant_type,participant_id):
-        self.id=participant_type
-        self.type=participant_id
+        self.id = participant_id
+        self.type = participant_type
         self.email=None
         self.name=None
         self.is_invited=None
@@ -552,6 +552,8 @@ class ZCRMRole(object):
         self.reporting_to=None
         self.label=None
         self.is_admin=None
+        self.forecast_manager = None
+        self.share_with_peers = None
     
     @staticmethod
     def get_instance(role_id,role_name=None):

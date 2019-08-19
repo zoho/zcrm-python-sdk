@@ -269,7 +269,7 @@ class EntityAPIHandler(APIHandler):
         
     def get_price_details_as_jsonarray(self):
         priceDetailsArr = list()
-        priceDetailsList = self.zcrmrecord.participants
+        priceDetailsList = self.zcrmrecord.price_details
         for priceBookPricingIns in priceDetailsList:
             priceDetailsArr.append(self.get_zcrmprice_detail_as_json(priceBookPricingIns))
         return priceDetailsArr
@@ -376,6 +376,12 @@ class EntityAPIHandler(APIHandler):
                 for taxName in value:
                     taxIns=ZCRMTax.get_instance(taxName)
                     self.zcrmrecord.tax_list.append(taxIns)
+            elif ("$line_tax" == key):
+                for lineTax in value:
+                    taxInstance = ZCRMTax.get_instance(lineTax["name"])
+                    taxInstance.percentage = lineTax['percentage']
+                    taxInstance.value = float(lineTax['value'])
+                    self.zcrmrecord.tax_list.append(taxInstance)
             elif(key.startswith('$')):
                 self.zcrmrecord.properties[key.replace('$','')]= value
             elif(isinstance(value,array)):
@@ -1403,7 +1409,7 @@ class ModuleAPIHandler(APIHandler):
             from .Operations import ZCRMCustomView,ZCRMCustomViewCriteria
         except ImportError:
             from Operations import ZCRMCustomView,ZCRMCustomViewCriteria
-        customview_instance=ZCRMCustomView.get_instance(self.module_instance.api_name,customview_details['id'])
+        customview_instance = ZCRMCustomView.get_instance(customview_details['id'],self.module_instance.api_name)
         customview_instance.display_value=customview_details['display_value']
         customview_instance.is_default=bool(customview_details['default'])
         customview_instance.name=customview_details['name']
@@ -2073,7 +2079,11 @@ class OrganizationAPIHandler(APIHandler):
         role_instance.display_label=role_details['display_label']
         role_instance.is_admin=bool(role_details['admin_user'])
         if 'reporting_to' in role_details and role_details['reporting_to'] is not None:
-            role_instance.reporting_to=ZCRMUser.get_instance(role_details['reporting_to']['id'],role_details['reporting_to']['name'])
+            role_instance.reporting_to = ZCRMRole.get_instance(role_details['reporting_to']['id'],role_details['reporting_to']['name'])
+        if 'forecast_manager' in role_details and role_details['forecast_manager'] is not None:
+            role_instance.forecast_manager = ZCRMUser.get_instance(role_details['forecast_manager']['id'], role_details['forecast_manager']['name'])
+        if 'share_with_peers' in role_details:
+            role_instance.share_with_peers = role_details['share_with_peers']
         return role_instance
     def get_zcrm_profile(self,profile_details):
         try:
