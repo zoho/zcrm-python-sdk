@@ -258,9 +258,25 @@ class EntityAPIHandler(APIHandler):
             record_json["Pricing_Details"]=self.get_price_details_as_jsonarray()
         if len(self.zcrmrecord.tax_list)>0:
             record_json["Tax"]=self.get_tax_list_as_json()
+        if len(self.zcrmrecord.tag_list) > 0:
+            record_json["Tag"] = self.get_tag_list_as_jsonarray()
         return record_json
-        
-    def get_tax_list_as_json(self):
+
+    def get_tag_list_as_jsonarray(self):
+        tagListJsonArr = list()
+        tagList = self.zcrmrecord.tag_list
+        for tagIns in tagList:
+            tagListJsonArr.append(self.get_zcrmtag_detail_as_json(tagIns))
+        return tagListJsonArr
+
+    def get_zcrmtag_detail_as_json(self, tagIns):
+        tagJSON = dict()
+        if tagIns.id != None:
+            tagJSON["id"] = tagIns.id
+        tagJSON["name"] = tagIns.name
+        return tagJSON
+
+    def get_tax_list_as_jsonarray(self):
         taxListJsonArr=list()
         taxList=self.zcrmrecord.tax_list
         for taxIns in taxList:
@@ -333,9 +349,9 @@ class EntityAPIHandler(APIHandler):
     
     def set_record_properties(self,responseDict):
         try:
-            from .Operations import ZCRMUser,ZCRMLayout,ZCRMRecord,ZCRMTax
+            from .Operations import ZCRMUser,ZCRMLayout,ZCRMRecord,ZCRMTax,ZCRMTag
         except ImportError:
-            from Operations import ZCRMUser,ZCRMLayout,ZCRMRecord,ZCRMTax
+            from Operations import ZCRMUser,ZCRMLayout,ZCRMRecord,ZCRMTax,ZCRMTag
         for key in responseDict:
             value=responseDict[key]
             if(value is None):
@@ -376,6 +392,14 @@ class EntityAPIHandler(APIHandler):
                 for taxName in value:
                     taxIns=ZCRMTax.get_instance(taxName)
                     self.zcrmrecord.tax_list.append(taxIns)
+            elif ("Tag" == key and isinstance(value, array)):
+                for tag in value:
+                    tag_ins = ZCRMTag.get_instance(tag['name'], tag['id'])
+                    self.zcrmrecord.tag_list.append(tag_ins)
+            elif ("tags" == key ):
+                for tag in value:
+                    tag_ins = ZCRMTag.get_instance(None, tag)
+                    self.zcrmrecord.tag_list.append(tag_ins)
             elif ("$line_tax" == key):
                 for lineTax in value:
                     taxInstance = ZCRMTax.get_instance(lineTax["name"])
@@ -2001,7 +2025,180 @@ class OrganizationAPIHandler(APIHandler):
             raise ex
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
-        
+
+    def get_organization_taxes(self):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'org/taxes'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.request_api_key = APIConstants.TAXES
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+            org_tax_json = bulk_api_response.response_json[APIConstants.TAXES]
+            org_tax_instances = list()
+            for org_tax_details in org_tax_json:
+                org_tax_instances.append(self.get_zcrm_org_tax(org_tax_details))
+            bulk_api_response.data = org_tax_instances
+            return bulk_api_response
+
+        except ZCRMException as ex:
+            raise ex
+
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def get_organization_tax(self, org_tax_id):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'org/taxes/' + org_tax_id
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.request_api_key = APIConstants.TAXES
+            api_response = APIRequest(handler_ins).get_api_response()
+            api_response.data = self.get_zcrm_org_tax(api_response.response_json[APIConstants.TAXES][0])
+            return api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def create_organization_taxes(self, orgtax_instances):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            if len(orgtax_instances) > 100:
+                CommonUtil.raise_exception('OrgTax_Create', "orgtax instances count must be less than or equals to 100",
+                                           'MORE ORGTAX PROVIDED', "MORE ORGTAX")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'org/taxes'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.request_api_key = APIConstants.TAXES
+            org_tax_array = list()
+            for orgtax_instance in orgtax_instances:
+                if orgtax_instance.id is None:
+                    org_tax_array.append(self.get_zcrmorgtax_as_json(orgtax_instance))
+                else:
+                    CommonUtil.raise_exception('OrgTax_Create', "orgtax id must be None", 'ORGTAX ID PROVIDED',
+                                               "ORGTAX ID")
+            request_json = dict()
+            request_json[APIConstants.TAXES] = org_tax_array
+            handler_ins.request_body = request_json
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def update_organization_taxes(self, orgtax_instances):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            if len(orgtax_instances) > 100:
+                CommonUtil.raise_exception('OrgTax_Update', "orgtax instances count must be less than or equals to 100",
+                                           'MORE ORGTAX PROVIDED', "MORE ORGTAX")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'org/taxes'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_PUT
+            handler_ins.request_api_key = APIConstants.TAXES
+            org_tax_array = list()
+            for orgtax_instance in orgtax_instances:
+                if orgtax_instance.id is None:
+                    CommonUtil.raise_exception('OrgTax_Update', "orgtax id must not be be None", 'ORGTAX ID NOT PROVIDED',
+                                               "ORGTAX ID")
+                else:
+                    org_tax_array.append(self.get_zcrmorgtax_as_json(orgtax_instance))
+
+            request_json = dict()
+            request_json[APIConstants.TAXES] = org_tax_array
+            handler_ins.request_body = request_json
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def delete_organization_taxes(self, orgtax_ids):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            if len(orgtax_ids) > 100:
+                CommonUtil.raise_exception('OrgTax_delete',
+                                           "orgtax ids count must be less than or equals to 100",
+                                           'MORE ORGTAX IDS PROVIDED', "MORE ORGTAX")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'org/taxes'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_DELETE
+            handler_ins.request_api_key = APIConstants.TAXES
+            ids_as_string = ','.join(str(orgtax_id) for orgtax_id in orgtax_ids)
+            handler_ins.add_param('ids', ids_as_string)
+
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def delete_organization_tax(self, orgtax_id):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'org/taxes/' + orgtax_id
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_DELETE
+            handler_ins.request_api_key = APIConstants.TAXES
+            api_response = APIRequest(handler_ins).get_api_response()
+            return api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def get_zcrmorgtax_as_json(self,orgtax_instance):
+        orgtax_as_json=dict()
+
+        if orgtax_instance.id is not None:
+            orgtax_as_json['id']=str(orgtax_instance.id)
+        if orgtax_instance.name is not None:
+            orgtax_as_json['name'] = str(orgtax_instance.name)
+        if orgtax_instance.display_label is not None:
+            orgtax_as_json['display_label'] = str(orgtax_instance.display_label)
+        if orgtax_instance.value is not None:
+            orgtax_as_json['value'] = str(orgtax_instance.value)
+        if orgtax_instance.sequence_number is not None:
+            orgtax_as_json['sequence_number'] = str(orgtax_instance.sequence_number)
+
+        return orgtax_as_json
+
+    def get_zcrm_org_tax(self, orgtax_details):
+        try:
+            from .Operations import ZCRMOrgTax
+        except ImportError:
+            from Operations import ZCRMOrgTax
+
+        org_tax_instance = ZCRMOrgTax.get_instance(orgtax_details['id'],orgtax_details['name'])
+        org_tax_instance.display_label = orgtax_details['name']
+        org_tax_instance.value = orgtax_details['value']
+        return org_tax_instance
+
     def construct_json_from_user_instance(self,user_instance):
         user_info_json=dict()
         if user_instance.role is not None:
@@ -2245,3 +2442,417 @@ class OrganizationAPIHandler(APIHandler):
         user_theme_instance.selected_tab_font_color=user_theme_info['selected_tab']['font_color']
         user_theme_instance.selected_tab_background=user_theme_info['selected_tab']['background']
         return user_theme_instance
+
+class TagAPIHandler(APIHandler):
+    def __init__(self, module_instance):
+        self.module_instance = module_instance
+
+    @staticmethod
+    def get_instance(module_ins=None):
+        return TagAPIHandler(module_ins)
+
+    def get_tags(self):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/tags"
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.request_api_key = APIConstants.TAG
+            handler_ins.add_param('module', self.module_instance.api_name)
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+            tags_json = bulk_api_response.response_json[APIConstants.TAG]
+            tag_list = []
+            for tag_details in tags_json:
+                tag_list.append(self.get_zcrmtag(tag_details))
+            bulk_api_response.data = tag_list
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def get_tag_count(self, tag_id):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'settings/tags/' + tag_id + '/actions/records_count'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.add_param('module',self.module_instance.api_name)
+            api_response = APIRequest(handler_ins).get_api_response()
+            tags_json = api_response.response_json
+            api_response.data = self.get_zcrmtag(tags_json)
+            return api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def create_tags(self,tag_instances):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            if len(tag_instances) > 50:
+                CommonUtil.raise_exception('Tags_Create', "Tag instances count must be less than or equals to 50",
+                                           'MORE TAGS PROVIDED', "MORE TAGs")
+            if len(tag_instances) < 1:
+                CommonUtil.raise_exception('Tags_Update', "Tag instances count must be atleast 1",
+                                           'NO TAGS PROVIDED', "NO TAGs")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'settings/tags'
+            handler_ins.add_param('module', self.module_instance.api_name)
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.request_api_key = APIConstants.TAG
+            tag_array= list()
+            for tag_instance in tag_instances:
+                if tag_instance.id is None:
+                    tag_array.append(self.get_zcrmtag_as_json(tag_instance))
+                else:
+                    CommonUtil.raise_exception('Tags_Create', "TAG id must be None", 'TAG ID PROVIDED',
+                                               "TAG ID")
+            request_json = dict()
+            request_json[APIConstants.TAG] = tag_array
+            handler_ins.request_body = request_json
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+            entity_responses = bulk_api_response.bulk_entity_response
+            length = len(entity_responses)
+            created_tags=list()
+
+            for i in range(0, length):
+                entity_response_ins = entity_responses[i]
+                if entity_response_ins.status == APIConstants.STATUS_SUCCESS:
+                    tag_create_details = entity_response_ins.details
+                    new_tag = self.get_zcrmtag(tag_create_details)
+                    new_tag.name = tag_instances[i].name
+                    created_tags.append(new_tag)
+                    entity_response_ins.data = new_tag
+            bulk_api_response.data = created_tags
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+    def update_tags(self,tag_instances):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            if len(tag_instances) > 50:
+                CommonUtil.raise_exception('Tags_Update', "Tag instances count must be less than or equals to 50",
+                                           'MORE TAGS PROVIDED', "MORE TAGs")
+            if len(tag_instances) < 1:
+                CommonUtil.raise_exception('Tags_Update', "Tag instances count must be atleast 1",
+                                           'NO TAGS PROVIDED', "NO TAGs")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'settings/tags'
+            handler_ins.add_param('module', self.module_instance.api_name)
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_PUT
+            handler_ins.request_api_key = APIConstants.TAG
+            tag_array= list()
+            for tag_instance in tag_instances:
+                if tag_instance.id is None:
+                    CommonUtil.raise_exception('Tags_Update', "TAG id must be None", 'TAG ID PROVIDED',
+                                               "TAG ID")
+                else:
+                    tag_array.append(self.get_zcrmtag_as_json(tag_instance))
+            request_json = dict()
+            request_json[APIConstants.TAG] = tag_array
+            handler_ins.request_body = request_json
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+            entity_responses = bulk_api_response.bulk_entity_response
+            length = len(entity_responses)
+            updated_tags=list()
+            for i in range(0, length):
+                entity_response_ins = entity_responses[i]
+                if entity_response_ins.status == APIConstants.STATUS_SUCCESS:
+                    tag_create_details = entity_response_ins.details
+                    new_tag = self.get_zcrmtag(tag_create_details)
+                    new_tag.name = tag_instances[i].name
+                    updated_tags.append(new_tag)
+                    entity_response_ins.data = new_tag
+            bulk_api_response.data = updated_tags
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def add_tags_to_multiple_records(self, tag_list, record_list):
+        try:
+            try:
+                from .Utility import CommonUtil
+                from .Operations import ZCRMRecord, ZCRMTag
+            except ImportError:
+                from Utility import CommonUtil
+                from Operations import ZCRMRecord, ZCRMTag
+            if len(tag_list) > 50:
+                CommonUtil.raise_exception('add_tags_to_multiple_records', "Tag names count must be less than or equals to 50",
+                                           'MORE TAGS PROVIDED', "MORE TAGs")
+            if len(tag_list) < 1:
+                CommonUtil.raise_exception('add_tags_to_multiple_records', "Tag names count must be atleast 1",
+                                           'NO TAGS PROVIDED', "NO TAGs")
+            if len(record_list) > 100:
+                CommonUtil.raise_exception('add_tags_to_multiple_records', "record id count must be less than or equals to 100",
+                                           'MORE RECORDS PROVIDED', "MORE RECORDS")
+            if len(record_list) < 1:
+                CommonUtil.raise_exception('add_tags_to_multiple_records', "record id count must be atleast 1",
+                                           'NO RECORDS PROVIDED', "NO RECORDS")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = self.module_instance.api_name + '/actions/add_tags'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.request_api_key = APIConstants.DATA
+            record_ids_as_string = ','.join(str(record_id) for record_id in record_list)
+            tag_names_as_string = ','.join(str(tag_name) for tag_name in tag_list)
+            handler_ins.add_param('ids', record_ids_as_string)
+            handler_ins.add_param('tag_names', tag_names_as_string)
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+            entity_responses = bulk_api_response.bulk_entity_response
+            length = len(entity_responses)
+            records=list()
+            for i in range(0, length):
+                entity_response_ins = entity_responses[i]
+                if entity_response_ins.status == APIConstants.STATUS_SUCCESS:
+                    tag_added_details = entity_response_ins.details
+                    record = ZCRMRecord.get_instance(self.module_instance.api_name, tag_added_details['id'])
+                    for tag in tag_added_details['tags']:
+                        record.tag_list.append(ZCRMTag.get_instance(None, tag))
+                    records.append(record)
+                    entity_response_ins.data = record
+            bulk_api_response.data = records
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def remove_tags_from_multiple_records(self, tag_list, record_list):
+        try:
+            try:
+                from .Utility import CommonUtil
+                from .Operations import ZCRMRecord, ZCRMTag
+            except ImportError:
+                from Utility import CommonUtil
+                from Operations import ZCRMRecord, ZCRMTag
+            if len(tag_list) > 50:
+                CommonUtil.raise_exception('remove_tags_to_multiple_records', "Tag names count must be less than or equals to 50",
+                                           'MORE TAGS PROVIDED', "MORE TAGs")
+            if len(tag_list) < 1:
+                CommonUtil.raise_exception('remove_tags_to_multiple_records', "Tag names count must be atleast 1",
+                                           'NO TAGS PROVIDED', "NO TAGs")
+            if len(record_list) > 100:
+                CommonUtil.raise_exception('remove_tags_to_multiple_records', "record id count must be less than or equals to 100",
+                                           'MORE RECORDS PROVIDED', "MORE RECORDS")
+            if len(record_list) < 1:
+                CommonUtil.raise_exception('remove_tags_to_multiple_records', "record id count must be atleast 1",
+                                           'NO RECORDS PROVIDED', "NO RECORDS")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = self.module_instance.api_name + '/actions/remove_tags'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.request_api_key = APIConstants.DATA
+            record_ids_as_string = ','.join(str(record_id) for record_id in record_list)
+            tag_names_as_string = ','.join(str(tag_name) for tag_name in tag_list)
+            handler_ins.add_param('ids', record_ids_as_string)
+            handler_ins.add_param('tag_names', tag_names_as_string)
+            bulk_api_response = APIRequest(handler_ins).get_bulk_api_response()
+            entity_responses = bulk_api_response.bulk_entity_response
+            length = len(entity_responses)
+            records=list()
+            for i in range(0, length):
+                entity_response_ins = entity_responses[i]
+                if entity_response_ins.status == APIConstants.STATUS_SUCCESS:
+                    tag_added_details = entity_response_ins.details
+                    record = ZCRMRecord.get_instance(self.module_instance.api_name,tag_added_details['id'])
+                    for tag in tag_added_details['tags']:
+                        record.tag_list.append(ZCRMTag.get_instance(None, tag))
+                    records.append(record)
+                    entity_response_ins.data = record
+            bulk_api_response.data = records
+            return bulk_api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def add_tags(self, record, tag_list):
+        try:
+            try:
+                from .Utility import CommonUtil
+                from .Operations import ZCRMTag
+            except ImportError:
+                from Utility import CommonUtil
+                from Operations import ZCRMTag
+            if len(tag_list) > 10:
+                CommonUtil.raise_exception('add_tags', "Tag names count must be less than or equals to 10",
+                                           'MORE TAGS PROVIDED', "MORE TAGs")
+            if len(tag_list) < 1:
+                CommonUtil.raise_exception('add_tags', "Tag names count must be atleast 1",
+                                           'NO TAGS PROVIDED', "NO TAGs")
+            if record is None or record.entity_id is None :
+                CommonUtil.raise_exception('add_tags', "no record given",
+                                           'NO RECORD PROVIDED', "NO RECORD")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = record.module_api_name + '/'+record.entity_id+ '/actions/add_tags'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.request_api_key = APIConstants.DATA
+            tag_names_as_string = ','.join(str(tag_name) for tag_name in tag_list)
+            handler_ins.add_param('tag_names', tag_names_as_string)
+            api_response = APIRequest(handler_ins).get_api_response()
+            response_details = api_response.response_json[APIConstants.DATA][0]['details']
+            EntityAPIHandler.get_instance(record).set_record_properties(response_details)
+            api_response.data = record
+            return api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def remove_tags(self, record, tag_list):
+        try:
+            try:
+                from .Utility import CommonUtil
+                from .Operations import ZCRMTag
+            except ImportError:
+                from Utility import CommonUtil
+                from Operations import ZCRMTag
+            if len(tag_list) > 10:
+                CommonUtil.raise_exception('remove_tags', "Tag names count must be less than or equals to 10",
+                                           'MORE TAGS PROVIDED', "MORE TAGs")
+            if len(tag_list) < 1:
+                CommonUtil.raise_exception('remove_tags', "Tag names count must be atleast 1",
+                                           'NO TAGS PROVIDED', "NO TAGs")
+            if record is None or record.entity_id is None :
+                CommonUtil.raise_exception('remove_tags', "no record given",
+                                           'NO RECORD PROVIDED', "NO RECORD")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = record.module_api_name + '/'+record.entity_id + '/actions/remove_tags'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.request_api_key = APIConstants.DATA
+            tag_names_as_string = ','.join(str(tag_name) for tag_name in tag_list)
+            handler_ins.add_param('tag_names', tag_names_as_string)
+            api_response = APIRequest(handler_ins).get_api_response()
+            response_details = api_response.response_json[APIConstants.DATA][0]['details']
+            EntityAPIHandler.get_instance(record).set_record_properties(response_details)
+            api_response.data = record
+            return api_response
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def delete(self, tag_id):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+
+            if tag_id is None :
+                CommonUtil.raise_exception('delete', "no tag id given",'NO TAG ID PROVIDED', "NO TAG ID")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'settings/tags/' + tag_id
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_DELETE
+            handler_ins.request_api_key = APIConstants.TAG
+            api_response = APIRequest(handler_ins).get_api_response()
+            return api_response
+
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def merge(self, tag_id, merge_tag_id):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+
+            if tag_id is None :
+                CommonUtil.raise_exception('merge', "no tag id given",'NO TAG ID PROVIDED', "NO TAG ID")
+            if merge_tag_id is None:
+                CommonUtil.raise_exception('merge', "no merge tag id given", 'NO MERGE TAG ID PROVIDED'
+                                           , "NO MERGE TAG ID")
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'settings/tags/' + merge_tag_id + '/actions/merge'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.request_api_key = APIConstants.TAG
+            tag_json = dict()
+            tag_json["conflict_id"] = tag_id
+            handler_ins.request_body = CommonUtil.create_api_supported_input_json(tag_json, APIConstants.TAG)
+            api_response = APIRequest(handler_ins).get_api_response()
+            response_details = api_response.response_json[APIConstants.TAG][0]['details']
+            api_response.data = self.get_zcrmtag(response_details)
+            return api_response
+
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def update(self, tag):
+        try:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+
+            if tag is None :
+                CommonUtil.raise_exception('update', "no tag provided",'NO TAG  PROVIDED', "NO TAG ")
+
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = 'settings/tags/' + tag.id
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_PUT
+            handler_ins.add_param('module', tag.module_apiname)
+            handler_ins.request_api_key = APIConstants.TAG
+            tag_json=dict()
+            tag_json["name"] = tag.name
+            handler_ins.request_body = CommonUtil.create_api_supported_input_json(tag_json, APIConstants.TAG)
+            api_response = APIRequest(handler_ins).get_api_response()
+            response_details = api_response.response_json[APIConstants.TAG][0]['details']
+            tag = self.get_zcrmtag(response_details)
+            api_response.data = tag
+            return api_response
+
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+
+    def get_zcrmtag(self, tag_details):
+        try:
+            from .Operations import ZCRMTag, ZCRMUser
+        except ImportError:
+            from Operations import ZCRMTag, ZCRMUser
+        tag_instance = ZCRMTag.get_instance(tag_details['id'] if 'id' in tag_details else None,
+                                            tag_details['name'] if 'name' in tag_details else None)
+
+        if 'created_by' in tag_details and tag_details['created_by'] is not None:
+            tag_instance.created_by = ZCRMUser.get_instance(tag_details['created_by']['id']
+                                                            , tag_details['created_by']['name'])
+        if 'modified_by' in tag_details and tag_details['modified_by'] is not None:
+            tag_instance.modified_by = ZCRMUser.get_instance(tag_details['modified_by']['id']
+                                                            , tag_details['modified_by']['name'])
+        tag_instance.created_time = tag_details['created_time'] if 'created_time' in tag_details else None
+        tag_instance.modified_time = tag_details['modified_time'] if 'modified_time' in tag_details else None
+        tag_instance.count = tag_details['count'] if 'count' in tag_details else None
+
+        return tag_instance
+
+    def get_zcrmtag_as_json(self, tag_ins):
+        tag_json = dict()
+        if tag_ins.name is not None:
+            tag_json['name'] = tag_ins.name
+        if tag_ins.id is not None:
+            tag_json['id'] = str(tag_ins.id)
+        return tag_json

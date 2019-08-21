@@ -88,4 +88,16 @@ class ZCRMOrganization(object):
         return OrganizationAPIHandler.get_instance().update_user(user_instance)
     def delete_user(self,user_id):
         return OrganizationAPIHandler.get_instance().delete_user(user_id)
+    def get_organization_taxes(self):
+        return OrganizationAPIHandler.get_instance().get_organization_taxes()
+    def get_organization_tax(self,orgtax_id):
+        return OrganizationAPIHandler.get_instance().get_organization_tax(orgtax_id)
+    def create_organization_taxes(self,orgtax_instances):
+        return OrganizationAPIHandler.get_instance().create_organization_taxes(orgtax_instances)
+    def update_organization_taxes(self,orgtax_instances):
+        return OrganizationAPIHandler.get_instance().update_organization_taxes(orgtax_instances)
+    def delete_organization_taxes(self,orgtax_ids):
+        return OrganizationAPIHandler.get_instance().delete_organization_taxes(orgtax_ids)
+    def delete_organization_tax(self,orgtax_id):
+        return OrganizationAPIHandler.get_instance().delete_organization_tax(orgtax_id)
     

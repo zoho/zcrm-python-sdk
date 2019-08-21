@@ -4,8 +4,8 @@ Created on Jul 31, 2017
 '''
 from RestClient import ZCRMRestClient
 from Operations import ZCRMModule, ZCRMRecord,\
-    ZCRMUser, ZCRMInventoryLineItem, ZCRMTax, ZCRMJunctionRecord, ZCRMNote,\
-    ZCRMCustomView, ZCRMRole, ZCRMProfile
+    ZCRMUser, ZCRMInventoryLineItem, ZCRMTax, ZCRMJunctionRecord, ZCRMNote, ZCRMOrgTax,\
+    ZCRMCustomView, ZCRMRole, ZCRMProfile, ZCRMTag
 from OAuthClient import ZohoOAuth
 import threading
 from CLException import ZCRMException
@@ -20,6 +20,7 @@ class MyThread(threading.Thread):
     def run(self):
         self.local.email=self.email
         print self.local.email
+
 
 class MyClass(object):
     '''
@@ -114,46 +115,325 @@ class MyClass(object):
             #record=ZCRMRecord.get_instance('Leads',440872000000219003)
             record=ZCRMRecord.get_instance('Invoices',1386586000000803061)
             resp=record.get()
-            print resp.status_code
-            print resp.data.entity_id
-            print resp.data.created_by.id
-            print resp.data.modified_by.id
-            print resp.data.owner.id
-            print resp.data.created_by.name
-            print resp.data.created_time
-            print resp.data.modified_time
-            print resp.data.get_field_value('Email')
-            print resp.data.get_field_value('Last_Name')
-            #print resp.data.field_data
-            if resp.data.line_items is not None:
-                for line_item in resp.data.line_items:
-                    print "::::::LINE ITEM DETAILS::::::"
-                    print line_item.id
-                    print line_item.product.lookup_label
-                    print line_item.product.get_field_value('Product_Code')
-                    print line_item.product.entity_id
-                    print line_item.list_price
-                    print line_item.quantity
-                    print line_item.description
-                    print line_item.total
-                    print line_item.discount
-                    print line_item.discount_percentage
-                    print line_item.total_after_discount
-                    print line_item.tax_amount
-                    print line_item.net_total
-                    print line_item.delete_flag
-                    if line_item.line_tax is not None:
-                        for tax in line_item.line_tax:
-                            print ":::::: TAX DETAILS ::::::"
-                            print tax.name
-                            print tax.value
-                            print tax.percentage
+            print(resp.status_code)
+            print( resp.data.entity_id)
+            print( resp.data.created_by.id)
+            print( resp.data.modified_by.id)
+            print( resp.data.owner.id)
+            print( resp.data.created_by.name)
+            print( resp.data.created_time)
+            print( resp.data.modified_time)
+            print( resp.data.get_field_value('Email'))
+            print( resp.data.get_field_value('Last_Name'))
+            #print( resp.data.field_data
+
         except ZCRMException as ex:
-            print ex.status_code
-            print ex.error_message
-            print ex.error_code
-            print ex.error_details
-            print ex.error_content
+            print( ex.status_code)
+            print( ex.error_message)
+            print( ex.error_code)
+            print( ex.error_details)
+            print( ex.error_content)
+    def get_tags(self):
+        try:
+            resp=ZCRMModule.get_instance("Leads").get_tags()
+            print (resp.status_code)
+            tag_ins_array = resp.data
+            for tag_ins in tag_ins_array:
+                print (tag_ins.id)
+                print (tag_ins.name)
+                print (tag_ins.created_by.id)
+                print(tag_ins.created_by.name)
+                print (tag_ins.modified_by.id)
+                print(tag_ins.created_by.id)
+                print (tag_ins.created_time)
+                print (tag_ins.modified_time)
+
+        except ZCRMException as ex:
+            print (ex.status_code)
+            print (ex.error_message)
+            print (ex.error_code)
+            print (ex.error_details)
+            print (ex.error_content)
+
+    def get_tag_count(self):
+        try:
+            resp=ZCRMModule.get_instance("Leads").get_tag_count("3524033000002965001")
+            print (resp.status_code)
+            tag_ins = resp.data
+            print (tag_ins.count)
+
+        except ZCRMException as ex:
+            print (ex.status_code)
+            print (ex.error_message)
+            print (ex.error_code)
+            print (ex.error_details)
+            print (ex.error_content)
+
+    def create_tags(self):
+        try:
+            tag_ins_array = []
+            tag1 = ZCRMTag.get_instance(None, "asdasdsdasdsadsd")
+            tag2 = ZCRMTag.get_instance(None, "dsdasasdssddadsdasd")
+            tag_ins_array.append(tag1)
+            tag_ins_array.append(tag2)
+            resp = ZCRMModule.get_instance("Leads").create_tags(tag_ins_array)
+            print(resp.status_code)
+            tag_created = resp.data
+            entity_responses = resp.bulk_entity_response
+            for entity_response in entity_responses:
+                print (entity_response.details)
+                print (entity_response.status)
+                print (entity_response.message)
+                print (entity_response.code)
+            for tag_ins in tag_created:
+                print(tag_ins.id)
+                print(tag_ins.name)
+                print(tag_ins.created_by.id)
+                print(tag_ins.created_by.name)
+                print(tag_ins.modified_by.id)
+                print(tag_ins.created_by.id)
+                print(tag_ins.created_time)
+                print(tag_ins.modified_time)
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+            print(ex.error_message)
+            print(ex.error_code)
+            print(ex.error_details)
+            print(ex.error_content)
+    def update_tags(self):
+        try:
+            tag_ins_array = []
+            tag1 = ZCRMTag.get_instance("3524033000002967011", "21")
+            tag2 = ZCRMTag.get_instance("3524033000002967012", "312")
+            tag_ins_array.append(tag1)
+            tag_ins_array.append(tag2)
+            resp = ZCRMModule.get_instance("Leads").update_tags(tag_ins_array)
+            print(resp.status_code)
+            tag_created = resp.data
+            for tag_ins in tag_created:
+                print(tag_ins.id)
+                print(tag_ins.name)
+                print(tag_ins.created_by.id)
+                print(tag_ins.created_by.name)
+                print(tag_ins.modified_by.id)
+                print(tag_ins.created_by.id)
+                print(tag_ins.created_time)
+                print(tag_ins.modified_time)
+            entity_responses = resp.bulk_entity_response
+            for entity_response in entity_responses:
+                print(entity_response.details)
+                print(entity_response.status)
+                print(entity_response.message)
+                print(entity_response.code)
+        except ZCRMException as ex:
+            print(ex.status_code)
+            print(ex.error_message)
+            print(ex.error_code)
+            print(ex.error_details)
+            print(ex.error_content)
+    def add_tags_to_multiple_records(self):
+        tag_names=["2", "3"]
+        record_ids=["3524033000002935002", "3524033000002930006"]
+        resp = ZCRMModule.get_instance("Leads").add_tags_to_multiple_records(tag_names, record_ids)
+        entity_responses = resp.bulk_entity_response
+        for entity_response in entity_responses:
+            print(entity_response.details)
+            print(entity_response.status)
+            print(entity_response.message)
+            print(entity_response.code)
+            print (entity_response.data.entity_id)
+            for tag in entity_response.data.tag_list:
+                print (tag.name)
+
+    def remove_tags_from_multiple_records(self):
+        tag_names=["2", "3"]
+        record_ids=["3524033000002935002", "3524033000002930006"]
+        resp = ZCRMModule.get_instance("Leads").remove_tags_from_multiple_records(tag_names, record_ids)
+        entity_responses = resp.bulk_entity_response
+        for entity_response in entity_responses:
+            print(entity_response.details)
+            print(entity_response.status)
+            print(entity_response.message)
+            print(entity_response.code)
+            print (entity_response.data.entity_id)
+            for tag in entity_response.data.tag_list:
+                print (tag.name)
+    def add_tags(self):
+        tag_names = ["2", "3"]
+        resp = ZCRMRecord.get_instance("Leads","3524033000002935002").add_tags(tag_names)
+        print(resp.details)
+        print(resp.status)
+        print(resp.message)
+        print(resp.code)
+        print (resp.data.entity_id)
+        for tag in resp.data.tag_list:
+            print (tag.name)
+    def remove_tags(self):
+        tag_names = ["2", "3"]
+        resp = ZCRMRecord.get_instance("Leads", "3524033000002935002").remove_tags(tag_names)
+        print(resp.details)
+        print(resp.status)
+        print(resp.message)
+        print(resp.code)
+        print (resp.data.entity_id)
+        for tag in resp.data.tag_list:
+            print (tag.name)
+    def delete_tag(self):
+        resp = ZCRMTag.get_instance("3524033000002969007").delete()
+        print(resp.details)
+        print(resp.status)
+        print(resp.message)
+        print(resp.code)
+    def merge_tag(self):
+        tag1 = ZCRMTag.get_instance("3524033000002967001")
+        resp = ZCRMTag.get_instance("3524033000002968001").merge(tag1)
+        print(resp.details)
+        print(resp.status)
+        print(resp.message)
+        print(resp.code)
+        print(resp.data.id)
+        print(resp.data.name)
+
+    def update_tag(self):
+        tag = ZCRMTag.get_instance("3524033000002967011", "aasdsdsdsdasd")
+        tag.module_apiname="Leads"
+        resp=tag.update()
+        print(resp.details)
+        print(resp.status)
+        print(resp.message)
+        print(resp.code)
+
+    def create_organization_taxes(self):
+        try:
+            orgtax_ins_list = list()
+            orgtax=ZCRMOrgTax.get_instance()
+            orgtax.name ="assddasdsd"
+            orgtax.value = 23
+            orgtax_ins_list.append(orgtax)
+            orgtax1 = ZCRMOrgTax.get_instance()
+            orgtax1.name = "asd2sd3sdasd"
+            orgtax1.value = 24
+            orgtax_ins_list.append(orgtax1)
+            resp = ZCRMOrganization.get_instance().create_organization_taxes(orgtax_ins_list)
+            print (resp)
+            print(resp.bulk_entity_response)
+            entity_responses = resp.bulk_entity_response
+            for entity_response in entity_responses:
+                print (entity_response.details)
+                print (entity_response.status)
+                print (entity_response.message)
+                print (entity_response.code)
+
+
+        except ZCRMException as ex:
+            print( ex.status_code)
+            print( ex.error_message)
+            print( ex.error_code)
+            print( ex.error_details)
+            print( ex.error_content)
+    def update_organization_taxes(self):
+        try:
+            orgtax_ins_list = list()
+            orgtax=ZCRMOrgTax.get_instance()
+            orgtax.id = "3524033000002953037"
+            orgtax.name ="asasdadda"
+            orgtax.value = 23
+            orgtax_ins_list.append(orgtax)
+            orgtax1 = ZCRMOrgTax.get_instance()
+            orgtax1.id = "3524033000002953039"
+            orgtax1.name = "asd2dfdasd"
+            orgtax1.value = 24
+            orgtax_ins_list.append(orgtax1)
+            resp = ZCRMOrganization.get_instance().update_organization_taxes(orgtax_ins_list)
+            print (resp)
+            print(resp.bulk_entity_response)
+            entity_responses = resp.bulk_entity_response
+            for entity_response in entity_responses:
+                print (entity_response.details)
+                print (entity_response.status)
+                print (entity_response.message)
+                print (entity_response.code)
+
+
+        except ZCRMException as ex:
+            print( ex.status_code)
+            print( ex.error_message)
+            print( ex.error_code)
+            print( ex.error_details)
+            print( ex.error_content)
+    def delete_organization_taxes(self):
+        try:
+            orgtax_ids= list()
+            orgtax_ids.append("3524033000002953045")
+            orgtax_ids.append("3524033000002953043")
+            resp = ZCRMOrganization.get_instance().delete_organization_taxes(orgtax_ids)
+            print(resp.bulk_entity_response)
+            entity_responses = resp.bulk_entity_response
+            for entity_response in entity_responses:
+                print (entity_response.details)
+                print (entity_response.status)
+                print (entity_response.message)
+                print (entity_response.code)
+
+
+        except ZCRMException as ex:
+            print( ex.status_code)
+            print( ex.error_message)
+            print( ex.error_code)
+            print( ex.error_details)
+            print( ex.error_content)
+    def delete_organization_tax(self):
+        try:
+
+            resp = ZCRMOrganization.get_instance().delete_organization_tax("3524033000002953039")
+            resp.status_code
+            print (resp.code)
+            print (resp.details)
+            print (resp.message)
+            print (resp.status)
+        except ZCRMException as ex:
+            print( ex.status_code)
+            print( ex.error_message)
+            print( ex.error_code)
+            print( ex.error_details)
+            print( ex.error_content)
+
+    def get_organization_taxes(selfself):
+        try:
+            resp = ZCRMOrganization.get_instance().get_organization_taxes()
+            org_taxes = resp.data
+            for org_tax in org_taxes:
+                print ("\n\n")
+                print (org_tax.id)
+                print (org_tax.name)
+                print(org_tax.display_label)
+                print(org_tax.value)
+
+        except ZCRMException as ex:
+            print (ex.status_code)
+            print (ex.error_message)
+            print (ex.error_code)
+            print (ex.error_details)
+            print (ex.error_content)
+
+    def get_organization_tax(selfself):
+        try:
+            resp = ZCRMOrganization.get_instance().get_organization_tax('3524033000002953035')
+            org_tax = resp.data
+            print ("\n\n")
+            print (org_tax.id)
+            print (org_tax.name)
+            print(org_tax.display_label)
+            print(org_tax.value)
+
+        except ZCRMException as ex:
+            print (ex.status_code)
+            print (ex.error_message)
+            print (ex.error_code)
+            print (ex.error_details)
+            print (ex.error_content)
+
 
     def convert_record(self):
         try:
@@ -422,6 +702,81 @@ class MyClass(object):
             print ex.error_details
             print ex.error_content
 
+    def note_get_attachments(self):
+        try:
+            note=ZCRMNote.get_instance(None,"1386586000001856002")
+            resp=note.get_attachments()
+            print(resp.status_code)
+            attachment_ins_arr=resp.data
+            for attachment_ins in attachment_ins_arr:
+                print (attachment_ins.id)
+                print (attachment_ins.file_name)
+                print (attachment_ins.file_type)
+                print (attachment_ins.size)
+                print (attachment_ins.owner.id)
+                print (attachment_ins.created_by.id)
+                print (attachment_ins.modified_by.id)
+                print (attachment_ins.created_time)
+                print( attachment_ins.modified_time)
+                print (attachment_ins.parent_module)
+                print (attachment_ins.attachment_type)
+                print (attachment_ins.parent_name)
+                print (attachment_ins.parent_id)
+                print (attachment_ins.parent_record.entity_id)
+                print ("\n\n")
+        except ZCRMException as ex:
+            print (ex.status_code)
+            print (ex.error_message)
+            print( ex.error_code)
+            print( ex.error_details)
+            print (ex.error_content)
+    def note_upload_attachment(self):
+        try:
+            note = ZCRMNote.get_instance(None, "1386586000001856002")
+            resp=note.upload_attachment('/Users/asdad/Documents/index.html')
+            print (resp.data.id)
+            print (resp.status_code)
+            print (resp.code)
+            print (resp.message)
+            print (resp.status)
+        except ZCRMException as ex:
+            print (ex.status_code)
+            print (ex.error_message)
+            print (ex.error_code)
+            print (ex.error_details)
+            print (ex.error_content)
+
+    def note_download_attachment(self):
+        try:
+            note = ZCRMNote.get_instance(None, "1386586000001856002")
+            resp=note.download_attachment("1386586000001856002")
+            print (resp.response_headers)
+            if resp.status_code == 200:
+                f = open(resp.file_name, "w")
+                for chunk in resp.response:
+                    f.write(chunk)
+                f.close()
+        except ZCRMException as ex:
+            print (ex.status_code)
+            print (ex.error_message)
+            print (ex.error_code)
+            print (ex.error_details)
+            print (ex.error_content)
+
+    def note_delete_attachment(self):
+        try:
+            note = ZCRMNote.get_instance(None, "1386586000001856002")
+            resp=note.delete_attachment("1386586000001856002")
+            print(resp.status_code)
+            print(resp.code)
+            print(resp.message)
+            print(resp.status)
+        except ZCRMException as ex:
+            print (ex.status_code)
+            print (ex.error_message)
+            print (ex.error_code)
+            print (ex.error_details)
+            print (ex.error_content)
     def get_related_records(self):
         try:
             record=ZCRMRecord.get_instance('Leads',1386586000001856002)
@@ -1709,129 +2064,188 @@ class MyClass(object):
             print ex.error_content
 
 
+
+
+
 obj=MyClass()
 #threading.current_thread().setName('support@zohocrm.com')
 #threading.current_thread().__setattr__('current_user_email','support@zohocrm.com')
-ZCRMRestClient.initialize()
+config = {
+        "client_id": "xxxxx",
+        "client_secret": "xxxxxx",
+        "redirect_uri": "https://www.zoho.com",
+        "accounts_url": "https://accounts.zoho.com",
+        "api_base_url": "https://www.zohoapis.com",
+        "access_type": "offline",
+        "mysql_username": "root",
+        "mysql_password": "",
+        "mysql_database": "zohooauth",
+        "mysql_server": "localhost",
+        "mysql_port": "3306",
+        "currentUserEmail": "xxxxx"
+    }
+ZCRMRestClient.initialize(config)
 
-#obj.test()
+obj.test()
 
-#obj.create_record()
+obj.create_record()
 
-#obj.update_record()
+obj.update_record()
 
-#obj.delete_record()
+obj.delete_record()
 
-#obj.get_record()
+obj.get_record()
 
-#obj.convert_record()
+obj.convert_record()
 
-#obj.upload_attachment()
+obj.upload_attachment()
 
-#obj.upload_link_as_attachment()
+obj.upload_link_as_attachment()
 
-#obj.download_attachment()
+obj.download_attachment()
 
-#obj.delete_attachment()
+obj.delete_attachment()
 
-#obj.upload_photo()
+obj.upload_photo()
 
-#obj.download_photo()
+obj.download_photo()
 
-#obj.delete_photo()
+obj.delete_photo()
 
-#obj.add_relation()
+obj.add_relation()
 
-#obj.remove_relation()
+obj.remove_relation()
 
-#obj.add_note()
+obj.add_note()
 
-#obj.update_note()
+obj.update_note()
 
-#obj.delete_note()
+obj.delete_note()
 
-#obj.get_notes()
+obj.get_notes()
 
-#obj.get_attachments()
+obj.get_attachments()
 
-#obj.get_related_records()
+obj.get_related_records()
 
-#obj.get_records()
+obj.get_records()
 
-#obj.create_records()
+obj.create_records()
 
-#obj.update_records()
+obj.update_records()
 
-#obj.upsert_records()
+obj.upsert_records()
 
-#obj.delete_records()
+obj.delete_records()
 
-#obj.get_deleted_records('permanent')
+obj.get_deleted_records('permanent')
 
-#obj.get_deleted_records('recycle')
+obj.get_deleted_records('recycle')
 
-#obj.get_deleted_records('all')
+obj.get_deleted_records('all')
 
-#obj.search_records()
+obj.search_records()
 
-#obj.get_fields()
+obj.get_fields()
 
-#obj.get_field()
+obj.get_field()
 
-#obj.get_all_layouts()
+obj.get_all_layouts()
 
-#obj.get_layout()
+obj.get_layout()
 
-#obj.get_all_customviews()
+obj.get_all_customviews()
 
-#obj.get_customview()
+obj.get_customview()
 
-#obj.update_customview()
+obj.update_customview()
 
-#obj.update_module_settings()
+obj.update_module_settings()
 
-#obj.get_all_relatedlists()
+obj.get_all_relatedlists()
 
-#obj.get_relatedlist()
+obj.get_relatedlist()
 
-#obj.get_org_details()
+obj.get_org_details()
 
-#obj.get_all_users()
+obj.get_all_users()
 
-#obj.get_user()
+obj.get_user()
 
-#obj.get_all_active_confirmed_admin_users()
+obj.get_all_active_confirmed_admin_users()
 
-#obj.get_all_active_confirmed_users()
+obj.get_all_active_confirmed_users()
 
-#obj.get_all_active_users()
+obj.get_all_active_users()
 
-#obj.get_all_admin_users()
+obj.get_all_admin_users()
 
-#obj.get_all_confirmed_users()
+obj.get_all_confirmed_users()
 
-#obj.get_all_deactive_users()
+obj.get_all_deactive_users()
 
-#obj.get_all_deleted_users()
+obj.get_all_deleted_users()
 
-#obj.get_all_not_confirmed_users()
+obj.get_all_not_confirmed_users()
 
-#obj.get_current_user()
+obj.get_current_user()
 
-#obj.create_user()
+obj.create_user()
 
-#obj.update_user()
+obj.update_user()
 
-#obj.delete_user()
+obj.delete_user()
 
-#obj.get_profiles()
+obj.get_profiles()
 
-#obj.get_profile()
+obj.get_profile()
 
-#obj.get_roles()
+obj.get_roles()
 
-#obj.get_role()
+obj.get_role()
 
-#obj.get_modules()
+obj.get_modules()
 
 obj.get_module()
+
+obj.create_organization_taxes()
+
+obj.update_organization_taxes()
+
+obj.delete_organization_taxes()
+
+obj.delete_organization_tax()
+
+obj.get_organization_taxes()
+
+obj.get_organization_tax()
+
+obj.get_tags()
+
+obj.get_tag_count()
+
+obj.create_tags()
+
+obj.update_tags()
+
+obj.add_tags_to_multiple_records()
+
+obj.remove_tags_from_multiple_records()
+
+obj.add_tags()
+
+obj.remove_tags()
+
+obj.delete_tag()
+
+obj.merge_tag()
+
+obj.update_tag()
+
+obj.note_get_attachments()
+
+obj.note_upload_attachment()
+
+obj.note_download_attachment()
+
+obj.note_delete_attachment()

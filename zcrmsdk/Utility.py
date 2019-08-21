@@ -101,7 +101,7 @@ class APIConstants(object):
     
     STATUS_SUCCESS = "success"
     STATUS_ERROR = "error"
-    
+    TAG = "tags"
     LEADS = "Leads"
     ACCOUNTS = "Accounts"
     CONTACTS = "Contacts"
@@ -120,7 +120,7 @@ class APIConstants(object):
     CODE = "code"
     STATUS = "status"
     DETAILS="details"
-    
+    TAXES = "taxes"
     DATA = "data"
     INFO = "info"
     FIELDS='fields'

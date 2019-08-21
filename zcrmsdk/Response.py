@@ -117,8 +117,8 @@ class BulkAPIResponse(CommonAPIResponse):
             exception=ZCRMException(self.url,self.status_code,responseJSON['message'],responseJSON['code'],responseJSON['details'],responseJSON['message'])
             raise exception
     def process_response_data(self):
-        if(APIConstants.DATA in self.response_json):
-            dataList=self.response_json[APIConstants.DATA]
+        if(self.api_key in self.response_json):
+            dataList=self.response_json[self.api_key]
             self.bulk_entity_response=[]
             for eachRecord in dataList:
                 if(APIConstants.STATUS in eachRecord):
@@ -173,9 +173,15 @@ class FileAPIResponse(object):
 class ResponseInfo(object):
     
     def __init__(self,response_info_json):
-        self.is_more_records=bool(response_info_json['more_records'])
-        self.page=int(response_info_json['page'])
-        self.per_page=int(response_info_json['per_page'])
-        self.count=int(response_info_json['count'])
-    
+        for key in response_info_json:
+            value=response_info_json[key]
+            if key == 'more_records':
+                self.is_more_records = bool(value)
+            if key == 'page':
+                self.page = int(value)
+            if key == 'per_page':
+                self.per_page = int(value)
+            if key == 'count':
+                self.count = int(value)
+
         

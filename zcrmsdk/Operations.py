@@ -194,7 +194,47 @@ class ZCRMModule(object):
         except ImportError:
             from Handler import ModuleAPIHandler
         return ModuleAPIHandler.get_instance(self).update_customview(customview_instance)
-    
+    def get_tags(self):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance(self).get_tags()
+
+    def get_tag_count(self,tag_id):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance(self).get_tag_count(tag_id)
+
+    def create_tags(self,tag_instances):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance(self).create_tags(tag_instances)
+
+    def update_tags(self,tag_instances):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance(self).update_tags(tag_instances)
+
+    def add_tags_to_multiple_records(self,tags_name_list, record_id_list):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance(self).add_tags_to_multiple_records(tags_name_list, record_id_list)
+
+    def remove_tags_from_multiple_records(self,tags_name_list, record_id_list):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance(self).remove_tags_from_multiple_records(tags_name_list, record_id_list)
 
 class ZCRMRecord(object):
     '''
@@ -219,6 +259,7 @@ class ZCRMRecord(object):
         self.price_details = []
         self.layout=None
         self.tax_list=[]
+        self.tag_list=[]
         self.last_activity_time=None
     @staticmethod
     def get_instance(module_apiname,entity_id=None):
@@ -290,7 +331,10 @@ class ZCRMRecord(object):
         except ImportError:
             from Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).convert_record(potential_record, assign_to_user)
-    
+
+    def get_attachments(self,page=1,per_page=20):
+        return ZCRMModuleRelation.get_instance(self,"Attachments").get_attachments(page,per_page)
+
     def upload_attachment(self,file_path):
         if file_path is None:
             try:
@@ -401,13 +445,23 @@ class ZCRMRecord(object):
     
     def get_notes(self,sort_by=None,sort_order=None,page=1,per_page=20):
         return ZCRMModuleRelation.get_instance(self,"Notes").get_notes(sort_by,sort_order,page,per_page)
-    
-    def get_attachments(self,page=1,per_page=20):
-        return ZCRMModuleRelation.get_instance(self,"Attachments").get_attachments(page,per_page)
-    
+
     def get_relatedlist_records(self,relatedlist_api_name,sort_by=None,sort_order=None,page=1,per_page=20):
         return ZCRMModuleRelation.get_instance(self,relatedlist_api_name).get_records(sort_by,sort_order,page,per_page)
-        
+
+    def add_tags(self, tagnames):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance().add_tags(self, tagnames)
+
+    def remove_tags(self,tagnames):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance().remove_tags(self, tagnames)
 
 class ZCRMInventoryLineItem(object):
     '''
@@ -436,7 +490,43 @@ class ZCRMInventoryLineItem(object):
     @staticmethod
     def get_instance(param):
         return ZCRMInventoryLineItem(param)
-    
+
+class ZCRMTag(object):
+    def __init__(self, tag_id, name):
+        self.id = tag_id
+        self.name = name
+        self.module_apiname = None
+        self.created_by = None
+        self.modified_by = None
+        self.created_time = None
+        self.modified_time = None
+        self.count = None
+
+    @staticmethod
+    def get_instance(tag_id=None, name=None):
+        return ZCRMTag(tag_id, name)
+
+    def delete(self):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance().delete(self.id)
+
+    def merge(self, merge_tag):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance().merge(self.id, merge_tag.id)
+
+    def update(self):
+        try:
+            from .Handler import TagAPIHandler
+        except ImportError:
+            from Handler import TagAPIHandler
+        return TagAPIHandler.get_instance().update(self)
+
 class ZCRMTax(object):
     
     def __init__(self,name):
@@ -447,7 +537,21 @@ class ZCRMTax(object):
     @staticmethod
     def get_instance(name):
         return ZCRMTax(name)
-    
+
+
+class ZCRMOrgTax(object):
+
+    def __init__(self, org_tax_id, name):
+        self.id = org_tax_id
+        self.name = name
+        self.display_label = None
+        self.value = None
+        self.sequence_number = None
+
+    @staticmethod
+    def get_instance(org_tax_id=None, name=None):
+        return ZCRMOrgTax(org_tax_id, name)
+
 class ZCRMEventParticipant(object):
     def __init__(self,participant_type,participant_id):
         self.id = participant_id
@@ -879,6 +983,38 @@ class ZCRMNote(object):
     @staticmethod
     def get_instance(parent_record,note_id=None):
         return ZCRMNote(parent_record,note_id)
+
+    def get_attachments(self, page=1, per_page=20):
+        return ZCRMModuleRelation.get_instance(ZCRMRecord.get_instance('Notes', self.id), "Attachments").get_attachments(page, per_page)
+
+    def upload_attachment(self, file_path):
+        if file_path is None:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            CommonUtil.raise_exception('Upload_Attachment', "file path must be given", 'FILEPATH NOT PROVIDED',
+                                       "FILEPATH")
+        return ZCRMModuleRelation.get_instance(ZCRMRecord.get_instance('Notes', self.id), "Attachments").upload_attachment(file_path)
+
+    def download_attachment(self, attachment_id):
+        if attachment_id is None:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            CommonUtil.raise_exception('Download_Attachment', "attachment id must be given", 'ID DOES NOT PROVIDED',
+                                       "ID")
+        return ZCRMModuleRelation.get_instance(ZCRMRecord.get_instance('Notes', self.id), "Attachments").download_attachment(attachment_id)
+
+    def delete_attachment(self, attachment_id):
+        if attachment_id is None:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            CommonUtil.raise_exception('Delete_Attachment', "attachment id must be given", 'ID DOES NOT PROVIDED', "ID")
+        return ZCRMModuleRelation.get_instance(ZCRMRecord.get_instance('Notes', self.id), "Attachments").delete_attachment(attachment_id)
     
 class ZCRMPermission(object):
     
