@@ -2856,3 +2856,375 @@ class TagAPIHandler(APIHandler):
         if tag_ins.id is not None:
             tag_json['id'] = str(tag_ins.id)
         return tag_json
+
+
+class VariableAPIHandler(APIHandler):
+    def __init__(self):
+        self.variable = None
+
+    @staticmethod
+    def get_instance():
+        return VariableAPIHandler()
+
+    def get_variables(self):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/variables"
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.add_header("Content-Type", "application/json")
+            handler_ins.api_key = "variables"
+            response = APIRequest(handler_ins).get_bulk_api_response()
+            response_json = response.response_json
+            data = response_json["variables"]
+            data_list = list()
+            for json_data in data:
+                variables_ins = ZCRMVariable.get_instance()
+                self.get_variables_res_as_obj(json_data, variables_ins)
+                data_list.append(variables_ins)
+
+            response.data = data_list
+            return response
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+
+    def get_variables_res_as_obj(self, json_data, entity_instance):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        for key, value in json_data.items():
+
+            if "id" == key:
+                entity_instance.id = value
+
+            elif "name" == key:
+                entity_instance.name = value
+
+            elif "api_name" == key:
+                entity_instance.api_name = value
+
+            elif "type" == key:
+                entity_instance.type = value
+
+            elif "value" == key:
+                entity_instance.value = value
+
+            elif "variable_group" == key:
+                ZCRMVariableGroup_ins = ZCRMVariableGroup.get_instance()
+                ZCRMVariableGroup_ins.id = value['id']
+                ZCRMVariableGroup_ins.api_name = value['api_name']
+                entity_instance.variable_group = ZCRMVariableGroup_ins
+
+            elif "description" == key:
+                entity_instance.description = value
+
+    def get_variable(self, group):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/variables/" + self.variable.id
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.add_header("Content-Type", "application/json")
+            if group is not None:
+                handler_ins.add_param("group", group)
+            handler_ins.api_key = "variables"
+            response = APIRequest(handler_ins).get_api_response()
+            response_json = response.response_json
+            data = response_json["variables"]
+            json_data = data[0]
+            variables_ins = ZCRMVariable.get_instance()
+            self.get_variable_res_as_obj(json_data, variables_ins)
+            response.data = variables_ins
+            return response
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+
+    def get_variable_res_as_obj(self, json_data, entity_instance):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        for key, value in json_data.items():
+            if "id" == key:
+                entity_instance.id = value
+
+            elif "name" == key:
+                entity_instance.name = value
+
+            elif "api_name" == key:
+                entity_instance.api_name = value
+
+            elif "type" == key:
+                entity_instance.type = value
+
+            elif "value" == key:
+                entity_instance.value = value
+
+            elif "variable_group" == key:
+                ZCRMVariableGroup_ins = ZCRMVariableGroup.get_instance()
+                ZCRMVariableGroup_ins.id = value['id']
+                ZCRMVariableGroup_ins.api_name = value['api_name']
+                entity_instance.variable_group = ZCRMVariableGroup_ins
+
+            elif "description" == key:
+                entity_instance.description = value
+
+    def create_variables(self, variables):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/variables"
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.add_header("Content-Type", "application/json")
+            handler_ins.api_key = "variables"
+            request_body = dict()
+            data_list = list()
+            for each_variable in variables:
+                data_object = self.convert_object_to_json(each_variable)
+                data_list.append(data_object)
+
+            request_body['variables'] = data_list
+            handler_ins.request_body = request_body
+            response = APIRequest(handler_ins).get_bulk_api_response()
+            return response
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+
+    def convert_object_to_json(self, entity_instance):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        variables_json = dict()
+        if bool(entity_instance.id):
+            variables_json['id'] = entity_instance.id
+
+        if bool(entity_instance.name):
+            variables_json['name'] = entity_instance.name
+
+        if bool(entity_instance.api_name):
+            variables_json['api_name'] = entity_instance.api_name
+
+        if bool(entity_instance.type):
+            variables_json['type'] = entity_instance.type
+
+        if bool(entity_instance.value):
+            variables_json['value'] = entity_instance.value
+
+        if bool(entity_instance.variable_group):
+            variable_group_json = dict()
+            variable_group = entity_instance.variable_group
+            if bool(variable_group.id):
+                variable_group_json['id'] = variable_group.id
+
+            if bool(variable_group.api_name):
+                variable_group_json['api_name'] = variable_group.api_name
+
+            variables_json['variable_group'] = variable_group_json
+
+        if bool(entity_instance.description):
+            variables_json['description'] = entity_instance.description
+
+        return variables_json
+
+    def update_variables(self, variables):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/variables"
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_PUT
+            handler_ins.add_header("Content-Type", "application/json")
+            handler_ins.api_key = "variables"
+            request_body = dict()
+            data_list = list()
+            for each_variable in variables:
+                data_object = self.convert_object_to_json(each_variable)
+                data_list.append(data_object)
+
+            request_body['variables'] = data_list
+            handler_ins.request_body = request_body
+            response = APIRequest(handler_ins).get_bulk_api_response()
+            return response
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+
+    def update_variable(self):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/variables/" + self.variable.id
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_PUT
+            handler_ins.add_header("Content-Type", "application/json")
+            handler_ins.api_key = "variables"
+            request_body = dict()
+            data_list = list()
+            data_object = self.convert_object_to_json(self.variable)
+            data_list.append(data_object)
+            request_body['variables'] = data_list
+            handler_ins.request_body = request_body
+            response = APIRequest(handler_ins).get_api_response()
+            return response
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+
+    def delete_variable(self):
+        try:
+            from .Operations import ZCRMVariable
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariable
+            from Operations import ZCRMVariableGroup
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/variables/" + self.variable.id
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_DELETE
+            handler_ins.add_header("Content-Type", "application/json")
+            handler_ins.api_key = "variables"
+            request_body = dict()
+            data_list = list()
+            data_object = self.convert_object_to_json(self.variable)
+            data_list.append(data_object)
+            request_body['variables'] = data_list
+            handler_ins.request_body = request_body
+            response = APIRequest(handler_ins).get_api_response()
+            return response
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+
+
+class VariableGroupAPIHandler(APIHandler):
+    def __init__(self):
+        self.variable_group = None
+
+    @staticmethod
+    def get_instance():
+        return VariableGroupAPIHandler()
+
+    def get_variable_groups(self):
+        try:
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariableGroup
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/variable_groups"
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.add_header("Content-Type", "application/json")
+            handler_ins.api_key = "variable_groups"
+            response = APIRequest(handler_ins).get_bulk_api_response()
+            response_json = response.response_json
+            data = response_json["variable_groups"]
+            data_list = list()
+            for json_data in data:
+                variable_groups_ins = ZCRMVariableGroup.get_instance()
+                self.get_variable_groups_res_as_obj(json_data, variable_groups_ins)
+                data_list.append(variable_groups_ins)
+
+            response.data = data_list
+            return response
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+
+    def get_variable_groups_res_as_obj(self, json_data, entity_instance):
+        try:
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariableGroup
+        for key, value in json_data.items():
+            if "id" == key:
+                entity_instance.id = value
+
+            elif "name" == key:
+                entity_instance.name = value
+
+            elif "api_name" == key:
+                entity_instance.api_name = value
+
+            elif "display_label" == key:
+                entity_instance.display_label = value
+
+            elif "description" == key:
+                entity_instance.description = value
+
+    def get_variable_group(self):
+        try:
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariableGroup
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = "settings/variable_groups/" + self.variable_group.id
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.add_header("Content-Type", "application/json")
+            handler_ins.api_key = "variable_groups"
+            response = APIRequest(handler_ins).get_api_response()
+            response_json = response.response_json
+            data = response_json["variable_groups"]
+            json_data = data[0]
+            variable_groups_ins = ZCRMVariableGroup.get_instance()
+            self.get_variable_group_res_as_obj(json_data, variable_groups_ins)
+            response.data = variable_groups_ins
+            return response
+
+        except ZCRMException as ex:
+            print(ex.status_code)
+
+    def get_variable_group_res_as_obj(self, json_data, entity_instance):
+        try:
+            from .Operations import ZCRMVariableGroup
+        except Exception:
+            from Operations import ZCRMVariableGroup
+        for key, value in json_data.items():
+            if "id" == key:
+                entity_instance.id = value
+
+            elif "name" == key:
+                entity_instance.name = value
+
+            elif "api_name" == key:
+                entity_instance.api_name = value
+
+            elif "display_label" == key:
+                entity_instance.display_label = value
+
+            elif "description" == key:
+                entity_instance.description = value

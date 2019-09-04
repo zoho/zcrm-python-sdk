@@ -1119,3 +1119,62 @@ class ZCRMTrashRecord(object):
     @staticmethod
     def get_instance(entity_type,entity_id=None):
         return ZCRMTrashRecord(entity_type,entity_id)
+
+
+try:
+    from .Handler import VariableAPIHandler
+except Exception:
+    from Handler import VariableAPIHandler
+
+class ZCRMVariable(object):
+    def __init__(self):
+        self.id = None
+        self.name = None
+        self.api_name = None
+        self.type = None
+        self.value = None
+        self.variable_group = dict()
+        self.description = None
+
+    @staticmethod
+    def get_instance():
+        return ZCRMVariable()
+
+    def get_variable(self, group):
+        handler_ins = VariableAPIHandler.get_instance()
+        handler_ins.variable = self
+        return handler_ins.get_variable(group)
+
+    def update_variable(self):
+        handler_ins = VariableAPIHandler.get_instance()
+        handler_ins.variable = self
+        return handler_ins.update_variable()
+
+    def delete_variable(self):
+        handler_ins = VariableAPIHandler.get_instance()
+        handler_ins.variable = self
+        return handler_ins.delete_variable()
+
+
+try:
+    from .Handler import VariableGroupAPIHandler
+except Exception:
+    from Handler import VariableGroupAPIHandler
+
+
+class ZCRMVariableGroup(object):
+    def __init__(self):
+        self.id = None
+        self.name = None
+        self.api_name = None
+        self.display_label = None
+        self.description = None
+
+    @staticmethod
+    def get_instance():
+        return ZCRMVariableGroup()
+
+    def get_variable_group(self):
+        handler_ins = VariableGroupAPIHandler.get_instance()
+        handler_ins.variable_group = self
+        return handler_ins.get_variable_group()

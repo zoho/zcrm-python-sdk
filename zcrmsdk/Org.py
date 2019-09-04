@@ -6,8 +6,12 @@ Created on Sep 14, 2017
 
 try:
     from .Handler import OrganizationAPIHandler
+    from .Handler import VariableAPIHandler
+    from .Handler import VariableGroupAPIHandler
 except ImportError:
     from Handler import OrganizationAPIHandler
+    from Handler import VariableAPIHandler
+    from Handler import VariableGroupAPIHandler
 
 class ZCRMOrganization(object):
     '''
@@ -100,4 +104,19 @@ class ZCRMOrganization(object):
         return OrganizationAPIHandler.get_instance().delete_organization_taxes(orgtax_ids)
     def delete_organization_tax(self,orgtax_id):
         return OrganizationAPIHandler.get_instance().delete_organization_tax(orgtax_id)
-    
+
+    def get_variables(self):
+        handler_ins = VariableAPIHandler.get_instance()
+        return handler_ins.get_variables()
+
+    def create_variables(self, variables):
+        handler_ins = VariableAPIHandler.get_instance()
+        return handler_ins.create_variables(variables)
+
+    def update_variables(self, variables):
+        handler_ins = VariableAPIHandler.get_instance()
+        return handler_ins.update_variables(variables)
+
+    def get_variable_groups(self):
+        handler_ins = VariableGroupAPIHandler.get_instance()
+        return handler_ins.get_variable_groups()
