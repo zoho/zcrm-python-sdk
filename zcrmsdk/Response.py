@@ -98,12 +98,13 @@ class BulkAPIResponse(CommonAPIResponse):
     '''
     This class is to store the Bulk APIs responses
     '''
-    def __init__(self, response,status_code,url,apiKey):
+    def __init__(self, response,status_code,url,apiKey,request_method):
         '''
         Constructor
         '''
         self.bulk_entity_response=None
         self.info=None
+        self.request_method = request_method
         super(BulkAPIResponse,self).__init__(response,status_code,url,apiKey)
         self.set_info()
         
@@ -117,7 +118,7 @@ class BulkAPIResponse(CommonAPIResponse):
             exception=ZCRMException(self.url,self.status_code,responseJSON['message'],responseJSON['code'],responseJSON['details'],responseJSON['message'])
             raise exception
     def process_response_data(self):
-        if(self.api_key in self.response_json):
+        if(self.request_method is not APIConstants.REQUEST_METHOD_GET and self.api_key in self.response_json):
             dataList=self.response_json[self.api_key]
             self.bulk_entity_response=[]
             for eachRecord in dataList:

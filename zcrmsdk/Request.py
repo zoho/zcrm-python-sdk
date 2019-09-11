@@ -62,7 +62,7 @@ class APIRequest(object):
             self.authenticate_request()
             connector=HTTPConnector.get_instance(self.url, self.request_params, self.request_headers, self.request_body, self.request_method, self.request_api_key, True)
             response=connector.trigger_request()
-            return BulkAPIResponse(response,response.status_code,self.url,self.request_api_key)
+            return BulkAPIResponse(response,response.status_code,self.url,self.request_api_key,self.request_method)
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
