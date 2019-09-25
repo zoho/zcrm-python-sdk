@@ -63,25 +63,25 @@ Run this command to upgrade the SDK to the latest version.
 Configuration
 --------------
 Below is a sample configuration dictionary containing all keys, which needs to be passed to ZCRMRestClient.initialize() on starting up your application.
->configuration_dictionary = {
-'apiBaseUrl':'https://www.zohoapis.com',
-'apiVersion':'v2',
-'currentUserEmail':'email@gmail.com'
-'sandbox':'False'
-'applicationLogFilePath':'',
-'client_id':'1000.3xxxxxxxxxxxxxxxxxxxxxxxxX0YW',
-'client_secret':'29xxxxxxxxxxxxxxxxxxxxxxxxxxxxx7e32',
-'redirect_uri':'https://www.abc.com',
-'accounts_url':'https://accounts.zoho.com',
-'token_persistence_path':'/Users/Zoho/Desktop/PythonSDK/FilePersistence',
-'access_type':'online',
-//Use the below keys for MySQL DB persistence
-'mysql_username':'',
-'mysql_password':'',
-'mysql_port':'3306',
-//Use the below keys for custom DB persistence
-'persistence_handler_class' : 'Custom',
-'persistence_handler_path': '/Users/Zoho/Desktop/PythonSDK/CustomPersistance.py'
+>configuration_dictionary = { <br>
+'apiBaseUrl':'https://www.zohoapis.com',<br>
+'apiVersion':'v2',<br>
+'currentUserEmail':'email@gmail.com' <br>
+'sandbox':'False'<br>
+'applicationLogFilePath':'',<br>
+'client_id':'1000.3xxxxxxxxxxxxxxxxxxxxxxxxX0YW',<br>
+'client_secret':'29xxxxxxxxxxxxxxxxxxxxxxxxxxxxx7e32',<br>
+'redirect_uri':'https://www.abc.com',<br>
+'accounts_url':'https://accounts.zoho.com',<br>
+'token_persistence_path':'/Users/Zoho/Desktop/PythonSDK/FilePersistence',<br>
+'access_type':'online',<br>
+//Use the below keys for MySQL DB persistence<br>
+'mysql_username':'',<br>
+'mysql_password':'',<br>
+'mysql_port':'3306',<br>
+//Use the below keys for custom DB persistence<br>
+'persistence_handler_class' : 'Custom',<br>
+'persistence_handler_path': '/Users/Zoho/Desktop/PythonSDK/CustomPersistance.py'<br>
 }
 
 Based on the preferred persistence, add all mandatory keys in the configuration dictionary.
@@ -143,10 +143,10 @@ Execute the following code snippet from your main class to get an access token.�
 
 Paste the generated grant token in the string literal mentioned. This is one-time process only.
 
->ZCRMRestClient.initialize(configuration_dictionary) 
-oauth_client = ZohoOAuth.get_client_instance()  
-grant_token="paste_grant_token_here"  
-oauth_tokens = oauth_client.generate_access_token(grant_token) 
+>ZCRMRestClient.initialize(configuration_dictionary) <br>
+oauth_client = ZohoOAuth.get_client_instance()  <br>
+grant_token="paste_grant_token_here" <br>
+oauth_tokens = oauth_client.generate_access_token(grant_token) <br>
 
 Upon successful execution of the above code snippet, the generated access and refresh tokens will be persisted through our persistence handler class, based on the preferred persistence.
 
@@ -156,11 +156,11 @@ Executed the below code snippet from your main class to get an access token. 
 
 Paste the generated refresh token in the string literal mentioned. This is one time process only.
 
->ZCRMRestClient.initialize(configuration_dictionary)  
-oauth_client = ZohoOAuth.get_client_instance()  
-refresh_token="paste_refresh_token_here"  
-user_identifier="provide_user_identifier_like_email_here"  
-oauth_tokens = oauth_client.generate_access_token_from_refresh_token(refresh_token,user_identifier) 
+>ZCRMRestClient.initialize(configuration_dictionary) <br>
+oauth_client = ZohoOAuth.get_client_instance()<br>
+refresh_token="paste_refresh_token_here"  <br>
+user_identifier="provide_user_identifier_like_email_here"  <br>
+oauth_tokens = oauth_client.generate_access_token_from_refresh_token(refresh_token,user_identifier) <br>
 
 Upon successful execution of the above code, the generated access and given refresh tokens will be persisted through our persistence handler class, based on the preferred persistence.
 
@@ -294,67 +294,67 @@ Examples
 Sample code to insert a record:
 -------------------------------
 
->try:  
-  record_ins_list=list()  
-  for i in range(0,2):  
-  record=ZCRMRecord.get_instance('Invoices') #module API Name  
-  record.set_field_value('Subject', 'Invoice'+str(i))  
-  record.set_field_value('Account_Name', 'IIIT')  
-  user=ZCRMUser.get_instance(440872000000175001,'Python Automation User1')  
-  record.set_field_value('Owner',user)  
-  line_item=ZCRMInventoryLineItem.get_instance(ZCRMRecord.get_instance("Products",440872000000224005))  
-  line_item.discount=10  
-  line_item.list_price=8  
-  line_item.description='Product Description'  
-  line_item.quantity=100  
-  line_item.tax_amount=2.5  
-  taxIns=ZCRMTax.get_instance("Vat")  
-  taxIns.percentage=5  
-  line_item.line_tax.append(taxIns)  
-  record.add_line_item(line_item)  
-  record_ins_list.append(record)  
-  resp=ZCRMModule.get_instance('Invoices').create_records(record_ins_list)  
-  print resp.status_code  
-  entity_responses=resp.bulk_entity_response  
-  for entity_response in entity_responses:  
-  print entity_response.details  
-  print entity_response.status  
-  print entity_response.message  
-  print entity_response.code  
-  print entity_response.data.entity_id  
-  print entity_response.data.created_by.id  
-  print entity_response.data.created_time  
-  print entity_response.data.modified_by.id  
-except ZCRMException as ex:  
-    print ex.status_code  
-    print ex.error_message  
-    print ex.error_code  
-    print ex.error_details  
-    print ex.error_content  
+>try:  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;record_ins_list=list()  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;for i in range(0,2):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;record=ZCRMRecord.get_instance('Invoices') #module API Name  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;record.set_field_value('Subject', 'Invoice'+str(i))  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;record.set_field_value('Account_Name', 'IIIT')  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user=ZCRMUser.get_instance(440872000000175001,'Python Automation User1')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;record.set_field_value('Owner',user)  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line_item=ZCRMInventoryLineItem.get_instance(ZCRMRecord.get_instance("Products",440872000000224005))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line_item.discount=10  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line_item.list_price=8  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line_item.description='Product Description' <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line_item.quantity=100  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line_item.tax_amount=2.5  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;taxIns=ZCRMTax.get_instance("Vat")  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;taxIns.percentage=5  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line_item.line_tax.append(taxIns) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;record.add_line_item(line_item)  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;record_ins_list.append(record)  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;resp=ZCRMModule.get_instance('Invoices').create_records(record_ins_list) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print resp.status_code  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;entity_responses=resp.bulk_entity_response  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;for entity_response in entity_responses: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print entity_response.details  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print entity_response.status  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print entity_response.message  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print entity_response.code  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print entity_response.data.entity_id  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print entity_response.data.created_by.id  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print entity_response.data.created_time  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print entity_response.data.modified_by.id  <br>
+except ZCRMException as ex:  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.status_code  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.error_message  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.error_code  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.error_details  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.error_content  <br>
 
 Sample code to fetch records:
 -----------------------------
 
->try:  
-  module_ins=ZCRMModule.get_instance('Products') #module API Name  
-  resp=module_ins.get_records()  
-  print resp.status_code  
-  record_ins_arr=resp.data  
-  for record_ins in record_ins_arr:  
-    print record_ins.entity_id  
-    print record_ins.owner.id  
-    print record_ins.created_by.id  
-    print record_ins.modified_by.id  
-    print record_ins.created_time  
-    print record_ins.modified_time  
-    product_data=record_ins.field_data  
-    for key in product_data:  
-      print key+":"+str(product_data[key])  
-except ZCRMException as ex:  
-  print ex.status_code  
-  print ex.error_message  
-  print ex.error_code  
-  print ex.error_details  
-  print ex.error_content  
+>try:  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;module_ins=ZCRMModule.get_instance('Products') #module API Name  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;resp=module_ins.get_records()  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print resp.status_code  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;record_ins_arr=resp.data  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;for record_ins in record_ins_arr: <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print record_ins.entity_id  <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print record_ins.owner.id  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print record_ins.created_by.id <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print record_ins.modified_by.id  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print record_ins.created_time <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print record_ins.modified_time  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;product_data=record_ins.field_data  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for key in product_data:  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print key+":"+str(product_data[key]) <br>
+except ZCRMException as ex:  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.status_code  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.error_message  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.error_code  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.error_details  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;print ex.error_content  <br>
 
 For more APIs, please refer [this link](https://www.zoho.com/crm/developer/docs/)
