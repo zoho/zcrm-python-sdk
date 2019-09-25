@@ -261,6 +261,24 @@ class ZCRMRecord(object):
         self.tax_list=[]
         self.tag_list=[]
         self.last_activity_time=None
+        self.blueprint_transition_id = None
+        self.blueprint_checklist = list()
+        self.blueprint_values = dict()
+
+    def set_checklist_value(self, key, value):
+        d = dict()
+        d[key] = value
+        self.blueprint_checklist.append(d)
+
+    def set_blueprint_data(self, key, value):
+        self.blueprint_values[key] = value
+
+    def get_checklist_values(self):
+        return self.blueprint_checklist
+
+    def get_blueprint_data(self):
+        return self.blueprint_values
+
     @staticmethod
     def get_instance(module_apiname,entity_id=None):
         return ZCRMRecord(module_apiname,entity_id)
@@ -456,12 +474,32 @@ class ZCRMRecord(object):
             from Handler import TagAPIHandler
         return TagAPIHandler.get_instance().add_tags(self, tagnames)
 
+    def get_blueprint(self):
+        if self.entity_id is None:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            CommonUtil.raise_exception('GET_BLUEPRINT', "id should be set for the record", 'ID IS NOT PROVIDED', "ID")
+        return ZCRMBlueprint.get_instance(self,self.module_api_name,self.entity_id).get_blueprint()
+
     def remove_tags(self,tagnames):
         try:
             from .Handler import TagAPIHandler
         except ImportError:
             from Handler import TagAPIHandler
         return TagAPIHandler.get_instance().remove_tags(self, tagnames)
+
+    def update_blueprint(self):
+        if self.entity_id is None:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            CommonUtil.raise_exception('UPDATE_BLUEPRINT', "id should be set for the record", 'ID IS NOT PROVIDED', "ID")
+        if self.blueprint_transition_id is None:
+            raise Exception("Transition ID is mandatory")
+        return ZCRMBlueprint.get_instance(self, self.module_api_name, self.entity_id).update_blueprint()
 
 class ZCRMInventoryLineItem(object):
     '''
@@ -780,7 +818,22 @@ class ZCRMField(object):
         self.suffix=None
         self.start_number=None
         self.json_type=None
-        
+        self.is_webhook = None
+        self.crypt = None
+        self.tooltip = None
+        self.created_source = None
+        self.display_label = None
+        self.association_details = None
+        self.column_name = None
+        self.type = None
+        self.is_history_tracking = None
+        self.transition_sequence = None
+        self.is_system_mandatory = None
+        self.related_details = None
+        self.personality_name = None
+        self.layouts = None
+        self.criteria = None
+
     @staticmethod
     def get_instance(api_name):
         return ZCRMField(api_name)
@@ -831,11 +884,23 @@ class ZCRMLookupField(object):
         self.display_label=None
         self.module=None
         self.id=None
-        
+        self.field_label = None
+        self.type = None
+
     @staticmethod
     def get_instance(api_name):
         return ZCRMLookupField(api_name)
-    
+
+class ZCRMBlueprintRelatedModule(object):
+
+    def __init__(self,id):
+        self.id = id
+        self.display_label = None
+        self.module_name = None
+
+    @staticmethod
+    def get_instance(id):
+        return ZCRMBlueprintRelatedModule(id)
 
 class ZCRMModuleRelatedList(object):
      
@@ -1178,3 +1243,207 @@ class ZCRMVariableGroup(object):
         handler_ins = VariableGroupAPIHandler.get_instance()
         handler_ins.variable_group = self
         return handler_ins.get_variable_group()
+
+class ZCRMBlueprint(object):
+    def __init__(self,zcrmrecord,entity_type,entity_id):
+        self.zcrmrecord = zcrmrecord
+        self.entity_type = entity_type
+        self.entity_id = entity_id
+        self.transitions = list()
+        self.processinfodata = dict()
+
+    @staticmethod
+    def get_instance(zcmrecord,entity_type,entity_id):
+        return ZCRMBlueprint(zcrmrecord=zcmrecord,entity_type=entity_type,entity_id=entity_id)
+
+    def get_blueprint(self):
+        try:
+            from .Handler import BlueprintAPIHandler
+        except Exception:
+            from Handler import BlueprintAPIHandler
+        try:
+            apiresponse = BlueprintAPIHandler.get_instance(self.zcrmrecord,self.entity_type,self.entity_id).get()
+            blueprint_json = apiresponse.response_json["blueprint"]
+            self.set_processinfo_values(blueprint_json)
+            transitionlist = blueprint_json["transitions"]
+            for transitiondict in transitionlist:
+                self.transitions.append(ZCRMBlueprintTransition.get_instance(self.entity_type).get_transition(transitiondict))
+            apiresponse.data = self
+            return apiresponse
+        except Exception as e:
+            raise e
+
+    def update_blueprint(self):
+        try:
+            from .Handler import BlueprintAPIHandler
+        except Exception:
+            from Handler import BlueprintAPIHandler
+        try:
+            apiresponse = BlueprintAPIHandler.get_instance(self.zcrmrecord,self.entity_type,self.entity_id).update()
+            return apiresponse
+        except Exception as e:
+            raise e
+
+    def set_processinfo_values(self,responsedict):
+        if "process_info" in responsedict:
+            processinfodict = responsedict["process_info"]
+            for key in processinfodict:
+                value = processinfodict[key]
+                self.processinfodata[key] = value;
+        return self.processinfodata
+
+    def get_processinfo_value(self,key):
+        return self.processinfodata[key] if key in self.processinfodata else None
+
+    def get_processinfo_values(self):
+        return self.processinfodata
+
+class ZCRMBlueprintTransition(object):
+    def __init__(self,entity_name):
+        self.entity_name = entity_name
+        self.next_transitions = []
+        self.transition_data = None
+        self.transitionproperties = dict()
+        self.fields = []
+        self.attachments = list()
+        self.checklists = list()
+
+    @staticmethod
+    def get_instance(entity_type):
+        return ZCRMBlueprintTransition(entity_type)
+
+    def get_transition_value(self,key):
+        return self.transitionproperties[key] if key in self.transitionproperties else None
+
+    def get_transition_values(self):
+        return self.transitionproperties
+
+    def get_transition(self,transitiondict):
+            for key in transitiondict:
+                value = transitiondict[key]
+                if key == 'next_transitions' and 'next_transitions' in transitiondict:
+                    transitiondetails = transitiondict['next_transitions']
+                    for eachtransition in transitiondetails:
+                        self.next_transitions.append(ZCRMTransition.get_instance(eachtransition['id'], eachtransition['name']))
+                elif key == 'fields' and 'fields' in transitiondict:
+                    fieldslist = transitiondict['fields']
+                    self.get_fields(fieldslist)
+                elif key =='data' and 'data' in transitiondict:
+                    relatedlist_instance = ZCRMTransitionRelatedData.get_instance()
+                    datadict = transitiondict['data']
+                    for data_key in datadict:
+                        if data_key == 'CheckLists' and 'CheckLists' in datadict:
+                            self.checklists.append(ZCRMTransitionCheckList.get_instance(datadict['CheckLists']['title'] if 'title' in datadict['CheckLists'] else None).get_checklist(datadict['CheckLists']))
+                        elif data_key == 'Attachments' and 'Attachments' in datadict:
+                            for attachment in datadict['Attachments']:
+                                self.attachments.append(ZCRMTransitionAttachment.get_instance(attachment['name'] if 'name' in attachment else None).set_attachment_values(attachment))
+                        else:
+                            relatedlist_instance.populate_data_values(data_key, datadict[data_key])
+                else:
+                    self.transitionproperties[key] = value
+            self.transition_data = (relatedlist_instance)
+            return self
+
+    def get_fields(self, fieldslist):
+        try:
+            from .Operations import ZCRMField,ZCRMModule
+            from .Handler import ModuleAPIHandler
+        except ImportError:
+            from Operations import ZCRMField,ZCRMModule
+            from Handler import ModuleAPIHandler
+        module_instance = ZCRMModule.get_instance(self.entity_name)
+        handler_instance = ModuleAPIHandler.get_instance(module_instance)
+        for field in fieldslist:
+            if 'api_name' not in field:
+                field['api_name'] = None
+            self.fields.append(handler_instance.get_zcrmfield(field))
+
+class ZCRMTransition(object):
+    def __init__(self,id,name):
+        self.name = name
+        self.id = id
+
+    @staticmethod
+    def get_instance(id, name):
+        return ZCRMTransition(id,name)
+
+class ZCRMTransitionCheckList(object):
+    def __init__(self,title):
+        self.title = title
+        self.items = list()
+
+    @staticmethod
+    def get_instance(title):
+        return ZCRMTransitionCheckList(title)
+
+    def get_checklist(self, checklistdict):
+        if 'items' in checklistdict:
+            itemslist = checklistdict['items']
+            for item in itemslist:
+                new_item = {}
+                for keys in item:
+                    new_item[keys] = item[keys]
+                self.items.append(new_item)
+        return self
+
+class ZCRMTransitionRelatedData(object):
+    def __init__(self):
+        self.values = dict()
+
+    @staticmethod
+    def get_instance():
+        return ZCRMTransitionRelatedData()
+
+    def get_value(self, related_list, key):
+        related_list_dict = self.values[related_list]
+        return related_list_dict[key] if key in related_list_dict else None
+
+    def populate_data_values(self, name, relatedlist_dict):
+        if isinstance(relatedlist_dict, dict):
+            current_relatedlist_dict = dict()
+            for keys in relatedlist_dict:
+                current_relatedlist_dict[str(keys)] = relatedlist_dict[str(keys)]
+            self.values[name] = current_relatedlist_dict
+        else:
+            self.values[name] = relatedlist_dict
+
+    def get_data_value(self, key):
+        return self.values[key]
+
+    def get_data_values(self):
+        return self.values
+
+    def get_data_names(self):
+        return self.values.keys()
+
+    def get_data_keys(self,key):
+        return (self.values[key]).keys() if isinstance(self.values[key], dict) else self.values[key]
+
+
+class ZCRMTransitionAttachment(object):
+    def __init__(self,name):
+        self.filesize = None
+        self.name = name
+        self.file_id = None
+        self.link_url = None
+
+    @staticmethod
+    def get_instance(name):
+        return ZCRMTransitionAttachment(name)
+
+    def set_attachment_values(self,attachmentdict):
+        self.file_id = attachmentdict['$file_id'] if '$file_id' in attachmentdict else None
+        self.link_url = attachmentdict['$link_url'] if '$link_url' in attachmentdict else None
+        self.filesize = attachmentdict['fileSize'] if 'fileSize' in attachmentdict else None
+        return self
+
+class ZCRMTransitionCrypt(object):
+    def __init__(self):
+        self.mode = None
+        self.column = None
+        self.table = None
+        self.status = None
+
+    @staticmethod
+    def get_instance():
+        return ZCRMTransitionCrypt()

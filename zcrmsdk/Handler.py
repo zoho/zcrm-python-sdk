@@ -478,7 +478,84 @@ class EntityAPIHandler(APIHandler):
             lineItemInstance.line_tax.append(taxInstance)
         lineItemInstance.net_total=float(lineItemDetails["net_total"])
         
-        return lineItemInstance 
+        return lineItemInstance
+
+    def get_blueprint_data(self):
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = self.zcrmrecord.module_api_name + '/' + str(self.zcrmrecord.entity_id) + \
+                                           '/actions/blueprint'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
+            handler_ins.request_api_key = APIConstants.BLUEPRINT
+            return APIRequest(handler_ins).get_api_response()
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def update_blueprint_data(self):
+        try:
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = self.zcrmrecord.module_api_name + "/" + str(self.zcrmrecord.entity_id) + \
+                                           '/actions/blueprint'
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_PUT
+            handler_ins.request_api_key = APIConstants.BLUEPRINT
+            input_json = self.get_zcrmrecord_blueprint_as_json()
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            body = CommonUtil.create_api_supported_blueprint_json(input_json, APIConstants.BLUEPRINT, self.zcrmrecord.blueprint_transition_id)
+            handler_ins.request_body = body
+            return APIRequest(handler_ins).get_api_response()
+        except ZCRMException as ex:
+            raise ex
+        except Exception as ex:
+            try:
+                from .Utility import CommonUtil
+            except ImportError:
+                from Utility import CommonUtil
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+
+    def get_zcrmrecord_blueprint_as_json(self):
+        try:
+            from .Operations import ZCRMRecord, ZCRMUser, ZCRMInventoryLineItem, ZCRMPriceBookPricing
+        except ImportError:
+            from Operations import ZCRMRecord, ZCRMUser, ZCRMInventoryLineItem, ZCRMPriceBookPricing
+        record_json = dict()
+        apiNameVsValues = self.zcrmrecord.blueprint_values
+        for apiName in apiNameVsValues:
+            value = apiNameVsValues[apiName]
+            if (isinstance(value, dict)):
+                temp_dict = dict()
+                for key in value.keys():
+                    each_value = value[key]
+                    if isinstance(each_value, ZCRMRecord):
+                        each_value = str(each_value.entity_id)
+                    elif isinstance(each_value, ZCRMUser):
+                        each_value = str(each_value.id)
+                    elif isinstance(each_value, list):
+                        if isinstance(each_value.__getitem__(0), ZCRMInventoryLineItem):
+                            each_value = self.get_line_item_json(each_value)
+                        elif isinstance(each_value.__getitem__(0), ZCRMPriceBookPricing):
+                            pricebook_list = list()
+                            for every_pricebook_pricing in each_value:
+                                pricebook_list.append(self.get_zcrmprice_detail_as_json(every_pricebook_pricing))
+                    temp_dict[key] = each_value
+                record_json[apiName] = temp_dict
+            else:
+                if isinstance(value, ZCRMRecord):
+                    value = str(value.entity_id)
+                elif isinstance(value, ZCRMUser):
+                    value = str(value.id)
+                record_json[apiName] = value
+        if len(self.zcrmrecord.blueprint_checklist) > 0:
+            record_json["CheckLists"] = self.zcrmrecord.blueprint_checklist
+        return record_json
 
 class RelatedListAPIHandler(APIHandler):
     
@@ -1551,11 +1628,12 @@ class ModuleAPIHandler(APIHandler):
         for field in fields:
             section_fields.append(self.get_zcrmfield(field))
         return section_fields
+
     def get_zcrmfield(self,field_details):
         try:
-            from .Operations import ZCRMField
+            from .Operations import ZCRMField,ZCRMLayout,ZCRMCustomViewCriteria
         except ImportError:
-            from Operations import ZCRMField
+            from Operations import ZCRMField,ZCRMLayout,ZCRMCustomViewCriteria
         field_instance=ZCRMField.get_instance(field_details['api_name'])
         field_instance.sequence_number=int(field_details['sequence_number']) if 'sequence_number' in field_details else None
         field_instance.id=field_details['id']
@@ -1583,13 +1661,13 @@ class ModuleAPIHandler(APIHandler):
             if viewtype_dict['edit']:
                 field_layout_permissions.append('EDIT')
             field_instance.field_layout_permissions=field_layout_permissions
-        
-        picklist_arr=field_details['pick_list_values']
-        if len(picklist_arr)>0:
-            picklist_instance_arr=list()
-            for picklist in picklist_arr:
-                picklist_instance_arr.append(self.get_picklist_value_instance(picklist))
-            field_instance.picklist_values=picklist_instance_arr
+        if 'pick_list_values' in field_details:
+            picklist_arr=field_details['pick_list_values']
+            if len(picklist_arr)>0:
+                picklist_instance_arr=list()
+                for picklist in picklist_arr:
+                    picklist_instance_arr.append(self.get_picklist_value_instance(picklist))
+                field_instance.picklist_values=picklist_instance_arr
             
         if 'lookup' in field_details and len(field_details['lookup'])>0:
             field_instance.lookup_field=self.get_lookup_field_instance(field_details['lookup'])
@@ -1619,7 +1697,52 @@ class ModuleAPIHandler(APIHandler):
             field_instance.prefix=field_details['auto_number']['prefix'] if 'prefix' in field_details['auto_number'] else None
             field_instance.suffix=field_details['auto_number']['suffix'] if 'suffix' in field_details['auto_number'] else None
             field_instance.start_number=field_details['auto_number']['start_number'] if 'start_number' in field_details['auto_number'] else None
-            
+
+        field_instance.display_label = field_details['display_label'] if 'display_label' in field_details else None
+        field_instance.field_label = field_details['field_label'] if 'field_label' in field_details else None
+        field_instance.tooltip = field_details['tooltip'] if 'tooltip' in field_details else None
+        if 'association_details' in field_details and field_details['association_details'] is not None:
+            associationdict = dict(field_details['association_details'])
+            for keys in associationdict.keys():
+                related_or_lookup_field = dict(associationdict[keys])
+                if related_or_lookup_field is not None:
+                    field_dict = dict()
+                    for field_key in related_or_lookup_field.keys():
+                        field_dict[field_key] = related_or_lookup_field[field_key]
+                    field_instance.association_details[keys] = field_dict
+        field_instance.is_webhook = bool(field_details['webhook']) if 'webhook' in field_details else None
+        if 'crypt' in field_details and field_details['crypt'] is not None:
+            try:
+                from .Operations import ZCRMTransitionCrypt
+            except Exception:
+                from Operations import ZCRMTransitionCrypt
+            crypt_dict = field_details['crypt']
+            crypt_instance = ZCRMTransitionCrypt.get_instance()
+            crypt_instance.mode = crypt_dict['mode'] if 'mode' in crypt_dict else None
+            crypt_instance.column = crypt_dict['column'] if 'column' in crypt_dict else None
+            crypt_instance.table = crypt_dict['table'] if 'table' in crypt_dict else None
+            crypt_instance.status = crypt_dict['status'] if 'status' in crypt_dict else None
+            field_instance.crypt = crypt_instance
+        field_instance.created_source = field_details['created_source'] if 'created_source' in field_details else None
+        field_instance.column_name = field_details['column_name'] if 'column_name' in field_details else None
+        field_instance.type = field_details['_type'] if '_type' in field_details else None
+        field_instance.is_history_tracking = bool(field_details['history_tracking']) if 'history_tracking' in field_details else None
+        field_instance.is_system_mandatory = bool(field_details['system_mandatory']) if 'system_mandatory' in field_details else None
+
+        if 'related_details' in field_details and len(field_details['related_details']) > 0:
+            field_instance.related_details = self.get_lookup_field_instance(field_details['related_details'])
+        field_instance.transition_sequence = field_details['transition_sequence'] if 'transition_sequence' in field_details else None
+        if 'layouts' in field_details and field_details['layouts'] is not None:
+            layout_dict = field_details['layouts']
+            layout_instance = ZCRMLayout.get_instance(layout_dict['id'])
+            layout_instance.name = layout_dict['name']
+            field_instance.layouts = layout_instance
+        if 'criteria' in field_details and field_details['criteria'] is not None:
+            criteria_instance = ZCRMCustomViewCriteria.get_instance()
+            criteria_instance.comparator = field_details['criteria']['comparator']
+            criteria_instance.value = field_details['criteria']['value']
+            field_instance.criteria = criteria_instance
+
         return field_instance
     def get_picklist_value_instance(self,picklist):
         try:
@@ -1638,15 +1761,25 @@ class ModuleAPIHandler(APIHandler):
     
     def get_lookup_field_instance(self,lookup_field_details):
         try:
-            from .Operations import ZCRMLookupField
+            from .Operations import ZCRMLookupField,ZCRMBlueprintRelatedModule
         except ImportError:
-            from Operations import ZCRMLookupField
+            from Operations import ZCRMLookupField,ZCRMBlueprintRelatedModule
         lookup_field_instance=ZCRMLookupField.get_instance(lookup_field_details['api_name'])
-        lookup_field_instance.display_label=lookup_field_details['display_label']
+        lookup_field_instance.display_label=lookup_field_details['display_label'] if 'display_label' in lookup_field_details else None
         lookup_field_instance.id=lookup_field_details['id']
         lookup_field_instance.module=lookup_field_details['module']
+        if (isinstance(lookup_field_details['module'], dict)):
+            moduledict = lookup_field_details['module']
+            relatedmodule_instance = ZCRMBlueprintRelatedModule.get_instance(moduledict['id'])
+            relatedmodule_instance.display_label = moduledict['display_label'] if 'display_label' in moduledict else None
+            relatedmodule_instance.module_name = moduledict['module_name'] if 'display_label' in moduledict else None
+            lookup_field_instance.module = relatedmodule_instance
+        else:
+            lookup_field_instance.module = lookup_field_details['module']
+        lookup_field_instance.type = lookup_field_details['_type'] if '_type' in lookup_field_details else None
+        lookup_field_instance.field_label = lookup_field_details['field_label'] if 'field_label' in lookup_field_details else None
         return lookup_field_instance
-    
+
     def get_zcrmlayouts(self,layouts):
         layout_instances=list()
         for each_layout_details in layouts:
@@ -2878,7 +3011,7 @@ class VariableAPIHandler(APIHandler):
             handler_ins.request_url_path = "settings/variables"
             handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
             handler_ins.add_header("Content-Type", "application/json")
-            handler_ins.api_key = "variables"
+            handler_ins.request_api_key = "variables"
             response = APIRequest(handler_ins).get_bulk_api_response()
             response_json = response.response_json
             data = response_json["variables"]
@@ -2941,7 +3074,7 @@ class VariableAPIHandler(APIHandler):
             handler_ins.add_header("Content-Type", "application/json")
             if group is not None:
                 handler_ins.add_param("group", group)
-            handler_ins.api_key = "variables"
+            handler_ins.request_api_key = "variables"
             response = APIRequest(handler_ins).get_api_response()
             response_json = response.response_json
             data = response_json["variables"]
@@ -2998,7 +3131,7 @@ class VariableAPIHandler(APIHandler):
             handler_ins.request_url_path = "settings/variables"
             handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
             handler_ins.add_header("Content-Type", "application/json")
-            handler_ins.api_key = "variables"
+            handler_ins.request_api_key = "variables"
             request_body = dict()
             data_list = list()
             for each_variable in variables:
@@ -3064,7 +3197,7 @@ class VariableAPIHandler(APIHandler):
             handler_ins.request_url_path = "settings/variables"
             handler_ins.request_method = APIConstants.REQUEST_METHOD_PUT
             handler_ins.add_header("Content-Type", "application/json")
-            handler_ins.api_key = "variables"
+            handler_ins.request_api_key = "variables"
             request_body = dict()
             data_list = list()
             for each_variable in variables:
@@ -3091,7 +3224,7 @@ class VariableAPIHandler(APIHandler):
             handler_ins.request_url_path = "settings/variables/" + self.variable.id
             handler_ins.request_method = APIConstants.REQUEST_METHOD_PUT
             handler_ins.add_header("Content-Type", "application/json")
-            handler_ins.api_key = "variables"
+            handler_ins.request_api_key = "variables"
             request_body = dict()
             data_list = list()
             data_object = self.convert_object_to_json(self.variable)
@@ -3116,7 +3249,7 @@ class VariableAPIHandler(APIHandler):
             handler_ins.request_url_path = "settings/variables/" + self.variable.id
             handler_ins.request_method = APIConstants.REQUEST_METHOD_DELETE
             handler_ins.add_header("Content-Type", "application/json")
-            handler_ins.api_key = "variables"
+            handler_ins.request_api_key = "variables"
             request_body = dict()
             data_list = list()
             data_object = self.convert_object_to_json(self.variable)
@@ -3148,7 +3281,7 @@ class VariableGroupAPIHandler(APIHandler):
             handler_ins.request_url_path = "settings/variable_groups"
             handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
             handler_ins.add_header("Content-Type", "application/json")
-            handler_ins.api_key = "variable_groups"
+            handler_ins.request_api_key = "variable_groups"
             response = APIRequest(handler_ins).get_bulk_api_response()
             response_json = response.response_json
             data = response_json["variable_groups"]
@@ -3195,7 +3328,7 @@ class VariableGroupAPIHandler(APIHandler):
             handler_ins.request_url_path = "settings/variable_groups/" + self.variable_group.id
             handler_ins.request_method = APIConstants.REQUEST_METHOD_GET
             handler_ins.add_header("Content-Type", "application/json")
-            handler_ins.api_key = "variable_groups"
+            handler_ins.request_api_key = "variable_groups"
             response = APIRequest(handler_ins).get_api_response()
             response_json = response.response_json
             data = response_json["variable_groups"]
@@ -3228,3 +3361,30 @@ class VariableGroupAPIHandler(APIHandler):
 
             elif "description" == key:
                 entity_instance.description = value
+
+
+class BlueprintAPIHandler(object):
+
+    def __init__(self,zcrmrecord,entity_type,entity_id):
+        self.zcrmrecord = zcrmrecord
+        self.entity_type = entity_type
+        self.entity_id = entity_id
+
+    @staticmethod
+    def get_instance(zcrmrecord,entity_type,entity_id):
+        return BlueprintAPIHandler(zcrmrecord,entity_type,entity_id)
+
+    def update(self):
+        try:
+            apiresponse = EntityAPIHandler.get_instance(self.zcrmrecord).update_blueprint_data()
+            apiresponse.data = self.zcrmrecord
+            return apiresponse
+        except ZCRMException as ex:
+            raise ex
+
+    def get(self):
+        try:
+            apiresponse = EntityAPIHandler.get_instance(self.zcrmrecord).get_blueprint_data()
+            return apiresponse
+        except ZCRMException as ex:
+            raise ex

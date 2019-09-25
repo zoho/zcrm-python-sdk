@@ -132,6 +132,7 @@ class APIConstants(object):
     ROLES='roles'
     PROFILES='profiles'
     USERS='users'
+    BLUEPRINT = 'blueprint'
     
     RESPONSECODE_OK=200
     RESPONSECODE_CREATED=201
@@ -264,3 +265,17 @@ class CommonUtil(object):
         reqBodyJson=dict()
         reqBodyJson[api_key]=inputJsonArr
         return reqBodyJson
+
+    @staticmethod
+    def create_api_supported_blueprint_json(input_json, api_key, transition_id):
+        if input_json is None:
+            input_json = dict()
+        data = dict()
+        data['transition_id'] = transition_id
+        data['data'] = input_json
+        inputJsonArr = list()
+        inputJsonArr.append(data)
+        reqBodyJson = dict()
+        reqBodyJson[api_key] = inputJsonArr
+        return reqBodyJson
+
