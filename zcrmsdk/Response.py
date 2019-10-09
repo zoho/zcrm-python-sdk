@@ -29,7 +29,7 @@ class CommonAPIResponse(object):
         self.set_response_json()
         self.process_response()
     def set_response_json(self):
-        if(self.status_code!=APIConstants.RESPONSECODE_NO_CONTENT):
+        if(self.status_code!=APIConstants.RESPONSECODE_NO_CONTENT and self.status_code != APIConstants.RESPONSECODE_NOT_MODIFIED):
             self.response_json=self.response.json()
         self.response_headers=self.response.headers
     def process_response(self):
@@ -74,10 +74,12 @@ class APIResponse(CommonAPIResponse):
         if(self.status_code==APIConstants.RESPONSECODE_NO_CONTENT):
             errorMsg=APIConstants.INVALID_DATA+"-"+APIConstants.INVALID_ID_MSG
             exception=ZCRMException(self.url,self.status_code,errorMsg,APIConstants.NO_CONTENT,None,errorMsg)
+            exception.message = exception.__str__()
             raise exception
         else:
             responseJSON=self.response_json
             exception=ZCRMException(self.url,self.status_code,responseJSON[APIConstants.MESSAGE],responseJSON[APIConstants.CODE],responseJSON[APIConstants.DETAILS],responseJSON[APIConstants.MESSAGE])
+            exception.message = exception.__str__()
             raise exception
     def process_response_data(self):
         respJson=self.response_json
@@ -87,6 +89,7 @@ class APIResponse(CommonAPIResponse):
                 respJson=respJson[0]
         if(APIConstants.STATUS in respJson and (respJson[APIConstants.STATUS]==APIConstants.STATUS_ERROR)):
             exception=ZCRMException(self.url,self.status_code,respJson[APIConstants.MESSAGE],respJson[APIConstants.CODE],respJson[APIConstants.DETAILS],respJson[APIConstants.STATUS])
+            exception.message=exception.__str__()
             raise exception
         elif(APIConstants.STATUS in respJson and (respJson[APIConstants.STATUS]==APIConstants.STATUS_SUCCESS)):
             self.status=respJson[APIConstants.STATUS]
@@ -109,13 +112,16 @@ class BulkAPIResponse(CommonAPIResponse):
         self.set_info()
         
     def handle_faulty_responses(self):
-        if(self.status_code==APIConstants.RESPONSECODE_NO_CONTENT):
-            errorMsg=APIConstants.INVALID_DATA+"-"+APIConstants.INVALID_ID_MSG
-            exception=ZCRMException(self.url,self.status_code,errorMsg,APIConstants.NO_CONTENT,None,errorMsg)
+        if(self.status_code==APIConstants.RESPONSECODE_NO_CONTENT or self.status_code==APIConstants.RESPONSECODE_NOT_MODIFIED):
+            errorMsg=APIConstants.INVALID_DATA+"-"+APIConstants.INVALID_ID_MSG if self.status_code==APIConstants.RESPONSECODE_NO_CONTENT else APIConstants.NOT_MODIFIED
+            exception_code=APIConstants.NO_CONTENT if self.status_code==APIConstants.RESPONSECODE_NO_CONTENT else APIConstants.NOT_MODIFIED
+            exception=ZCRMException(self.url,self.status_code,errorMsg,exception_code,None,errorMsg)
+            exception.message = exception.__str__()
             raise exception
         else:
             responseJSON=self.response_json
             exception=ZCRMException(self.url,self.status_code,responseJSON['message'],responseJSON['code'],responseJSON['details'],responseJSON['message'])
+            exception.message = exception.__str__()
             raise exception
     def process_response_data(self):
         if(self.request_method is not APIConstants.REQUEST_METHOD_GET and self.api_key in self.response_json):

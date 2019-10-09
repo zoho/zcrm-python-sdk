@@ -914,7 +914,7 @@ class MassEntityAPIHandler(APIHandler):
     @staticmethod
     def get_instance(module_instance):
         return MassEntityAPIHandler(module_instance)
-    def get_records(self,cvid,sort_by,sort_order,page,per_page):
+    def get_records(self,cvid,sort_by,sort_order,page,per_page,custom_headers):
         try:
             handler_ins=APIHandler()
             handler_ins.request_url_path=self.module_instance.api_name
@@ -926,6 +926,9 @@ class MassEntityAPIHandler(APIHandler):
                 handler_ins.add_param("sort_by", sort_by)
             if sort_order is not None:
                 handler_ins.add_param("sort_order", sort_order)
+            if custom_headers is not None:
+                for header in custom_headers:
+                    handler_ins.add_header(header, custom_headers[header])
             handler_ins.add_param("page", page)
             handler_ins.add_param("per_page", per_page)
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()

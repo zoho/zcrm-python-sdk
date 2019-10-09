@@ -103,7 +103,7 @@ class ZohoOAuth(object):
                 custompersistence_modulename = custompersistence_handler.split(splitter)[-1].rstrip(".py")
                 try:
                     custompersistence_module = importlib.import_module(custompersistence_modulename)
-                    custompersistence_class = getattr(custompersistence_module, custompersistence_modulename)
+                    custompersistence_class = getattr(custompersistence_module, custompersistence_classname)
                     custompersistence_instance = custompersistence_class()
                     return custompersistence_instance
                 except Exception as e:
@@ -235,16 +235,34 @@ class ZohoOAuthTokens(object):
     def set_user_email(self,userEmail):
         self.userEmail=userEmail
 
-from abc import ABC, abstractmethod
-class AbstractZohoOAuthPersistence(ABC):
-    @abstractmethod
-    def get_oauthtokens(self,user_email):
-        pass
+import sys
+if sys.version > '3':
+    from abc import ABC, abstractmethod
+    class AbstractZohoOAuthPersistence(ABC):
+        @abstractmethod
+        def get_oauthtokens(self,user_email):
+            pass
 
-    @abstractmethod
-    def save_oauthtokens(self, oauthtokens):
-        pass
+        @abstractmethod
+        def save_oauthtokens(self, oauthtokens):
+            pass
 
-    @abstractmethod
-    def delete_oauthtokens(self, user_email):
-        pass
+        @abstractmethod
+        def delete_oauthtokens(self, user_email):
+            pass
+else:
+    from abc import ABCMeta, abstractmethod
+    class AbstractZohoOAuthPersistence():
+        __metaclass__ = ABCMeta
+
+        @abstractmethod
+        def get_oauthtokens(self, user_email):
+            pass
+
+        @abstractmethod
+        def save_oauthtokens(self, oauthtokens):
+            pass
+
+        @abstractmethod
+        def delete_oauthtokens(self, user_email):
+            pass

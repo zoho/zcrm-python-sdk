@@ -127,10 +127,12 @@ class APIRequest(object):
             elif(response.status_code==APIConstants.RESPONSECODE_NO_CONTENT):
                 errorMsg=APIConstants.INVALID_DATA+"-"+APIConstants.INVALID_ID_MSG
                 exception=ZCRMException(self.url,response.status_code,errorMsg,APIConstants.NO_CONTENT,None,errorMsg)
+                exception.message = exception.__str__()
                 raise exception
             else:
                 responseJSON=response.json()
                 exception=ZCRMException(self.url,response.status_code,responseJSON[APIConstants.MESSAGE],responseJSON[APIConstants.CODE],responseJSON[APIConstants.DETAILS],responseJSON[APIConstants.MESSAGE])
+                exception.message = exception.__str__()
                 raise exception
         except ZCRMException as ex:
             raise ex
