@@ -190,20 +190,22 @@ class ZohoOAuthClient(object):
             raise ex
     
     def get_tokens_from_json(self,responseJson):
-        expiresIn = responseJson[ZohoOAuthConstants.EXPIRES_IN]
+        expiresIn = responseJson[ZohoOAuthConstants.EXPIRES_IN] if 'expires_in_sec' in responseJson else (responseJson[ZohoOAuthConstants.EXPIRES_IN] * 1000)
         expiresIn=expiresIn+(ZohoOAuthTokens.get_current_time_in_millis())
         accessToken=responseJson[ZohoOAuthConstants.ACCESS_TOKEN]
         refreshToken=None
         if(ZohoOAuthConstants.REFRESH_TOKEN in responseJson):
             refreshToken=responseJson[ZohoOAuthConstants.REFRESH_TOKEN]
         oAuthTokens = ZohoOAuthTokens(refreshToken,accessToken,expiresIn)
-        return oAuthTokens;
+        return oAuthTokens
+
     def get_connector(self,url):
         connector=ZohoOAuthHTTPConnector.get_instance(url,{})
         connector.add_http_request_params(ZohoOAuthConstants.CLIENT_ID, ZohoOAuthClient.oAuthParams.clientID)
         connector.add_http_request_params(ZohoOAuthConstants.CLIENT_SECRET, ZohoOAuthClient.oAuthParams.clientSecret)
         connector.add_http_request_params(ZohoOAuthConstants.REDIRECT_URL, ZohoOAuthClient.oAuthParams.redirectUri)
         return connector
+
     def get_user_email_from_iam(self,accessToken):
         header={ZohoOAuthConstants.AUTHORIZATION:(ZohoOAuthConstants.OAUTH_HEADER_PREFIX+accessToken)}
         connector=ZohoOAuthHTTPConnector.get_instance(ZohoOAuth.get_user_info_url(),None,header,None,ZohoOAuthConstants.REQUEST_METHOD_GET)
