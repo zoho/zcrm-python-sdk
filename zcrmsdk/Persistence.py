@@ -86,23 +86,26 @@ class ZohoOAuthPersistenceFileHandler(object):
     '''
     This class deals with persistance of oauth related tokens in File
     '''
+    def __init__(self):
+        import os
+        try:
+            from .OAuthClient import ZohoOAuth
+            from .OAuthUtility import ZohoOAuthConstants
+        except ImportError:
+            from OAuthClient import ZohoOAuth
+            from OAuthUtility import ZohoOAuthConstants
+        self.file_path = os.path.join(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH], ZohoOAuthConstants.PERSISTENCE_FILE_NAME)
+
     def save_oauthtokens(self,oAuthTokens):
         try:
             self.delete_oauthtokens(oAuthTokens.userEmail)
-            try:
-                from .OAuthClient import ZohoOAuth
-                from .OAuthUtility import ZohoOAuthConstants
-            except ImportError:
-                from OAuthClient import ZohoOAuth
-                from OAuthUtility import ZohoOAuthConstants
             import os
-            os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
             import pickle
-            if os.path.isfile(ZohoOAuthConstants.PERSISTENCE_FILE_NAME):
-                with open(ZohoOAuthConstants.PERSISTENCE_FILE_NAME, 'ab') as fp:
+            if os.path.isfile(self.file_path):
+                with open(self.file_path, 'ab') as fp:
                     pickle.dump(oAuthTokens, fp, pickle.HIGHEST_PROTOCOL)
             else:
-                with open(ZohoOAuthConstants.PERSISTENCE_FILE_NAME, 'wb') as fp:
+                with open(self.file_path, 'wb') as fp:
                     pickle.dump(oAuthTokens, fp, pickle.HIGHEST_PROTOCOL)
             
         except Exception as ex:
@@ -112,19 +115,17 @@ class ZohoOAuthPersistenceFileHandler(object):
         
     def get_oauthtokens(self,userEmail):
         try:
+            import os
             import pickle
             try:
-                from .OAuthClient import ZohoOAuth,ZohoOAuthTokens
-                from .OAuthUtility import ZohoOAuthConstants
+                from .OAuthClient import ZohoOAuthTokens
             except ImportError:
-                from OAuthClient import ZohoOAuth,ZohoOAuthTokens
-                from OAuthUtility import ZohoOAuthConstants
-            import os
-            os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
+                from OAuthClient import ZohoOAuthTokens
+
             responseObj=ZohoOAuthTokens(None,None,None,None)
-            if not os.path.isfile(ZohoOAuthConstants.PERSISTENCE_FILE_NAME):
+            if not os.path.isfile(self.file_path):
                 return responseObj
-            with open(ZohoOAuthConstants.PERSISTENCE_FILE_NAME, 'rb') as fp:
+            with open(self.file_path, 'rb') as fp:
                 while True:
                     try:
                         oAuthObj=pickle.load(fp)
@@ -142,18 +143,11 @@ class ZohoOAuthPersistenceFileHandler(object):
     def delete_oauthtokens(self,userEmail):
         try:
             import pickle
-            try:
-                from .OAuthClient import ZohoOAuth
-                from .OAuthUtility import ZohoOAuthConstants
-            except ImportError:
-                from OAuthClient import ZohoOAuth
-                from OAuthUtility import ZohoOAuthConstants
             import os
-            os.chdir(ZohoOAuth.configProperties[ZohoOAuthConstants.TOKEN_PERSISTENCE_PATH])
-            if not os.path.isfile(ZohoOAuthConstants.PERSISTENCE_FILE_NAME):
+            if not os.path.isfile(self.file_path):
                 return
             objectsToPreserve=[]
-            with open(ZohoOAuthConstants.PERSISTENCE_FILE_NAME, 'rb') as fp:
+            with open(self.file_path, 'rb') as fp:
                 while True:
                     try:
                         oAuthObj=pickle.load(fp)
@@ -161,7 +155,7 @@ class ZohoOAuthPersistenceFileHandler(object):
                             objectsToPreserve.append(oAuthObj)
                     except EOFError:
                         break
-            with open(ZohoOAuthConstants.PERSISTENCE_FILE_NAME, 'wb') as fp:
+            with open(self.file_path, 'wb') as fp:
                 for eachObj in objectsToPreserve:
                     pickle.dump(eachObj, fp, pickle.HIGHEST_PROTOCOL)
             
