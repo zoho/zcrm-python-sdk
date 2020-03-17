@@ -257,7 +257,7 @@ class EntityAPIHandler(APIHandler):
         if len(self.zcrmrecord.price_details)>0:
             record_json["Pricing_Details"]=self.get_price_details_as_jsonarray()
         if len(self.zcrmrecord.tax_list)>0:
-            record_json["Tax"]=self.get_tax_list_as_json()
+            record_json["Tax"]=self.get_tax_list_as_jsonarray()
         if len(self.zcrmrecord.tag_list) > 0:
             record_json["Tag"] = self.get_tag_list_as_jsonarray()
         return record_json
