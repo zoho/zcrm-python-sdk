@@ -358,11 +358,11 @@ class EntityAPIHandler(APIHandler):
                 continue
             if(key=="id"):
                 self.zcrmrecord.entity_id=value
-            elif("Product_Details"==key):
+            elif("Product_Details"==key and self.zcrmrecord.module_api_name in APIConstants.INVENTORY_MODULES):
                 self.set_inventory_line_items(value)
-            elif("Participants"==key):
+            elif("Participants"==key and self.zcrmrecord.module_api_name == "Events"):
                 self.set_participants(value)
-            elif ("Pricing_Details"==key):
+            elif ("Pricing_Details"==key and self.zcrmrecord.module_api_name == "Price_Books"):
                 self.set_price_details(value)
             elif("Created_By"==key):
                 createdBy = ZCRMUser.get_instance(value["id"], value["name"])

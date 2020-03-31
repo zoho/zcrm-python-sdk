@@ -172,6 +172,7 @@ class APIConstants(object):
     CURR_WINDOW_RESET="X-RATELIMIT-RESET";
     API_COUNT_REMAINING_FOR_THE_DAY="X-RATELIMIT-DAY-REMAINING";
     API_LIMIT_FOR_THE_DAY="X-RATELIMIT-DAY-LIMIT"
+    INVENTORY_MODULES = ["Invoices", "Sales_Orders","Purchase_Orders","Quotes"]
     
 class ZCRMConfigUtil(object):
     '''
