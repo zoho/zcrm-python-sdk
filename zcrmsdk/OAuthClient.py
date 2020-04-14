@@ -210,7 +210,13 @@ class ZohoOAuthClient(object):
         header={ZohoOAuthConstants.AUTHORIZATION:(ZohoOAuthConstants.OAUTH_HEADER_PREFIX+accessToken)}
         connector=ZohoOAuthHTTPConnector.get_instance(ZohoOAuth.get_user_info_url(),None,header,None,ZohoOAuthConstants.REQUEST_METHOD_GET)
         response=connector.trigger_request()
-        return response.json()['Email']
+        data = response.json()
+        if data.get('response') == 'error':
+            raise ZohoOAuthException((
+                "Exception occured while fetching email from iam ; "
+                "Response is: {0}"
+            ).format(data))
+        return data['Email']
 
 class ZohoOAuthTokens(object):
     '''
