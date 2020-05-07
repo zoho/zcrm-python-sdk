@@ -210,7 +210,12 @@ class ZohoOAuthClient(object):
         header={ZohoOAuthConstants.AUTHORIZATION:(ZohoOAuthConstants.OAUTH_HEADER_PREFIX+accessToken)}
         connector=ZohoOAuthHTTPConnector.get_instance(ZohoOAuth.get_user_info_url(),None,header,None,ZohoOAuthConstants.REQUEST_METHOD_GET)
         response=connector.trigger_request()
-        return response.json()['Email']
+        try:
+            response_json = response.json()
+            if 'Email' in response_json:
+                return response.json()['Email']
+        except ValueError as err:
+            raise ZohoOAuthException('Exception while fetching User email from access token, Make sure AAAserver.profile.Read scope is included while generating the Grant token')
 
 class ZohoOAuthTokens(object):
     '''
