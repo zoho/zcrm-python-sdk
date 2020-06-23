@@ -439,9 +439,19 @@ class EntityAPIHandler(APIHandler):
             from .Operations import ZCRMEventParticipant
         except ImportError:
             from Operations import ZCRMEventParticipant
-        participant = ZCRMEventParticipant.get_instance(participantDetails['type'],participantDetails['participant'])
+
+        email = None
+        id = None
+
+        if "Email" in participantDetails:
+            email = participantDetails['Email']
+            id = participantDetails['participant']
+        else:
+            email = participantDetails['participant']
+
+        participant = ZCRMEventParticipant.get_instance(participantDetails['type'], id)
         participant.name=participantDetails["name"]
-        participant.email=participantDetails["Email"]
+        participant.email = email
         participant.is_invited=bool(participantDetails["invited"])
         participant.status=participantDetails["status"]
         
