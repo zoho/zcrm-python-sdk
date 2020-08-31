@@ -97,19 +97,19 @@ class ZCRMModule(object):
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).get_all_deleted_records(page=0,per_page=200,custom_headers=None)
+        return MassEntityAPIHandler.get_instance(self).get_all_deleted_records(page,per_page,custom_headers)
     def get_recyclebin_records(self,page=0,per_page=200,custom_headers=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).get_recyclebin_records(page=0,per_page=200,custom_headers=None)
+        return MassEntityAPIHandler.get_instance(self).get_recyclebin_records(page,per_page,custom_headers)
     def get_permanently_deleted_records(self,page=0,per_page=200,custom_headers=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).get_permanently_deleted_records(page=0,per_page=200,custom_headers=None)
+        return MassEntityAPIHandler.get_instance(self).get_permanently_deleted_records(page,per_page,custom_headers)
     def search_records(self,search_word,page=0,per_page=200):
         try:
             from .Handler import MassEntityAPIHandler
