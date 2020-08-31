@@ -1163,13 +1163,13 @@ class MassEntityAPIHandler(APIHandler):
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
-    def get_all_deleted_records(self):
-        return self.get_deleted_records('all')
-    def get_recyclebin_records(self):
-        return self.get_deleted_records('recycle')
-    def get_permanently_deleted_records(self):
-        return self.get_deleted_records('permanent')
-    def get_deleted_records(self,trashed_type):
+    def get_all_deleted_records(self,page,per_page,custom_headers):
+        return self.get_deleted_records('all',page,per_page,custom_headers)
+    def get_recyclebin_records(self,page,per_page,custom_headers):
+        return self.get_deleted_records('recycle',page,per_page,custom_headers)
+    def get_permanently_deleted_records(self,page,per_page,custom_headers):
+        return self.get_deleted_records('permanent',page,per_page,custom_headers)
+    def get_deleted_records(self,trashed_type,page,per_page,custom_headers):
         try:
             handler_ins=APIHandler()
             handler_ins.request_url_path=self.module_instance.api_name+"/deleted"
