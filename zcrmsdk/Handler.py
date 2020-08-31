@@ -1179,9 +1179,9 @@ class MassEntityAPIHandler(APIHandler):
                 handler_ins.add_param("type", trashed_type)
             if custom_headers is not None:
                 for header in custom_headers:
-                    header_ins.add_header(header,custom_headers[header])
-            header_ins.add_param("page",page)
-            header_ins.add_param("per_page",per_page)
+                    handler_ins.add_header(header,custom_headers[header])
+            handler_ins.add_param("page",page)
+            handler_ins.add_param("per_page",per_page)
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
             data_arr=bulk_api_response.response_json[APIConstants.DATA]
             record_ins_list=list()
