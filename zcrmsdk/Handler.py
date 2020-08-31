@@ -1163,13 +1163,13 @@ class MassEntityAPIHandler(APIHandler):
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
         
-    def get_all_deleted_records(self):
-        return self.get_deleted_records('all')
-    def get_recyclebin_records(self):
-        return self.get_deleted_records('recycle')
-    def get_permanently_deleted_records(self):
-        return self.get_deleted_records('permanent')
-    def get_deleted_records(self,trashed_type):
+    def get_all_deleted_records(self, page, per_page, custom_headers):
+        return self.get_deleted_records('all', page, per_page, custom_headers)
+    def get_recyclebin_records(self, page, per_page, custom_headers):
+        return self.get_deleted_records('recycle', page, per_page, custom_headers)
+    def get_permanently_deleted_records(self, page, per_page, custom_headers):
+        return self.get_deleted_records('permanent', page, per_page, custom_headers)
+    def get_deleted_records(self,trashed_type, page, per_page, custom_headers):
         try:
             handler_ins=APIHandler()
             handler_ins.request_url_path=self.module_instance.api_name+"/deleted"
@@ -1177,6 +1177,11 @@ class MassEntityAPIHandler(APIHandler):
             handler_ins.request_api_key=APIConstants.DATA
             if trashed_type is not None:
                 handler_ins.add_param("type", trashed_type)
+            if custom_headers is not None:
+                for header, value in custom_headers.items():
+                    handler_ins.add_header(header, value)
+            handler_ins.add_param("page", page)
+            handler_ins.add_param("per_page", per_page)
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
             data_arr=bulk_api_response.response_json[APIConstants.DATA]
             record_ins_list=list()
