@@ -92,24 +92,24 @@ class ZCRMModule(object):
         except ImportError:
             from Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).delete_records(entityid_list)
-    def get_all_deleted_records(self):
+    def get_all_deleted_records(self,page=0,per_page=200,custom_headers=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).get_all_deleted_records()
-    def get_recyclebin_records(self):
+        return MassEntityAPIHandler.get_instance(self).get_all_deleted_records(page=0,per_page=200,custom_headers=None)
+    def get_recyclebin_records(self,page=0,per_page=200,custom_headers=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).get_recyclebin_records()
-    def get_permanently_deleted_records(self):
+        return MassEntityAPIHandler.get_instance(self).get_recyclebin_records(page=0,per_page=200,custom_headers=None)
+    def get_permanently_deleted_records(self,page=0,per_page=200,custom_headers=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).get_permanently_deleted_records()
+        return MassEntityAPIHandler.get_instance(self).get_permanently_deleted_records(page=0,per_page=200,custom_headers=None)
     def search_records(self,search_word,page=0,per_page=200):
         try:
             from .Handler import MassEntityAPIHandler
