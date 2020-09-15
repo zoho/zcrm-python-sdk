@@ -55,7 +55,7 @@ class APIRequest(object):
             except ImportError:
                 from Utility import CommonUtil
             import traceback
-            CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(self.url,ex.__str__(),traceback.format_stack())
         
     def get_bulk_api_response(self):
         try:
@@ -71,7 +71,7 @@ class APIRequest(object):
             except ImportError:
                 from Utility import CommonUtil
             import traceback
-            CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(self.url,ex.__str__(),traceback.format_stack())
         
     def upload_attachment(self,file_path,upload_file=True):
         try:
@@ -92,7 +92,7 @@ class APIRequest(object):
             except ImportError:
                 from Utility import CommonUtil
             import traceback
-            CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(self.url,ex.__str__(),traceback.format_stack())
     def upload_link_as_attachment(self):
         try:
             self.authenticate_request()
@@ -109,7 +109,7 @@ class APIRequest(object):
             except ImportError:
                 from Utility import CommonUtil
             import traceback
-            CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(self.url,ex.__str__(),traceback.format_stack())
       
     def download_attachment(self):
         try:
@@ -142,4 +142,4 @@ class APIRequest(object):
             except ImportError:
                 from Utility import CommonUtil
             import traceback
-            CommonUtil.raise_exception(self.url,ex.message,traceback.format_stack())  
+            CommonUtil.raise_exception(self.url,ex.__str__(),traceback.format_stack())

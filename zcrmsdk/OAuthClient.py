@@ -137,12 +137,14 @@ class ZohoOAuthClient(object):
             oAuthTokens=handler.get_oauthtokens(userEmail)
             try:
                 return oAuthTokens.get_access_token()
-            except Exception as e:
-                OAuthLogger.add_log("Access token expired hence refreshing",logging.INFO,e)
-                oAuthTokens=self.refresh_access_token(oAuthTokens.refreshToken,userEmail)
+            except ZohoOAuthException as ex:
+                OAuthLogger.add_log("Access token expired hence refreshing", logging.INFO, ex)
+                oAuthTokens = self.refresh_access_token(oAuthTokens.refreshToken, userEmail)
                 return oAuthTokens.accessToken
+            except Exception as e:
+                raise e
         except Exception as ex:
-            OAuthLogger.add_log("Exception occured while fetching oauthtoken from db",logging.ERROR,ex)
+            OAuthLogger.add_log("Exception occurred while fetching oauthtokens", logging.ERROR, ex)
             raise ex
     def generate_access_token_from_refresh_token(self,refreshToken,userEmail):
         self.refresh_access_token(refreshToken, userEmail)
@@ -231,7 +233,7 @@ class ZohoOAuthTokens(object):
         self.userEmail=user_email
         
     def get_access_token(self):
-        if((self.expiryTime-self.get_current_time_in_millis())>5000):
+        if(self.expiryTime-self.get_current_time_in_millis()) > 5000:
             return self.accessToken
         else:
             raise ZohoOAuthException("Access token got expired!")

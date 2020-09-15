@@ -122,18 +122,21 @@ class ZohoOAuthPersistenceFileHandler(object):
             except ImportError:
                 from OAuthClient import ZohoOAuthTokens
 
-            responseObj=ZohoOAuthTokens(None,None,None,None)
+            responseObj = None
+
             if not os.path.isfile(self.file_path):
-                return responseObj
+                raise Exception('Token Persistence File is not found')
             with open(self.file_path, 'rb') as fp:
                 while True:
                     try:
-                        oAuthObj=pickle.load(fp)
-                        if(userEmail==oAuthObj.userEmail):
-                            responseObj=oAuthObj
+                        oAuthObj = pickle.load(fp)
+                        if(userEmail == oAuthObj.userEmail):
+                            responseObj= ZohoOAuthTokens(oAuthObj.refreshToken, oAuthObj.accessToken, oAuthObj.expiryTime, oAuthObj.userEmail)
                             break
                     except EOFError:
                         break
+            if responseObj is None:
+                raise Exception('No tokens found for the given user')
             return responseObj
         except Exception as ex:
             import logging

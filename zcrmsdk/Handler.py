@@ -67,7 +67,7 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def create_record(self):
         try:
             handler_ins=APIHandler()
@@ -95,7 +95,7 @@ class EntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def update_record(self):
         try:
@@ -127,7 +127,7 @@ class EntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def delete_record(self):
         try:
@@ -144,7 +144,7 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
     def convert_record(self,potential_record,assign_to_user):
         try:
@@ -181,7 +181,7 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def upload_photo(self,file_path):
         try:
@@ -197,7 +197,7 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
             
     def download_photo(self):
         try:
@@ -213,7 +213,7 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
     def delete_photo(self):
         try:
@@ -229,7 +229,7 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
             
     def get_zcrmrecord_as_json(self):
         try:
@@ -505,7 +505,7 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def update_blueprint_data(self):
         try:
@@ -529,7 +529,7 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def get_zcrmrecord_blueprint_as_json(self):
         try:
@@ -618,7 +618,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def add_relation(self):
         try:
@@ -636,7 +636,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def remove_relation(self):
         try:
@@ -652,7 +652,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def add_note(self,zcrm_note_ins):
         try:
@@ -673,7 +673,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def update_note(self,zcrm_note_ins):
         try:
@@ -694,7 +694,7 @@ class RelatedListAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def delete_note(self,zcrm_note_ins):
         try:
@@ -710,7 +710,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def get_notes(self,sort_by,sort_order,page,per_page):
         try:
             handler_ins=APIHandler()
@@ -737,7 +737,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
     def get_attachments(self,page,per_page):
         try:
@@ -761,7 +761,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def get_zcrmnote_as_json(self,zcrm_note_ins):
         note_json=dict()
@@ -856,7 +856,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def upload_link_as_attachment(self,link_url):
         try:
             handler_ins=APIHandler()
@@ -883,7 +883,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def download_attachment(self,attachment_id):
         try:
@@ -898,7 +898,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def delete_attachment(self,attachment_id):
         try:
@@ -914,7 +914,7 @@ class RelatedListAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
 class MassEntityAPIHandler(APIHandler):
         
@@ -961,7 +961,7 @@ class MassEntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def create_records(self,record_ins_list):
         try:
             try:
@@ -1002,7 +1002,7 @@ class MassEntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def upsert_records(self,record_ins_list,duplicate_check_fields):
         try:
@@ -1047,7 +1047,7 @@ class MassEntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
     def update_records(self,record_ins_list):
         try:
@@ -1089,7 +1089,7 @@ class MassEntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
 
     def update_mass_records(self,entityid_list,field_api_name,value):
         try:
@@ -1127,7 +1127,7 @@ class MassEntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
     def delete_records(self,entityid_list):
         try:
@@ -1161,7 +1161,7 @@ class MassEntityAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def get_all_deleted_records(self, page, per_page, custom_headers):
         return self.get_deleted_records('all', page, per_page, custom_headers)
@@ -1202,7 +1202,7 @@ class MassEntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def search_records(self,search_word,page,per_page,type):
         try:
@@ -1233,7 +1233,7 @@ class MassEntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
             
     def set_trash_record_properties(self,trash_record_ins,trash_record_prop):
         try:
@@ -1288,7 +1288,7 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def get_all_fields(self):
         try:
@@ -1311,7 +1311,7 @@ class ModuleAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def get_all_layouts(self):
         try:
@@ -1334,7 +1334,7 @@ class ModuleAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def get_layout(self,layout_id):
         try:
@@ -1355,7 +1355,7 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def get_all_customviews(self):
         try:
@@ -1380,7 +1380,7 @@ class ModuleAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def get_customview(self,customview_id):
         try:
@@ -1403,7 +1403,7 @@ class ModuleAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def update_module_settings(self):
         try:
@@ -1420,7 +1420,7 @@ class ModuleAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def update_customview(self,customview_instance):
         try:
             handler_ins=APIHandler()
@@ -1436,7 +1436,7 @@ class ModuleAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def get_all_relatedlists(self):
         try:
             handler_ins=APIHandler()
@@ -1463,7 +1463,7 @@ class ModuleAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
     def get_relatedlist(self,relatedlist_id):
         try:
@@ -1488,7 +1488,7 @@ class ModuleAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
     def construct_json_for_cv_update(self,customview_instance):
         cv_settings=dict()
@@ -1836,7 +1836,7 @@ class MetaDataAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
             
     def get_module(self,module_api_name):
         try:
@@ -1855,7 +1855,7 @@ class MetaDataAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
         
     def get_zcrmmodule(self,module_details):
@@ -1970,7 +1970,7 @@ class OrganizationAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
             
     def get_all_roles(self):
         try:
@@ -1992,7 +1992,7 @@ class OrganizationAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
     def get_role(self,role_id):
         try:
@@ -2013,7 +2013,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def get_all_profiles(self):
         try:
             try:
@@ -2034,7 +2034,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def get_profile(self,profile_id):
         try:
             try:
@@ -2054,7 +2054,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     def create_user(self,user_instance):
         try:
             try:
@@ -2072,7 +2072,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
             
     def update_user(self,user_instance):
         try:
@@ -2091,7 +2091,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
             
     def delete_user(self,user_id):
         try:
@@ -2109,7 +2109,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
             
     def get_user(self,user_id):
         try:
@@ -2129,7 +2129,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
     def get_all_users(self,page,per_page):
         return self.get_users(None,page,per_page)
@@ -2175,7 +2175,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.message,traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
 
     def get_organization_taxes(self):
         try:
@@ -2199,7 +2199,7 @@ class OrganizationAPIHandler(APIHandler):
             raise ex
 
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def get_organization_tax(self, org_tax_id):
         try:
@@ -2217,7 +2217,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def create_organization_taxes(self, orgtax_instances):
         try:
@@ -2247,7 +2247,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def update_organization_taxes(self, orgtax_instances):
         try:
@@ -2278,7 +2278,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def delete_organization_taxes(self, orgtax_ids):
         try:
@@ -2303,7 +2303,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def delete_organization_tax(self, orgtax_id):
         try:
@@ -2321,7 +2321,7 @@ class OrganizationAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def get_zcrmorgtax_as_json(self,orgtax_instance):
         orgtax_as_json=dict()
@@ -2624,7 +2624,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def get_tag_count(self, tag_id):
         try:
@@ -2644,7 +2644,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def create_tags(self,tag_instances):
         try:
@@ -2691,7 +2691,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
     def update_tags(self,tag_instances):
         try:
             try:
@@ -2736,7 +2736,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def add_tags_to_multiple_records(self, tag_list, record_list):
         try:
@@ -2784,7 +2784,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def remove_tags_from_multiple_records(self, tag_list, record_list):
         try:
@@ -2832,7 +2832,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def add_tags(self, record, tag_list):
         try:
@@ -2865,7 +2865,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def remove_tags(self, record, tag_list):
         try:
@@ -2898,7 +2898,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def delete(self, tag_id):
         try:
@@ -2919,7 +2919,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def merge(self, tag_id, merge_tag_id):
         try:
@@ -2948,7 +2948,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
     def update(self, tag):
         try:
@@ -2977,7 +2977,7 @@ class TagAPIHandler(APIHandler):
         except ZCRMException as ex:
             raise ex
         except Exception as ex:
-            CommonUtil.raise_exception(handler_ins.request_url_path, ex.message, traceback.format_stack())
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
 
 
     def get_zcrmtag(self, tag_details):
