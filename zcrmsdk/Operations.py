@@ -56,12 +56,12 @@ class ZCRMModule(object):
             from Handler import EntityAPIHandler
         record=ZCRMRecord.get_instance(self.api_name, entityID)
         return EntityAPIHandler.get_instance(record).get_record()
-    def get_records(self,cvid=None,sort_by=None,sort_order=None,page=0,per_page=200,custom_headers=None):
+    def get_records(self,cvid=None,sort_by=None,sort_order=None,page=0,per_page=200,custom_headers=None, custom_parameters=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).get_records(cvid,sort_by,sort_order,page,per_page,custom_headers)
+        return MassEntityAPIHandler.get_instance(self).get_records(cvid,sort_by,sort_order,page,per_page,custom_headers, custom_parameters)
     def create_records(self,record_ins_list):
         try:
             from .Handler import MassEntityAPIHandler
