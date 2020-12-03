@@ -257,7 +257,7 @@ class EntityAPIHandler(APIHandler):
         if len(self.zcrmrecord.price_details)>0:
             record_json["Pricing_Details"]=self.get_price_details_as_jsonarray()
         if len(self.zcrmrecord.tax_list)>0:
-            record_json["Tax"]=self.get_tax_list_as_json()
+            record_json["Tax"]=self.get_tax_list_as_jsonarray()
         if len(self.zcrmrecord.tag_list) > 0:
             record_json["Tag"] = self.get_tag_list_as_jsonarray()
         return record_json
@@ -2517,53 +2517,55 @@ class OrganizationAPIHandler(APIHandler):
             from Operations import ZCRMUser,ZCRMRole,ZCRMProfile
         user_instance=ZCRMUser.get_instance(user_details['id'],user_details['name'] if 'name' in user_details else None)
         user_instance.country=user_details['country'] if 'country' in user_details else None
-        user_instance.role=ZCRMRole.get_instance(user_details['role']['id'],user_details['role']['name'])
+        if 'role' in user_details:
+            user_instance.role=ZCRMRole.get_instance(user_details['role']['id'],user_details['role']['name'])
         if 'customize_info' in user_details:
             user_instance.customize_info=self.get_zcrm_user_customizeinfo(user_details['customize_info'])
-        user_instance.city=user_details['city']
+        user_instance.city=user_details['city'] if 'city' in user_details else None
         user_instance.signature=user_details['signature'] if 'signature' in user_details else None
         user_instance.name_format=user_details['name_format'] if 'name_format' in user_details else None
-        user_instance.language=user_details['language']
-        user_instance.locale=user_details['locale']
+        user_instance.language=user_details['language'] if 'language' in user_details else None
+        user_instance.locale=user_details['locale'] if 'locale' in user_details else None
         user_instance.is_personal_account=bool(user_details['personal_account']) if 'personal_account' in user_details else None
         user_instance.default_tab_group=user_details['default_tab_group'] if 'default_tab_group' in user_details else None
-        user_instance.alias=user_details['alias']
-        user_instance.street=user_details['street']
-        user_instance.city=user_details['city']
+        user_instance.alias=user_details['alias'] if 'alias' in user_details else None
+        user_instance.street=user_details['street'] if 'street' in user_details else None
+        user_instance.city=user_details['city'] if 'city' in user_details else None
         if 'theme' in user_details:
             user_instance.theme=self.get_zcrm_user_theme(user_details['theme'])
-        user_instance.state=user_details['state']
-        user_instance.country_locale=user_details['country_locale']
-        user_instance.fax=user_details['fax']
-        user_instance.first_name=user_details['first_name']
-        user_instance.email=user_details['email']
-        user_instance.zip=user_details['zip']
+        user_instance.state=user_details['state'] if 'state' in user_details else None
+        user_instance.country_locale=user_details['country_locale'] if 'country_locale' in user_details else None
+        user_instance.fax=user_details['fax'] if 'fax' in user_details else None
+        user_instance.first_name=user_details['first_name'] if 'first_name' in user_details else None
+        user_instance.email=user_details['email'] if 'email' in user_details else None
+        user_instance.zip=user_details['zip'] if 'zip' in user_details else None
         user_instance.decimal_separator=user_details['decimal_separator'] if 'decimal_separator' in user_details else None
-        user_instance.website=user_details['website']
-        user_instance.time_format=user_details['time_format']
-        user_instance.profile=ZCRMProfile.get_instance(user_details['profile']['id'],user_details['profile']['name'])
-        user_instance.mobile=user_details['mobile']
-        user_instance.last_name=user_details['last_name']
-        user_instance.time_zone=user_details['time_zone']
-        user_instance.zuid=user_details['zuid']
-        user_instance.is_confirm=bool(user_details['confirm'])
-        user_instance.full_name=user_details['full_name']
-        user_instance.phone=user_details['phone']
-        user_instance.dob=user_details['dob']
-        user_instance.date_format=user_details['date_format']
-        user_instance.status=user_details['status']
+        user_instance.website=user_details['website'] if 'website' in user_details else None
+        user_instance.time_format=user_details['time_format'] if 'time_format' in user_details else None
+        if 'profile' in user_details:
+            user_instance.profile=ZCRMProfile.get_instance(user_details['profile']['id'],user_details['profile']['name'])
+        user_instance.mobile=user_details['mobile'] if 'mobile' in user_details else None
+        user_instance.last_name=user_details['last_name'] if 'last_name' in user_details else None
+        user_instance.time_zone=user_details['time_zone'] if 'time_zone' in user_details else None
+        user_instance.zuid=user_details['zuid'] if 'zuid' in user_details else None
+        user_instance.is_confirm=bool(user_details['confirm']) if 'confirm' in user_details else None
+        user_instance.full_name=user_details['full_name'] if 'full_name' in user_details else None
+        user_instance.phone=user_details['phone'] if 'phone' in user_details else None
+        user_instance.dob=user_details['dob'] if 'dob' in user_details else None
+        user_instance.date_format=user_details['date_format'] if 'date_format' in user_details else None
+        user_instance.status=user_details['status'] if 'status' in user_details else None
         if 'territories' in user_details:
             user_instance.territories=user_details['territories']
         if 'reporting_to' in user_details:
             user_instance.reporting_to=user_details['reporting_to']
         if 'Currency' in user_details:
             user_instance.currency=user_details['Currency']
-        user_instance.created_by=user_details['created_by']
-        user_instance.modified_by=user_details['Modified_By']
+        user_instance.created_by=user_details['created_by'] if 'created_by' in user_details else None
+        user_instance.modified_by=user_details['Modified_By'] if 'Modified_By' in user_details else None
         if 'Isonline' in user_details:
             user_instance.is_online=user_details['Isonline']
-        user_instance.created_time=user_details['created_time']
-        user_instance.modified_time=user_details['Modified_Time']
+        user_instance.created_time=user_details['created_time'] if 'created_time' in user_details else None
+        user_instance.modified_time=user_details['Modified_Time'] if 'Modified_Time' in user_details else None
         try:
             for userkey in user_details:
                 if userkey not in ZCRMUser.defaultKeys:
