@@ -31,6 +31,7 @@ class ZohoOAuthConstants(object):
     DATABASE_PORT="mysql_port";
     DATABASE_PASSWORD="mysql_password";
     DATABASE_USERNAME="mysql_username";
+    DATABASE_HOST="mysql_host";
     PERSISTENCE_FILE_NAME="zcrm_oauthtokens.pkl"
     
     GRANT_TYPE_REFRESH="refresh_token";
