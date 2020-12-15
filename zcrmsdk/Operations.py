@@ -62,24 +62,24 @@ class ZCRMModule(object):
         except ImportError:
             from Handler import MassEntityAPIHandler
         return MassEntityAPIHandler.get_instance(self).get_records(cvid,sort_by,sort_order,page,per_page,custom_headers, custom_parameters)
-    def create_records(self,record_ins_list):
+    def create_records(self,record_ins_list, trigger=None, process=None, lar_id=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).create_records(record_ins_list)
-    def upsert_records(self,record_ins_list,duplicate_check_fields=None):
+        return MassEntityAPIHandler.get_instance(self).create_records(record_ins_list, trigger, process, lar_id)
+    def upsert_records(self,record_ins_list,duplicate_check_fields=None, trigger=None, process=None, lar_id=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).upsert_records(record_ins_list,duplicate_check_fields)
-    def update_records(self,record_ins_list):
+        return MassEntityAPIHandler.get_instance(self).upsert_records(record_ins_list, duplicate_check_fields, trigger, process, lar_id)
+    def update_records(self,record_ins_list, trigger=None, process=None):
         try:
             from .Handler import MassEntityAPIHandler
         except ImportError:
             from Handler import MassEntityAPIHandler
-        return MassEntityAPIHandler.get_instance(self).update_records(record_ins_list)
+        return MassEntityAPIHandler.get_instance(self).update_records(record_ins_list, trigger, process)
     def mass_update_records(self,entityid_list,field_api_name,value):
         try:
             from .Handler import MassEntityAPIHandler
@@ -301,7 +301,7 @@ class ZCRMRecord(object):
         except ImportError:
             from Handler import EntityAPIHandler
         return EntityAPIHandler.get_instance(self).get_record()
-    def create(self):
+    def create(self, trigger=None, process=None, lar_id=None):
         if self.entity_id is not None:
             try:
                 from .Utility import CommonUtil
@@ -312,8 +312,8 @@ class ZCRMRecord(object):
             from .Handler import EntityAPIHandler
         except ImportError:
             from Handler import EntityAPIHandler
-        return EntityAPIHandler.get_instance(self).create_record()
-    def update(self):
+        return EntityAPIHandler.get_instance(self).create_record(trigger, process, lar_id)
+    def update(self, trigger=None, process=None):
         if self.entity_id is None:
             try:
                 from .Utility import CommonUtil
@@ -324,7 +324,7 @@ class ZCRMRecord(object):
             from .Handler import EntityAPIHandler
         except ImportError:
             from Handler import EntityAPIHandler
-        return EntityAPIHandler.get_instance(self).update_record()
+        return EntityAPIHandler.get_instance(self).update_record(trigger, process)
     def delete(self):
         if self.entity_id is None:
             try:

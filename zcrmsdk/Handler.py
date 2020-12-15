@@ -68,7 +68,7 @@ class EntityAPIHandler(APIHandler):
             except ImportError:
                 from Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
-    def create_record(self):
+    def create_record(self, trigger, process, lar_id):
         try:
             handler_ins=APIHandler()
             handler_ins.request_url_path=self.zcrmrecord.module_api_name
@@ -79,7 +79,14 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            handler_ins.request_body=CommonUtil.create_api_supported_input_json(input_json, APIConstants.DATA)
+            request_json = CommonUtil.create_api_supported_input_json(input_json, APIConstants.DATA)
+            if trigger is not None:
+                request_json[APIConstants.TRIGGER] = trigger
+            if process is not None:
+                request_json[APIConstants.PROCESS] = process
+            if lar_id is not None:
+                request_json[APIConstants.LAR_ID] = lar_id
+            handler_ins.request_body = request_json
             apiResponse=APIRequest(handler_ins).get_api_response()
             reponseDetails=apiResponse.response_json[APIConstants.DATA][0]['details']
             self.zcrmrecord.entity_id=reponseDetails['id']
@@ -97,7 +104,7 @@ class EntityAPIHandler(APIHandler):
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
-    def update_record(self):
+    def update_record(self, trigger, process):
         try:
             handler_ins=APIHandler()
             handler_ins.request_url_path=self.zcrmrecord.module_api_name+"/"+str(self.zcrmrecord.entity_id)
@@ -108,7 +115,12 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            handler_ins.request_body=CommonUtil.create_api_supported_input_json(input_json, APIConstants.DATA)
+            request_json = CommonUtil.create_api_supported_input_json(input_json, APIConstants.DATA)
+            if trigger is not None:
+                request_json[APIConstants.TRIGGER] = trigger
+            if process is not None:
+                request_json[APIConstants.PROCESS] = process
+            handler_ins.request_body = request_json
             api_response=APIRequest(handler_ins).get_api_response()
             reponseDetails=api_response.response_json[APIConstants.DATA][0]['details']
             self.zcrmrecord.entity_id=reponseDetails['id']
@@ -924,6 +936,7 @@ class MassEntityAPIHandler(APIHandler):
     @staticmethod
     def get_instance(module_instance):
         return MassEntityAPIHandler(module_instance)
+
     def get_records(self,cvid,sort_by,sort_order,page,per_page,custom_headers, custom_parameters):
         try:
             handler_ins=APIHandler()
@@ -965,7 +978,8 @@ class MassEntityAPIHandler(APIHandler):
             except ImportError:
                 from Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
-    def create_records(self,record_ins_list):
+
+    def create_records(self,record_ins_list, trigger, process, lar_id):
         try:
             try:
                 from .Utility import CommonUtil
@@ -983,9 +997,15 @@ class MassEntityAPIHandler(APIHandler):
                     data_array.append(EntityAPIHandler.get_instance(record_ins).get_zcrmrecord_as_json())
                 else:
                     CommonUtil.raise_exception('Records_Create',"record id must be None",'RECORD ID PROVIDED',"RECORD ID")
-            request_json=dict()
-            request_json[APIConstants.DATA]=data_array
-            handler_ins.request_body=request_json
+            request_json = dict()
+            request_json[APIConstants.DATA] = data_array
+            if trigger is not None:
+                request_json[APIConstants.TRIGGER] = trigger
+            if process is not None:
+                request_json[APIConstants.PROCESS] = process
+            if lar_id is not None:
+                request_json[APIConstants.LAR_ID] = lar_id
+            handler_ins.request_body = request_json
             
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
             
@@ -1007,7 +1027,7 @@ class MassEntityAPIHandler(APIHandler):
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
         
-    def upsert_records(self,record_ins_list,duplicate_check_fields):
+    def upsert_records(self,record_ins_list,duplicate_check_fields, trigger, process, lar_id):
         try:
             try:
                 from .Utility import CommonUtil
@@ -1019,9 +1039,6 @@ class MassEntityAPIHandler(APIHandler):
             handler_ins.request_url_path=self.module_instance.api_name+"/upsert"
             handler_ins.request_method=APIConstants.REQUEST_METHOD_POST
             handler_ins.request_api_key=APIConstants.DATA
-            if (duplicate_check_fields is not None):
-                duplicate_check_fields_as_string = ','.join(str(duplicate_check_field) for duplicate_check_field in duplicate_check_fields)
-                handler_ins.add_param('duplicate_check_fields', duplicate_check_fields_as_string)
             data_array=list()
             for record_ins in record_ins_list:
                 record_json=EntityAPIHandler.get_instance(record_ins).get_zcrmrecord_as_json()
@@ -1029,7 +1046,16 @@ class MassEntityAPIHandler(APIHandler):
                     record_json['id']=str(record_ins.entity_id)
                 data_array.append(record_json)
             request_json=dict()
-            request_json[APIConstants.DATA]=data_array
+            request_json[APIConstants.DATA] = data_array
+            if trigger is not None:
+                request_json[APIConstants.TRIGGER] = trigger
+            if process is not None:
+                request_json[APIConstants.PROCESS] = process
+            if lar_id is not None:
+                request_json[APIConstants.LAR_ID] = lar_id
+            if duplicate_check_fields is not None:
+                request_json[APIConstants.DUPLICATE_CHECK_FIELDS] = duplicate_check_fields
+
             handler_ins.request_body=request_json
             
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()
@@ -1052,7 +1078,7 @@ class MassEntityAPIHandler(APIHandler):
         except Exception as ex:
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
-    def update_records(self,record_ins_list):
+    def update_records(self,record_ins_list, trigger, process):
         try:
             try:
                 from .Utility import CommonUtil
@@ -1072,6 +1098,10 @@ class MassEntityAPIHandler(APIHandler):
                 data_array.append(record_json)
             request_json=dict()
             request_json[APIConstants.DATA]=data_array
+            if trigger is not None:
+                request_json[APIConstants.TRIGGER] = trigger
+            if process is not None:
+                request_json[APIConstants.PROCESS] = process
             handler_ins.request_body=request_json
             
             bulk_api_response=APIRequest(handler_ins).get_bulk_api_response()

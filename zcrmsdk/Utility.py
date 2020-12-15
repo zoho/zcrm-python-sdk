@@ -122,6 +122,10 @@ class APIConstants(object):
     DETAILS="details"
     TAXES = "taxes"
     DATA = "data"
+    TRIGGER = "trigger"
+    PROCESS = "process"
+    LAR_ID = "lar_id"
+    DUPLICATE_CHECK_FIELDS = "duplicate_check_fields"
     INFO = "info"
     FIELDS='fields'
     LAYOUTS='layouts'
