@@ -147,7 +147,7 @@ class ZohoOAuthClient(object):
             OAuthLogger.add_log("Exception occurred while fetching oauthtokens", logging.ERROR, ex)
             raise ex
     def generate_access_token_from_refresh_token(self,refreshToken,userEmail):
-        self.refresh_access_token(refreshToken, userEmail)
+        return self.refresh_access_token(refreshToken, userEmail)
     def refresh_access_token(self,refreshToken,userEmail):
         if(refreshToken==None):
             raise ZohoOAuthException("Refresh token not provided!")
