@@ -78,7 +78,7 @@ class ZohoOAuthPersistenceHandler(object):
             from OAuthClient import ZohoOAuth
             from OAuthUtility import ZohoOAuthConstants
         import mysql.connector
-        connection=mysql.connector.connect(user=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME], password=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD],port=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT],database='zohooauth')
+        connection=mysql.connector.connect(user=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_USERNAME], password=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PASSWORD],port=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_PORT],host=ZohoOAuth.configProperties[ZohoOAuthConstants.DATABASE_HOST],database='zohooauth')
         return connection
         #connection=MySQLdb.connect(host="localhost",user="root",passwd="",db="zohooauth")
         #return connection
