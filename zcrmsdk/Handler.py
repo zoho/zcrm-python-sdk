@@ -158,33 +158,33 @@ class EntityAPIHandler(APIHandler):
                 from Utility import CommonUtil
             CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
     
-    def convert_record(self,potential_record,assign_to_user):
+    def convert_record(self, potential_record, assign_to_user):
         try:
-            handler_ins=APIHandler()
-            handler_ins.request_url_path=self.zcrmrecord.module_api_name+"/"+str(self.zcrmrecord.entity_id)+"/actions/convert"
-            handler_ins.request_method=APIConstants.REQUEST_METHOD_POST
-            handler_ins.request_api_key=APIConstants.DATA
-            input_json=dict()
+            handler_ins = APIHandler()
+            handler_ins.request_url_path = self.zcrmrecord.module_api_name + "/" + str(
+                self.zcrmrecord.entity_id) + "/actions/convert"
+            handler_ins.request_method = APIConstants.REQUEST_METHOD_POST
+            handler_ins.request_api_key = APIConstants.DATA
+            input_json = dict()
+            reqBodyJson = dict()
+            inputJsonArr = list()
             if assign_to_user is not None:
-                input_json['assign_to']=assign_to_user.id
+                input_json['assign_to'] = assign_to_user.id
             if potential_record is not None:
-                input_json['Deals']=self.get_instance(potential_record).get_zcrmrecord_as_json()
-            if(assign_to_user is not None or potential_record is not None):
-                inputJsonArr=list()
-                inputJsonArr.append(input_json)
-                reqBodyJson=dict()
-                reqBodyJson[APIConstants.DATA]=inputJsonArr
-                handler_ins.request_body=reqBodyJson
-            api_response=APIRequest(handler_ins).get_api_response()
-            converted_dict=dict()
-            convertedIdsJson=api_response.response_json[APIConstants.DATA][0]
+                input_json['Deals'] = self.get_instance(potential_record).get_zcrmrecord_as_json()
+            inputJsonArr.append(input_json)
+            reqBodyJson[APIConstants.DATA] = inputJsonArr
+            handler_ins.request_body = reqBodyJson
+            api_response = APIRequest(handler_ins).get_api_response()
+            converted_dict = dict()
+            convertedIdsJson = api_response.response_json[APIConstants.DATA][0]
             if APIConstants.CONTACTS in convertedIdsJson and convertedIdsJson[APIConstants.CONTACTS] is not None:
-                converted_dict[APIConstants.CONTACTS]=convertedIdsJson[APIConstants.CONTACTS]
+                converted_dict[APIConstants.CONTACTS] = convertedIdsJson[APIConstants.CONTACTS]
             if APIConstants.ACCOUNTS in convertedIdsJson and convertedIdsJson[APIConstants.ACCOUNTS] is not None:
-                converted_dict[APIConstants.ACCOUNTS]=convertedIdsJson[APIConstants.ACCOUNTS]
+                converted_dict[APIConstants.ACCOUNTS] = convertedIdsJson[APIConstants.ACCOUNTS]
             if APIConstants.DEALS in convertedIdsJson and convertedIdsJson[APIConstants.DEALS] is not None:
-                converted_dict[APIConstants.DEALS]=convertedIdsJson[APIConstants.DEALS]
-            
+                converted_dict[APIConstants.DEALS] = convertedIdsJson[APIConstants.DEALS]
+
             return converted_dict
         except ZCRMException as ex:
             raise ex
@@ -193,9 +193,9 @@ class EntityAPIHandler(APIHandler):
                 from .Utility import CommonUtil
             except ImportError:
                 from Utility import CommonUtil
-            CommonUtil.raise_exception(handler_ins.request_url_path,ex.__str__(),traceback.format_stack())
-        
-    def upload_photo(self,file_path):
+            CommonUtil.raise_exception(handler_ins.request_url_path, ex.__str__(), traceback.format_stack())
+
+    def upload_photo(self, file_path):
         try:
             handler_ins=APIHandler()
             handler_ins.request_url_path=self.zcrmrecord.module_api_name+"/"+str(self.zcrmrecord.entity_id)+"/photo"

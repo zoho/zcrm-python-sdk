@@ -1,4 +1,4 @@
-#Python SDK for Zoho CRM
+# Python SDK for Zoho CRM
 -------------------------
 Python SDK acts as a wrapper for Zoho CRM APIs. Hence, invoking a Zoho CRM API from your python client application is just a method call.
 
@@ -9,7 +9,7 @@ Registering a Zoho Client
 Since Zoho CRM APIs are authenticated with OAuth2 standards, you should register your client app with Zoho. 
 To register your app:
 
-- Visit the page "https://accounts.zoho.com/developerconsole".
+- Visit the page "https://api-console.zoho.com/".
 - Click “Add Client ID”.
 - Enter Client Name, Client Domain, and Redirect URI. Click “Create”.
 - Your Client app is created and displayed.
