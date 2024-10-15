@@ -1,15 +1,7 @@
 # Archival Notice:
 
-This SDK is archived. You can continue to use it, but no new features or support requests will be accepted. For the new version, refer to
-
-ZOHO CRM v2 API SDK :
-- [GitHub Repository](https://github.com/zoho/zohocrm-python-sdk-2.0)
-- [Help Doc](https://www.zoho.com/crm/developer/docs/server-side-sdks/v2/py-overview.html)
-
-ZOHO CRM v2.1 API SDK :
-- [GitHub Repository](https://github.com/zoho/zohocrm-python-sdk-2.1)
-- [Help Doc](https://www.zoho.com/crm/developer/docs/api2.1/server-side-sdks/v1/python.html)
-
+This SDK is archived. You can continue to use it, but no new features or support requests will be accepted. For the new version, refer to https://www.zoho.com/crm/developer/docs/sdk/server-side/python-sdk.html
+  
 # Python SDK for Zoho CRM
 -------------------------
 Python SDK acts as a wrapper for Zoho CRM APIs. Hence, invoking a Zoho CRM API from your python client application is just a method call.
